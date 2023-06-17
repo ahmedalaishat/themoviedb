@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.alaishat.ahmed.themoviedb.feature.movie.MovieScreen
+import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheetContent
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TheMovieDBTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MovieScreen()
+                    RateBottomSheetContent()
                 }
             }
         }

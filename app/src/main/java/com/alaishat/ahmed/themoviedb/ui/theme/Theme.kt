@@ -16,12 +16,13 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = LightBlue,
+    onPrimary = Color.White,
     secondary = Orange,
     background = DarkBlue,
     onBackground = Color.White,
     surface = Color.White,
     surfaceVariant = DarkTeal,
-    onSurface = Color.White,
+    onSurface = OnSurfaceGray,
     onSurfaceVariant = SteelGray,
     outlineVariant = SteelGray,
 )
