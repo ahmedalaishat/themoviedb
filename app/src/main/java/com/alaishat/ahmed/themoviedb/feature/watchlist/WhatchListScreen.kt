@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.search
+package com.alaishat.ahmed.themoviedb.feature.watchlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.feature.watchlist.SearchScreen
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.movieList
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
@@ -34,9 +33,10 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WatchListScreen() {
+fun SearchScreen() {
     var searchText by remember { mutableStateOf("") }
 
+    //AHMED_TODO: change me to grid
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
         contentPadding = PaddingValues(
@@ -62,12 +62,12 @@ fun WatchListScreen() {
     }
     if (searchText.isNotEmpty())
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(.5f),
             contentAlignment = Alignment.Center
         ) {
             EmptyContent(
-                imageId = R.drawable.ic_no_results,
-                title = "We Are Sorry, We Can Not Find The Movie :(",
+                imageId = R.drawable.ic_magic_box,
+                title = "There Is No Movie Yet!",
                 text = "Find your movie by Type title, categories, years, etc ",
                 modifier = Modifier.fillMaxWidth(.5f),
             )
