@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themmoviedb.ui.theme
+package com.alaishat.ahmed.themoviedb.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
