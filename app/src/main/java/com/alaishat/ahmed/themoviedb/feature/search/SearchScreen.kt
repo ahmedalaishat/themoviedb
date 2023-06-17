@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,26 +37,37 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 fun WatchListScreen() {
     var searchText by remember { mutableStateOf("") }
 
-    LazyColumn(
+    LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
         contentPadding = PaddingValues(
             start = Dimensions.ScreenPadding,
             end = Dimensions.ScreenPadding,
             bottom = Dimensions.ScreenPadding,
-        )
+        ),
+        columns = GridCells.Adaptive(300.dp)
     ) {
-        stickyHeader {
-            Surface(color = MaterialTheme.colorScheme.background) {
-                SearchBar(
-                    searchText = searchText,
-                    placeholder = "Search",
-                    onSearchTextChange = { searchText = it },
-                    modifier = Modifier
-                        .padding(top = Dimensions.ScreenPadding)
-                        .fillMaxWidth()
-                )
-            }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            SearchBar(
+                searchText = searchText,
+                placeholder = "Search",
+                onSearchTextChange = { searchText = it },
+                modifier = Modifier
+                    .padding(top = Dimensions.ScreenPadding)
+                    .fillMaxWidth()
+            )
         }
+//        stickyHeader {
+//            Surface(color = MaterialTheme.colorScheme.background) {
+//                SearchBar(
+//                    searchText = searchText,
+//                    placeholder = "Search",
+//                    onSearchTextChange = { searchText = it },
+//                    modifier = Modifier
+//                        .padding(top = Dimensions.ScreenPadding)
+//                        .fillMaxWidth()
+//                )
+//            }
+//        }
         if (searchText.isEmpty())
             movieList(itemModifier = Modifier.height(120.dp))
     }

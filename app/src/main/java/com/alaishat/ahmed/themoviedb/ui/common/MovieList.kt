@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.ui.common
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.ui.Modifier
 
 /**
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
  * The Movie DB Project.
  */
 //AHMED_TODO: add items list as parameter
-fun LazyListScope.movieList(
+fun LazyGridScope.movieList(
     itemModifier: Modifier = Modifier,
 ) = items(
     count = 10,

@@ -1,6 +1,7 @@
 package com.alaishat.ahmed.themoviedb.ui.extenstions
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -9,6 +10,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.Density
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -31,5 +33,23 @@ fun ScrollState.verticalNestedScrollConnection() = object : NestedScrollConnecti
             x = 0f,
             y = -dispatchRawDelta(-available.y)
         )
+    }
+}
+
+val FooterArrangement = object : Arrangement.Vertical {
+    override fun Density.arrange(
+        totalSize: Int,
+        sizes: IntArray,
+        outPositions: IntArray
+    ) {
+        var currentOffset = 0
+        sizes.forEachIndexed { index, size ->
+            if (index == sizes.lastIndex) {
+                outPositions[index] = totalSize - size
+            } else {
+                outPositions[index] = currentOffset
+                currentOffset += size
+            }
+        }
     }
 }
