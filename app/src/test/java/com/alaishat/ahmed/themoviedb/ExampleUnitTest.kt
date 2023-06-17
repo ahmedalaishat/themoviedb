@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themmoviedb
+package com.alaishat.ahmed.themoviedb
 
 import org.junit.Test
 
