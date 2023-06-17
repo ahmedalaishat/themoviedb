@@ -3,8 +3,10 @@ package com.alaishat.ahmed.themoviedb.feature.home
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,6 +22,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -37,12 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.verticalNestedScroll
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.IconXLg
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.MarginMd
@@ -58,24 +63,31 @@ import kotlinx.coroutines.launch
 fun HomeScreen() {
     var text by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-//            .verticalScroll(rememberScrollState())
-            .padding(Dimensions.ScreenPadding)
-    ) {
-        Text(text = "What do you want to watch?")
-        SpacerMd()
-        SearchBar(
-            searchText = text,
-            placeholder = "Search",
-            onSearchTextChange = { text = it },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        SpacerMd()
-        TopFiveMovies()
-        SpacerMd()
-        val tabs = remember { listOf("Now playing", "Upcoming", "Top rated", "Popular") }
-        HomePager(tabs = tabs)
+    BoxWithConstraints {
+        val screenHeight = maxHeight
+        val scrollState = rememberScrollState()
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .padding(Dimensions.ScreenPadding)
+        ) {
+            Text(text = "What do you want to watch?")
+            SpacerMd()
+            SearchBar(
+                searchText = text,
+                placeholder = "Search",
+                onSearchTextChange = { text = it },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            SpacerMd()
+            TopFiveMovies()
+            val tabs = remember { listOf("Now playing", "Upcoming", "Top rated", "Popular") }
+            HomePager(
+                tabs = tabs,
+                outerScrollState = scrollState,
+                modifier = Modifier.height(screenHeight),
+            )
+        }
     }
 }
 
@@ -152,41 +164,52 @@ fun MovieCard(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HomePager(tabs: List<String>) {
+private fun HomePager(
+    tabs: List<String>,
+    modifier: Modifier = Modifier,
+    outerScrollState: ScrollState? = null,
+) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-    ScrollableTabRow(
-        selectedTabIndex = pagerState.currentPage,
-        containerColor = MaterialTheme.colorScheme.background,
-        edgePadding = 0.dp,
-        divider = { Divider(color = MaterialTheme.colorScheme.background) },
-    ) {
-        tabs.forEachIndexed { position, tab ->
-            Tab(
-                text = {
-                    Text(
-                        text = tab,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                },
-                selected = pagerState.currentPage == position,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(position)
-                    }
-                },
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+    Column(modifier = modifier) {
+        SpacerMd()
+        ScrollableTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            containerColor = MaterialTheme.colorScheme.background,
+            edgePadding = 0.dp,
+            divider = { Divider(color = MaterialTheme.colorScheme.background) },
+        ) {
+            tabs.forEachIndexed { position, tab ->
+                Tab(
+                    text = {
+                        Text(
+                            text = tab,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    selected = pagerState.currentPage == position,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(position)
+                        }
+                    },
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
-    }
 
-    HorizontalPager(
-        pageCount = tabs.size,
-        state = pagerState,
-        userScrollEnabled = false,
-    ) { position ->
-        HomePageContent()
+        val pagerModifier = if (outerScrollState == null) Modifier
+        else Modifier.verticalNestedScroll(outerScrollState)
+
+        HorizontalPager(
+            pageCount = tabs.size,
+            state = pagerState,
+            userScrollEnabled = false,
+            modifier = pagerModifier,
+        ) { position ->
+            HomePageContent()
+        }
     }
 }
 
@@ -198,23 +221,28 @@ fun HomePageContent(
 
     LazyVerticalGrid(
         state = lazyGridState,
-        columns = GridCells.Fixed(3),//AHMED_TODO: make me adaptive
+        columns = GridCells.Adaptive(100.dp),
         horizontalArrangement = Arrangement.spacedBy(MarginSm),
         verticalArrangement = Arrangement.spacedBy(MarginSm),
         contentPadding = PaddingValues(vertical = MarginMd),
         modifier = modifier.fillMaxWidth(),
-    ) {
+
+        ) {
         items(10) {
+//            BoxWithConstraints {
             MovieCard(
                 movieImageId = if (it % 2 == 1) R.drawable.alt_movie_1 else R.drawable.alt_movie_2,
                 modifier = Modifier
-                    .aspectRatio(2 / 3f),
+//                        .requiredWidthIn(max = min(maxWidth, 150.dp), min = 0.dp)
+                    .aspectRatio(2 / 3f)
+//                        .align(Alignment.Center),
             )
+//            }
         }
     }
 }
 
-@Preview
+@DevicePreviews
 @Composable
 private fun HomeScreenPreview() {
     TheMoviePreviewSurface {
