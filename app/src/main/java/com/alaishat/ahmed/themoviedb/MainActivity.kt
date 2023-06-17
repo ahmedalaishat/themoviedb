@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.alaishat.ahmed.themoviedb.feature.home.HomeScreen
+import com.alaishat.ahmed.themoviedb.feature.search.SearchScreen
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TheMovieDBTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    HomeScreen()
+                    SearchScreen()
                 }
             }
         }

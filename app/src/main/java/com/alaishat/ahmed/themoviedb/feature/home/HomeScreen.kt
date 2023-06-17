@@ -24,7 +24,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,12 +42,12 @@ import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
+import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.IconXLg
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.MarginMd
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.MarginSm
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
-import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 import kotlinx.coroutines.launch
 
 /**
@@ -218,9 +217,7 @@ fun HomePageContent(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    TheMovieDBTheme {
-        Surface {
-            HomeScreen()
-        }
+    TheMoviePreviewSurface {
+        HomeScreen()
     }
 }

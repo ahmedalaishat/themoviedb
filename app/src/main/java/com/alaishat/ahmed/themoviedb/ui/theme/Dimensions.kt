@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 object Dimensions {
     val ScreenPadding = 16.dp
 
+    val MarginXSm = 4.dp
     val MarginSm = 12.dp
     val MarginMd = 16.dp
     val MarginLg = 32.dp

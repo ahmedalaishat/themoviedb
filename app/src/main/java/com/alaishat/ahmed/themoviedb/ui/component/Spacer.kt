@@ -14,6 +14,11 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
  * The Movie DB Project.
  */
 @Composable
+fun ColumnScope.SpacerXSm() {
+    Spacer(modifier = Modifier.height(Dimensions.MarginXSm))
+}
+
+@Composable
 fun ColumnScope.SpacerSm() {
     Spacer(modifier = Modifier.height(Dimensions.MarginSm))
 }
@@ -31,6 +36,11 @@ fun ColumnScope.SpacerLg() {
 @Composable
 fun RowScope.SpacerSm() {
     Spacer(modifier = Modifier.width(Dimensions.MarginSm))
+}
+
+@Composable
+fun RowScope.SpacerXSm() {
+    Spacer(modifier = Modifier.width(Dimensions.MarginXSm))
 }
 
 @Composable
