@@ -33,7 +33,7 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
  * The Movie DB Project.
  */
 @Composable
-fun SearchScreen() {
+fun WatchListScreen() {
     var searchText by remember { mutableStateOf("") }
 
     LazyVerticalGrid(
@@ -62,7 +62,7 @@ fun SearchScreen() {
     }
     if (searchText.isNotEmpty())
         Box(
-            modifier = Modifier.fillMaxSize(.5f),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             EmptyContent(
@@ -76,8 +76,8 @@ fun SearchScreen() {
 
 @DevicePreviews
 @Composable
-private fun SearchScreenPreview() {
+private fun WatchListScreenPreview() {
     TheMoviePreviewSurface {
-        SearchScreen()
+        WatchListScreen()
     }
 }
