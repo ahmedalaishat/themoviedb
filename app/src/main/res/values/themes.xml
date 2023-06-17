@@ -3,6 +3,7 @@
 
     <style name="Theme.TheMovieDB" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/dark_blue</item>
+<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
         <item name="android:navigationBarColor">@color/dark_blue</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>

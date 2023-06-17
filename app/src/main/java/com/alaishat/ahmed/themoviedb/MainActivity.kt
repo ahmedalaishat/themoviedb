@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.alaishat.ahmed.themoviedb.feature.home.HomeScreen
-import com.alaishat.ahmed.themoviedb.feature.watchlist.SearchScreen
+import com.alaishat.ahmed.themoviedb.feature.movie.MovieScreen
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             TheMovieDBTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    HomeScreen()
+                    MovieScreen()
                 }
             }
         }

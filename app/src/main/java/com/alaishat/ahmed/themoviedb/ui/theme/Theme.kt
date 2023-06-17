@@ -12,6 +12,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = LightBlue,
@@ -22,6 +23,7 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = DarkTeal,
     onSurface = Color.White,
     onSurfaceVariant = SteelGray,
+    outlineVariant = SteelGray,
 )
 
 private val LightColorScheme = DarkColorScheme
@@ -46,6 +48,7 @@ fun TheMovieDBTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+//            WindowCompat.setDecorFitsSystemWindows(window, false)
 //            window.statusBarColor = colorScheme.primary.toArgb()
 //            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }

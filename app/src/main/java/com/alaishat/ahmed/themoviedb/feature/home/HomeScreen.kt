@@ -1,9 +1,7 @@
 package com.alaishat.ahmed.themoviedb.feature.home
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,21 +18,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,17 +34,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
-import com.alaishat.ahmed.themoviedb.ui.extenstions.verticalNestedScroll
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.IconXLg
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.MarginMd
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions.MarginSm
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
-import kotlinx.coroutines.launch
 
 /**
  * Created by Ahmed Al-Aishat on Jun/16/2023.
@@ -82,11 +72,15 @@ fun HomeScreen() {
             SpacerMd()
             TopFiveMovies()
             val tabs = remember { listOf("Now playing", "Upcoming", "Top rated", "Popular") }
-            HomePager(
+            AppHorizontalPager(
                 tabs = tabs,
                 outerScrollState = scrollState,
-                modifier = Modifier.height(screenHeight),
-            )
+                modifier = Modifier
+                    .height(screenHeight)
+                    .padding(top = MarginMd),
+            ) { page ->
+                HomePageContent()
+            }
         }
     }
 }
@@ -159,57 +153,6 @@ fun MovieCard(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun HomePager(
-    tabs: List<String>,
-    modifier: Modifier = Modifier,
-    outerScrollState: ScrollState? = null,
-) {
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
-    Column(modifier = modifier) {
-        SpacerMd()
-        ScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            containerColor = MaterialTheme.colorScheme.background,
-            edgePadding = 0.dp,
-            divider = { Divider(color = MaterialTheme.colorScheme.background) },
-        ) {
-            tabs.forEachIndexed { position, tab ->
-                Tab(
-                    text = {
-                        Text(
-                            text = tab,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    },
-                    selected = pagerState.currentPage == position,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(position)
-                        }
-                    },
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        val pagerModifier = if (outerScrollState == null) Modifier
-        else Modifier.verticalNestedScroll(outerScrollState)
-
-        HorizontalPager(
-            pageCount = tabs.size,
-            state = pagerState,
-            userScrollEnabled = false,
-            modifier = pagerModifier,
-        ) { position ->
-            HomePageContent()
-        }
     }
 }
 
