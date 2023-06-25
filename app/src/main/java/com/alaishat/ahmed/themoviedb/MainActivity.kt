@@ -26,10 +26,10 @@ class MainActivity : ComponentActivity() {
                 MovieApp()
             }
         }
-        lifecycleScope.launch {
-            movieListRepository.getMovieListByType(MovieListType.UPCOMING).collect {
-                Timber.e(it.toString())
-            }
-        }
+//        lifecycleScope.launch {
+//            movieListRepository.getMovieListByType(MovieListType.UPCOMING).collect {
+//                Timber.e(it.toString())
+//            }
+//        }
     }
 }

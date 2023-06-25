@@ -53,6 +53,9 @@ buildscript {
 //        // Moshi
 //        moshi_version = '1.14.0'
 
+        // Coil
+        coil_version = '2.4.0'
+
         // Paging
         paging_version = "3.1.1"
         paging_compose_version = "1.0.0-alpha17"

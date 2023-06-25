@@ -36,41 +36,42 @@ private const val TIME_OUT = 30_000L
 @Singleton
 class KtorClient @Inject constructor(
     @Dispatcher(MovieDispatcher.IO) val ioDispatcher: CoroutineDispatcher,
-    networkJson: Json,
-    exceptionHandler: KtorExceptionHandler,
-    ktorLogger: KtorLogger,
+    private val networkJson: Json,
+    private val exceptionHandler: KtorExceptionHandler,
+    private val ktorLogger: KtorLogger,
 ) {
 
-    val httpClient = HttpClient(Android) {
-        expectSuccess = true
+    val httpClient
+        get() = HttpClient(Android) {
+            expectSuccess = true
 
-        install(ContentNegotiation) {
-            json(networkJson)
-        }
+            install(ContentNegotiation) {
+                json(networkJson)
+            }
 
-        install(Logging) {
-            logger = ktorLogger
-            level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
-        }
+            install(Logging) {
+                logger = ktorLogger
+                level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
+            }
 
-        install(HttpTimeout) {
-            socketTimeoutMillis = TIME_OUT
-            requestTimeoutMillis = TIME_OUT
-            connectTimeoutMillis = TIME_OUT
-        }
+            install(HttpTimeout) {
+                socketTimeoutMillis = TIME_OUT
+                requestTimeoutMillis = TIME_OUT
+                connectTimeoutMillis = TIME_OUT
+            }
 
-        defaultRequest {
-            contentType(ContentType.Application.Json)
-            url(BASE_URL)
-            url {
-                parameters.append(API_KEY_PARAM, API_KEY)
+            defaultRequest {
+                contentType(ContentType.Application.Json)
+                url(BASE_URL)
+                url {
+                    parameters.append(API_KEY_PARAM, API_KEY)
+                }
+            }
+
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest(exceptionHandler::handle)
             }
         }
-
-        HttpResponseValidator {
-            handleResponseExceptionWithRequest(exceptionHandler::handle)
-        }
-    }
 
     suspend inline fun <reified T> call(crossinline caller: suspend HttpClient.() -> HttpResponse): T {
         return withContext(ioDispatcher) {
