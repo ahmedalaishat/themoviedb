@@ -1,0 +1,14 @@
+package com.alaishat.ahmed.themoviedb.network.datasource.fake
+
+import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
+import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMovieListsDataSource
+
+/**
+ * Created by Ahmed Al-Aishat on Jun/25/2023.
+ * The Movie DB Project.
+ */
+class FakeMovieListDataSource : NetworkMovieListsDataSource {
+    override suspend fun getList(movieListPath: String): List<NetworkMovie> {
+        TODO("Not yet implemented")
+    }
+}

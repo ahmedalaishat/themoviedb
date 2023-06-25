@@ -4,20 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
-import com.alaishat.ahmed.themoviedb.network.sources.NetworkMovieListsDataSource
-import com.alaishat.ahmed.themoviedb.network.sources.ktor.KtorMovieListsDataSource
+import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
+import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
 import com.alaishat.ahmed.themoviedb.ui.MovieApp
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var dataSource: KtorMovieListsDataSource
+    lateinit var movieListRepository: MovieListRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,18 +27,9 @@ class MainActivity : ComponentActivity() {
             }
         }
         lifecycleScope.launch {
-            dataSource.getList(NetworkMovieListsDataSource.MovieList.UPCOMING)
+            movieListRepository.getMovieListByType(MovieListType.UPCOMING).collect {
+                Timber.e(it.toString())
+            }
         }
     }
 }
-
-@Serializable
-data class TestRes(
-    val dates: TestDates
-)
-
-@Serializable
-data class TestDates(
-    val maximum: String,
-    val minimum: String,
-)
