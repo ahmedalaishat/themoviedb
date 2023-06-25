@@ -11,14 +11,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetworkMovie(
     @SerialName("adult") val adult: Boolean,
-    @SerialName("backdrop_path") val backdropPath: String,
+    @SerialName("backdrop_path") val backdropPath: String?,
     @SerialName("genre_ids") val genreIds: List<Int>,
     @SerialName("id") val id: Int,
     @SerialName("original_language") val originalLanguage: String,
     @SerialName("original_title") val originalTitle: String,
     @SerialName("overview") val overview: String,
     @SerialName("popularity") val popularity: Float,
-    @SerialName("poster_path") val posterPath: String,
+    @SerialName("poster_path") val posterPath: String?,
     @SerialName("release_date") val releaseDate: String,//AHMED_TODO: convert me to date
     @SerialName("title") val title: String,
     @SerialName("video") val video: Boolean,
@@ -30,9 +30,9 @@ fun List<NetworkMovie>.mapToMovies() = map {
     Movie(
         id = it.id,
         overview = it.overview,
-        posterPath = it.posterPath,
+        posterPath = it.posterPath.orEmpty(),
         releaseDate = it.releaseDate,
         title = it.title,
-        voteAverage = it.voteAverage,
+        voteAverage = "%.1f".format(it.voteAverage),
     )
 }

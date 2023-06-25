@@ -11,4 +11,8 @@ class FakeMovieListDataSource : NetworkMovieListsDataSource {
     override suspend fun getList(movieListPath: String): List<NetworkMovie> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun searchMovie(query: String): List<NetworkMovie> {
+        TODO("Not yet implemented")
+    }
 }

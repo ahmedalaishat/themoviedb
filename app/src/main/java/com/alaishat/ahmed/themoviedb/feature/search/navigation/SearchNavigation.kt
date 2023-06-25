@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.alaishat.ahmed.themoviedb.feature.search.SearchScreen
+import com.alaishat.ahmed.themoviedb.feature.search.SearchRoute
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.
@@ -18,6 +18,6 @@ fun NavController.navigateToSearch(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.searchScreen() {
     composable(route = searchRoute) {
-        SearchScreen()
+        SearchRoute()
     }
 }

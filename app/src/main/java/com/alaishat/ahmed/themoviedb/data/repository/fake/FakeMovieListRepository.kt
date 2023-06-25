@@ -13,4 +13,8 @@ class FakeMovieListRepository : MovieListRepository {
     override fun getMovieListByType(movieListType: MovieListType): Flow<List<Movie>> {
         TODO("Not yet implemented")
     }
+
+    override fun searchMovie(query: String): Flow<List<Movie>> {
+        TODO("Not yet implemented")
+    }
 }

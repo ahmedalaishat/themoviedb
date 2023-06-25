@@ -24,4 +24,12 @@ class KtorMovieListsDataSource @Inject constructor(
         }
         return res.results
     }
+
+    override suspend fun searchMovie(query: String): List<NetworkMovie> {
+        //AHMED_TODO: convert me to pager
+        val res: MovieListRes = ktorClient.call {
+            get("search/movie?query=$query")
+        }
+        return res.results
+    }
 }

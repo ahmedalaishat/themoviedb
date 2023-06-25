@@ -9,4 +9,5 @@ import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
 interface NetworkMovieListsDataSource {
 
     suspend fun getList(movieListPath: String): List<NetworkMovie>
+    suspend fun searchMovie(query: String): List<NetworkMovie>
 }

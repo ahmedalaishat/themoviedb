@@ -27,17 +27,17 @@ class HomeViewModel @Inject constructor(
     private fun getMoviesFlowOf(homeTab: HomeTab): StateFlow<MovieListUiState> {
         return getMovieListUseCase(homeTab.movieListType)
             .asResult()
-            .map(Result<List<Movie>>::toUiState)
+            .map(Result<List<Movie>>::toMovieListUiState)
             .stateInViewModel(
                 initialValue = MovieListUiState.Loading,
-                started = SharingStarted.Lazily
+                started = SharingStarted.Lazily // no need to use `WhileSubscribed` as we make one shot call
             )
     }
 
     //AHMED_TODO: make me pager flow
     val topFiveMoviesFlow = getTopFiveMoviesUseCase()
         .asResult()
-        .map(Result<List<Movie>>::toUiState)
+        .map(Result<List<Movie>>::toMovieListUiState)
         .stateInViewModel(
             initialValue = MovieListUiState.Loading,
             started = SharingStarted.Lazily
@@ -60,7 +60,7 @@ sealed interface MovieListUiState {
     ) : MovieListUiState
 }
 
-private fun Result<List<Movie>>.toUiState(): MovieListUiState {
+fun Result<List<Movie>>.toMovieListUiState(): MovieListUiState {
     return when (this) {
         is Result.Loading -> MovieListUiState.Loading
         is Result.Error -> MovieListUiState.Error(this.message)

@@ -27,4 +27,9 @@ class MovieListRepositoryImpl @Inject constructor(
         val movies = movieListsDataSource.getList(movieListPath).mapToMovies()
         emit(movies)
     }
+
+    override fun searchMovie(query: String): Flow<List<Movie>> = flow {
+        val movies = movieListsDataSource.searchMovie(query).mapToMovies()
+        emit(movies)
+    }
 }

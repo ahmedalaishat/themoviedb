@@ -12,5 +12,6 @@ interface MovieListRepository : Repository {
 
 
     //AHMED_TODO: make me pager flow
-    fun getMovieListByType(movieListType: MovieListType) : Flow<List<Movie>>
+    fun getMovieListByType(movieListType: MovieListType): Flow<List<Movie>>
+    fun searchMovie(query: String): Flow<List<Movie>>
 }
