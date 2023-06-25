@@ -10,16 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.movieList
@@ -33,9 +34,25 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
  * The Movie DB Project.
  */
 @Composable
-fun WatchListScreen() {
-    var searchText by remember { mutableStateOf("") }
+fun WatchListRoute(
+    viewModel: WatchListViewModel = hiltViewModel(),
+) {
+    val query by viewModel.queryFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.searchMoviesFlow.collectAsStateWithLifecycle()
 
+    WatchListScreen(
+        searchText = query,
+        uiState = uiState,
+        onSearchTextChange = viewModel::updateQueryText
+    )
+}
+
+@Composable
+private fun WatchListScreen(
+    searchText: String,
+    uiState: WatchListUiState,
+    onSearchTextChange: (String) -> Unit,
+) {
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
         contentPadding = PaddingValues(
@@ -50,34 +67,43 @@ fun WatchListScreen() {
                 SearchBar(
                     searchText = searchText,
                     placeholder = "Search",
-                    onSearchTextChange = { searchText = it },
+                    onSearchTextChange = onSearchTextChange,
                     modifier = Modifier
                         .padding(top = Dimensions.ScreenPadding)
                         .fillMaxWidth()
                 )
             }
         }
-        if (searchText.isEmpty())
-            movieList(itemModifier = Modifier.height(120.dp))
+        if (uiState is WatchListUiState.Success)
+            movieList(
+                movies = uiState.movies,
+                itemModifier = Modifier.height(110.dp),
+            )
     }
-    if (searchText.isNotEmpty())
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (uiState == WatchListUiState.Loading) CircularProgressIndicator()
+        if (uiState == WatchListUiState.NoResults)
             EmptyContent(
                 imageId = R.drawable.ic_magic_box,
-                title = "There Is No Movie Yet!",
-                text = "Find your movie by Type title, categories, years, etc ",
+                title = stringResource(R.string.watch_list_no_movies_title),
+                subtitle = stringResource(id = R.string.find_your_movie_by),
                 modifier = Modifier.fillMaxWidth(.5f),
             )
-        }
+    }
 }
 
 @DevicePreviews
 @Composable
 private fun WatchListScreenPreview() {
+    //AHMED_TODO: add preview parameters
     TheMoviePreviewSurface {
-        WatchListScreen()
+        WatchListScreen(
+            searchText = "",
+            uiState = WatchListUiState.Loading,
+            onSearchTextChange = { }
+        )
     }
 }

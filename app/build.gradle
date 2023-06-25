@@ -1,6 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'kotlinx-serialization'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -27,13 +31,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = jvm_target_version
     }
     buildFeatures {
+        buildConfig true
         compose true
     }
     composeOptions {
@@ -51,6 +56,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$android_core_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.activity:activity-compose:$activity_compose_version"
+    implementation "androidx.startup:startup-runtime:$startup_version"
 
 
     implementation platform("androidx.compose:compose-bom:$compose_bom_version")
@@ -68,6 +74,45 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$nav_version"
     // Integration with HiltNavigation
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_nav_compose_version"
+
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+    // For Robolectric tests.
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    // ...with Kotlin.
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    // Hilt worker
+    implementation "androidx.hilt:hilt-work:$hilt_work_version"
+
+
+    // Networking
+    implementation "io.ktor:ktor-client-core:${ktor_version}"
+//    implementation "io.ktor:ktor-client-cio:${ktor_version}"
+    implementation "io.ktor:ktor-client-auth:${ktor_version}"
+    implementation "io.ktor:ktor-client-android:${ktor_version}"
+    implementation "io.ktor:ktor-client-serialization:${ktor_version}"
+    implementation "io.ktor:ktor-client-logging-jvm:${ktor_version}"
+    implementation "io.ktor:ktor-client-content-negotiation:${ktor_version}"
+    implementation "io.ktor:ktor-client-cio:${ktor_version}"
+    implementation "io.ktor:ktor-client-logging:${ktor_version}"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:${ktor_version}"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization"
+
+//    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+//    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+//    implementation "com.squareup.retrofit2:retrofit-mock:$retrofit_version"
+//    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+//    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    implementation "io.coil-kt:coil-compose:$coil_version"
+
+
+    // Timber
+    implementation "com.jakewharton.timber:timber:$timber_version"
 
 
     testImplementation "junit:junit:$junit_version"

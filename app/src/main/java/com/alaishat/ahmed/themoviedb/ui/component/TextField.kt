@@ -1,9 +1,11 @@
 package com.alaishat.ahmed.themoviedb.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -14,6 +16,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
@@ -95,7 +98,15 @@ fun SearchBar(
         value = searchText,
         onValueChange = onSearchTextChange,
         trailingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "search")
+            val image = if (searchText.isEmpty()) Icons.Default.Search
+            else Icons.Default.Close
+            Icon(
+                modifier = Modifier
+                    .clip(Shapes.CornerFull)
+                    .clickable { onSearchTextChange("") },
+                imageVector = image,
+                contentDescription = "search",
+            )
         },
         placeholder = { Text(text = placeholder) },
     )

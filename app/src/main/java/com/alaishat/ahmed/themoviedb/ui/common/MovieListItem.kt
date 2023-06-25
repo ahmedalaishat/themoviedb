@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.feature.home.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 
@@ -20,15 +21,15 @@ import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
  */
 @Composable
 fun MovieListItem(
+    movie: Movie,
     modifier: Modifier = Modifier,
-    index: Int
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
         MovieCard(
-            movieImageId = if (index % 2 == 1) R.drawable.alt_movie_1 else R.drawable.alt_movie_2,
+            movie = movie,
             modifier = Modifier
                 .fillMaxHeight()
                 .aspectRatio(.8f, true),
@@ -38,12 +39,16 @@ fun MovieListItem(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Spiderman", maxLines = 1)
+            Text(text = movie.title, maxLines = 1)
             Column {
-                MovieInfo(iconId = R.drawable.ic_star, text = "9.5", color = MaterialTheme.colorScheme.secondary)
+                MovieInfo(
+                    iconId = R.drawable.ic_star,
+                    text = movie.voteAverage,
+                    color = MaterialTheme.colorScheme.secondary
+                )
                 MovieInfo(iconId = R.drawable.ic_ticket, text = "Action")
-                MovieInfo(iconId = R.drawable.ic_calendar, text = "2019")
-                MovieInfo(iconId = R.drawable.ic_clock, text = "139 minutes")
+                MovieInfo(iconId = R.drawable.ic_calendar, text = movie.releaseDate)
+//                MovieInfo(iconId = R.drawable.ic_clock, text = "139 minutes")
             }
         }
     }

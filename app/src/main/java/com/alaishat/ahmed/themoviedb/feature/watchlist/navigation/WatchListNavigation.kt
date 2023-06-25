@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.alaishat.ahmed.themoviedb.feature.watchlist.WatchListScreen
+import com.alaishat.ahmed.themoviedb.feature.watchlist.WatchListRoute
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.
@@ -18,6 +18,6 @@ fun NavController.navigateToWatchList(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.watchListScreen() {
     composable(route = watchListRoute) {
-        WatchListScreen()
+        WatchListRoute()
     }
 }
