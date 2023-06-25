@@ -8,8 +8,12 @@ import com.alaishat.ahmed.themoviedb.network.log.KtorLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -29,8 +33,10 @@ import javax.inject.Singleton
  * The Movie DB Project.
  */
 const val BASE_URL = "https://api.themoviedb.org/3/"
-const val API_KEY = "09957daf31929ea5e3a7ae61108eb811"
-const val API_KEY_PARAM = "api_key"
+
+// this token is provided by the movie db api to use it instead of api key
+const val BREAR_TOKEN =
+    "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTk1N2RhZjMxOTI5ZWE1ZTNhN2FlNjExMDhlYjgxMSIsInN1YiI6IjVmN2EwYTgxN2I3YjRkMDAzYTczMmU5MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rj6ppPQbHRnKloFkHLPU29bnn9WbQUm-bPQfBTlyEQ8"
 private const val TIME_OUT = 30_000L
 
 @Singleton
@@ -63,8 +69,12 @@ class KtorClient @Inject constructor(
             defaultRequest {
                 contentType(ContentType.Application.Json)
                 url(BASE_URL)
-                url {
-                    parameters.append(API_KEY_PARAM, API_KEY)
+            }
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(BREAR_TOKEN, "")
+                    }
                 }
             }
 

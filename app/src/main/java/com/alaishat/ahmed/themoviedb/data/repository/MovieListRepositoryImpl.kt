@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.data.repository
 
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMovieListsDataSource
+import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
@@ -14,7 +14,7 @@ import javax.inject.Inject
  * The Movie DB Project.
  */
 class MovieListRepositoryImpl @Inject constructor(
-    private val movieListsDataSource: NetworkMovieListsDataSource
+    private val movieListsDataSource: NetworkMoviesDataSource
 ) : MovieListRepository {
 
     override fun getMovieListByType(movieListType: MovieListType): Flow<List<Movie>> = flow {
@@ -30,6 +30,11 @@ class MovieListRepositoryImpl @Inject constructor(
 
     override fun searchMovie(query: String): Flow<List<Movie>> = flow {
         val movies = movieListsDataSource.searchMovie(query).mapToMovies()
+        emit(movies)
+    }
+
+    override fun getWatchList(): Flow<List<Movie>> = flow {
+        val movies = movieListsDataSource.getWatchList().mapToMovies()
         emit(movies)
     }
 }

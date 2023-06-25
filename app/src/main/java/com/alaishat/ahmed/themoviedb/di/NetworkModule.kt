@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMovieListsDataSource
-import com.alaishat.ahmed.themoviedb.network.datasource.KtorMovieListsDataSource
+import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
+import com.alaishat.ahmed.themoviedb.network.datasource.KtorMoviesDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,6 +17,6 @@ interface NetworkModule {
 
     @Binds
     fun providesMovieListDataSource(
-        movieListsDataSource: KtorMovieListsDataSource
-    ): NetworkMovieListsDataSource
+        movieListsDataSource: KtorMoviesDataSource
+    ): NetworkMoviesDataSource
 }

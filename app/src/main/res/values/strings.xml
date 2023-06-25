@@ -7,4 +7,6 @@
     <string name="search_movie">Search Movie</string>
     <string name="can_not_find_movie_title">We Are Sorry, We Can Not Find The Movie :(</string>
     <string name="find_your_movie_by">"Find your movie by Type title, categories, years, etc "</string>
+
+    <string name="watch_list_no_movies_title">There Is No Movie Yet!</string>
 </resources>
