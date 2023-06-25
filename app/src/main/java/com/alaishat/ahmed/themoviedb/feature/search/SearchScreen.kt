@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.feature.watchlist.SearchScreen
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.movieList
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
@@ -32,9 +31,8 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
  * Created by Ahmed Al-Aishat on Jun/17/2023.
  * The Movie DB Project.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WatchListScreen() {
+fun SearchScreen() {
     var searchText by remember { mutableStateOf("") }
 
     LazyVerticalGrid(

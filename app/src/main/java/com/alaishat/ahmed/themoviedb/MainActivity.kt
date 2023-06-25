@@ -3,23 +3,15 @@ package com.alaishat.ahmed.themoviedb
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.alaishat.ahmed.themoviedb.feature.movie.MovieScreen
-import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheetContent
+import com.alaishat.ahmed.themoviedb.ui.MovieApp
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             TheMovieDBTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    RateBottomSheetContent()
-                }
+                MovieApp()
             }
         }
     }
