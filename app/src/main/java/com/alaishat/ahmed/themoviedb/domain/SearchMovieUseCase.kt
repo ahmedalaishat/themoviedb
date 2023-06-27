@@ -1,5 +1,8 @@
 package com.alaishat.ahmed.themoviedb.domain
 
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,12 +25,20 @@ class SearchMovieUseCase @Inject constructor(
     private val movieListRepository: MovieListRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    operator fun invoke(queryFlow: Flow<String>): Flow<List<Movie>> {
+    operator fun invoke(queryFlow: Flow<String>): Flow<PagingData<Movie>> {
+        val emptyPagingData = PagingData.empty<Movie>(
+            sourceLoadStates = LoadStates(
+                refresh = LoadState.Loading,
+                prepend = LoadState.NotLoading(false),
+                append = LoadState.NotLoading(false),
+            )
+        )
+
         return queryFlow
             .debounce(DEBOUNCE_TIMEOUT)
             .flatMapLatest {
-                if (it.isEmpty()) flowOf(emptyList())
-                else movieListRepository.searchMovie(it)
+                if (it.isEmpty()) flowOf(emptyPagingData)
+                else movieListRepository.getSearchMoviePagingFlow(it)
                     .catch { emitAll(flowOf()) }
             }
     }

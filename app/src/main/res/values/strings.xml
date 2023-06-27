@@ -9,4 +9,5 @@
     <string name="find_your_movie_by">"Find your movie by Type title, categories, years, etc "</string>
 
     <string name="watch_list_no_movies_title">There Is No Movie Yet!</string>
+    <string name="what_do_you_want_to_watch">What do you want to watch?</string>
 </resources>

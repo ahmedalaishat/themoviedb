@@ -4,7 +4,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -14,8 +14,8 @@ import javax.inject.Inject
 class GetTopFiveMoviesUseCase @Inject constructor(
     private val movieListRepository: MovieListRepository,
 ) {
-    operator fun invoke(): Flow<List<Movie>> =
-        movieListRepository.getMovieListByType(MovieListType.TOP_RATED).map { movies ->
-                movies.take(5)
-            }
+    operator fun invoke(): Flow<List<Movie>> = flow {
+        val topFiveMovies = movieListRepository.getMoviesPageByType(MovieListType.TOP_RATED, 1).take(5)
+        emit(topFiveMovies)
+    }
 }
