@@ -30,8 +30,12 @@ fun MovieNavHost(
         homeScreen(
             onMovieClick = navController::navigateToMovie
         )
-        searchScreen()
-        watchListScreen()
+        searchScreen(
+            onMovieClick = navController::navigateToMovie
+        )
+        watchListScreen(
+            onMovieClick = navController::navigateToMovie
+        )
         movieScreen()
     }
 }

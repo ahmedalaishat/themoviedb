@@ -58,7 +58,6 @@ import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
-import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
 import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
@@ -69,6 +68,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.SpacerLg
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
@@ -87,6 +87,7 @@ fun MovieRoute(
     val reviews = viewModel.movieReviews.collectAsLazyPagingItems()
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
 
+    //AHMED_TODO: make me shimmer
     if (movie == null) TheMovieLoader()
     else MovieScreen(
         movie = movie!!,
@@ -136,7 +137,7 @@ private fun MovieScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(Shapes.CornerSmall)
-                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant.darker(0.4f).copy(alpha = 0.6f))
                     )
                     MovieInfo(
                         modifier = Modifier.padding(
@@ -247,13 +248,10 @@ private fun ReviewsTab(
             .fillMaxWidth()
             .wrapContentHeight()
 
+        //AHMED_TODO: make me shimmer
         pagingInitialLoader(pagingReviews.loadState) {
-            // Shimmer
-            items(count = 9) {
-                ShimmerCard(
-                    modifier = reviewModifier,
-                    shape = Shapes.CornerLarge
-                )
+            item {
+                TheMovieLoader()
             }
         }
 
@@ -278,6 +276,7 @@ private fun CastTab(
 ) {
     val lazyGridState = rememberLazyGridState()
 
+    //AHMED_TODO: make me shimmer
     if (credits == null) return TheMovieLoader()
 
     LazyVerticalGrid(

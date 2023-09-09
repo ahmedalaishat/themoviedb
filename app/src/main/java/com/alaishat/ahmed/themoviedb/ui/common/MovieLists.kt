@@ -9,6 +9,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.feature.home.MovieListUiState
+import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -23,13 +24,14 @@ fun LazyListScope.topMoviesList(
         TopMovieCard(
             movie = movie,
             rank = index + 1,
-            modifier = cardModifier.then(Modifier.clickable { onMovieClick(movie.id) }),
+            modifier = cardModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),
         )
     }
 }
 
 fun LazyGridScope.movieInfoList(
     pagingItems: LazyPagingItems<Movie>,
+    onMovieClick: (movieId: Int) -> Unit,
     itemModifier: Modifier = Modifier,
 ) = items(
     count = pagingItems.itemCount,
@@ -38,13 +40,14 @@ fun LazyGridScope.movieInfoList(
         val movie = pagingItems[index]!!
         MovieListItem(
             movie = movie,
-            modifier = itemModifier,
+            modifier = itemModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),
         )
     },
 )
 
 fun LazyGridScope.movieCardsList(
     pagingItems: LazyPagingItems<Movie>,
+    onMovieClick: (movieId: Int) -> Unit,
     cardModifier: Modifier = Modifier,
 ) = items(
     count = pagingItems.itemCount,
@@ -53,7 +56,7 @@ fun LazyGridScope.movieCardsList(
         val movie = pagingItems[index]!!
         MovieCard(
             moviePosterPath = movie.posterPath,
-            modifier = cardModifier,
+            modifier = cardModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),
         )
     }
 )

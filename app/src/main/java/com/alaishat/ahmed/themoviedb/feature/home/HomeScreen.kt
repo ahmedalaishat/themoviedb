@@ -122,6 +122,7 @@ private fun HomeScreen(
                 val tabPagingItems = tabsMap[homeTabs[page]]!!.collectAsLazyPagingItems()
                 HomePageContent(
                     pagingItems = tabPagingItems,
+                    onMovieClick = onMovieClick,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -169,6 +170,7 @@ private fun TopFiveMovies(
 @Composable
 fun HomePageContent(
     pagingItems: LazyPagingItems<Movie>,
+    onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -194,6 +196,7 @@ fun HomePageContent(
 
         movieCardsList(
             pagingItems = pagingItems,
+            onMovieClick = onMovieClick,
             cardModifier = movieCardModifier
         )
 

@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.Density
+import androidx.core.graphics.ColorUtils
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -38,6 +41,10 @@ else clickable(
     indication = null,
     onClick = onClick
 )
+
+fun Color.darker(ratio: Float = .9f) = Color(ColorUtils.blendARGB(this.toArgb(), Color.Black.toArgb(), ratio))
+
+fun Color.lighter(ratio: Float = .9f) = Color(ColorUtils.blendARGB(this.toArgb(), Color.White.toArgb(), ratio))
 
 fun Modifier.verticalNestedScroll(
     outerScrollState: ScrollState,

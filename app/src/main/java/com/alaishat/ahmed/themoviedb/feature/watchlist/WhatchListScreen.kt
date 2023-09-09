@@ -26,7 +26,6 @@ import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
-import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
@@ -35,7 +34,6 @@ import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingEmptyBox
 import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingErrorBox
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
-import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -44,6 +42,7 @@ import kotlinx.coroutines.flow.flowOf
  */
 @Composable
 fun WatchListRoute(
+    onMovieClick: (movieId: Int) -> Unit,
     viewModel: WatchListViewModel = hiltViewModel(),
 ) {
     val query by viewModel.queryFlow.collectAsStateWithLifecycle()
@@ -52,7 +51,8 @@ fun WatchListRoute(
     WatchListScreen(
         searchText = query,
         pagingItems = pagingItems,
-        onSearchTextChange = viewModel::updateQueryText
+        onSearchTextChange = viewModel::updateQueryText,
+        onMovieClick = onMovieClick,
     )
 }
 
@@ -61,6 +61,7 @@ private fun WatchListScreen(
     searchText: String,
     pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
+    onMovieClick: (movieId: Int) -> Unit,
 ) {
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
@@ -94,6 +95,7 @@ private fun WatchListScreen(
 
         movieInfoList(
             pagingItems = pagingItems,
+            onMovieClick = onMovieClick,
             itemModifier = itemModifier,
         )
     }
@@ -128,7 +130,9 @@ private fun WatchListScreenPreview() {
     TheMoviePreviewSurface {
         WatchListScreen(
             searchText = "",
-            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems()
-        ) { }
+            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
+            onSearchTextChange = { },
+            onMovieClick = { },
+        )
     }
 }
