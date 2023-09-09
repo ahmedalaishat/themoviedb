@@ -1,7 +1,5 @@
 package com.alaishat.ahmed.themoviedb.feature.movie
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,17 +13,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
@@ -35,27 +39,69 @@ import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.Credit
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
+import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
+import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
+import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
+import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
+import com.alaishat.ahmed.themoviedb.ui.component.ExpandingText
 import com.alaishat.ahmed.themoviedb.ui.component.RowDivider
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerLg
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
+import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
  * The Movie DB Project.
  */
 @Composable
-fun MovieScreen() {
+fun MovieRoute(
+    viewModel: MovieViewModel = hiltViewModel(),
+) {
+    val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
+    val reviews = viewModel.movieReviews.collectAsLazyPagingItems()
+    val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
+
+    //AHMED_TODO: make me shimmer
+    if (movie == null) TheMovieLoader()
+    else MovieScreen(
+        movie = movie!!,
+        reviews = reviews,
+        credits = credits
+    )
+}
+
+@Composable
+private fun MovieScreen(
+    movie: MovieDetails,
+    reviews: LazyPagingItems<Review>,
+    credits: List<Credit>?,
+) {
     val scrollState = rememberScrollState()
 
     BoxWithConstraints {
@@ -69,14 +115,16 @@ fun MovieScreen() {
                     .fillMaxWidth(),
                 contentAlignment = Alignment.BottomStart
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.alt_movie_cover),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("$BACKDROP_BASE_URL${movie.backdropPath}")
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .padding(bottom = 60.dp)
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
-//                    .fillMaxWidth(),
                 )
                 Box(
                     modifier = Modifier
@@ -89,7 +137,7 @@ fun MovieScreen() {
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(Shapes.CornerSmall)
-                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant.darker(0.4f).copy(alpha = 0.6f))
                     )
                     MovieInfo(
                         modifier = Modifier.padding(
@@ -97,7 +145,7 @@ fun MovieScreen() {
                             horizontal = Dimensions.MarginXSm.times(2)
                         ),
                         iconId = R.drawable.ic_star,
-                        text = "9.5",
+                        text = movie.voteAverage,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -106,13 +154,13 @@ fun MovieScreen() {
                     verticalAlignment = Alignment.Bottom
                 ) {
                     MovieCard(
-                        movieImageId = R.drawable.alt_movie_2,
+                        moviePosterPath = movie.posterPath,
                         modifier = Modifier
                             .height(120.dp)
                             .width(95.dp),
                     )
                     SpacerSm()
-                    Text(text = "Spiderman No Way Home", maxLines = 2, minLines = 2)
+                    Text(text = movie.title, maxLines = 2, minLines = 2)
                 }
             }
             SpacerMd()
@@ -123,26 +171,26 @@ fun MovieScreen() {
             ) {
                 MovieInfo(
                     iconId = R.drawable.ic_calendar,
-                    text = "2021",
+                    text = movie.releaseYear,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
                 MovieInfo(
                     iconId = R.drawable.ic_clock,
-                    text = "148 minutes",
+                    text = movie.runtime,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
-                MovieInfo(
-                    iconId = R.drawable.ic_ticket,
-                    text = "Action",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (movie.genre != null)
+                    MovieInfo(
+                        iconId = R.drawable.ic_ticket,
+                        text = movie.genre,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
             }
             SpacerLg()
             //AHMED_TODO: convert me to enums
             val tabs = remember { listOf("About Movie", "Reviews", "Cast") }
-            val actors = remember { listOf(Actor(1), Actor(2), Actor(3), Actor(4), Actor(5)) }
 
             AppHorizontalPager(
                 tabs = tabs,
@@ -155,10 +203,20 @@ fun MovieScreen() {
                     .padding(vertical = Dimensions.MarginMd)
                     .fillMaxSize()
                 when (page) {
-//                    0 -> CastTab(actors = actors, modifier = tabModifier)
-                    0 -> AboutMovieTab(modifier = tabModifier)
-                    1 -> ReviewsTab(modifier = tabModifier)
-                    2 -> CastTab(actors = actors, modifier = tabModifier)
+                    0 -> AboutMovieTab(
+                        movieOverview = movie.overview,
+                        modifier = tabModifier,
+                    )
+
+                    1 -> ReviewsTab(
+                        pagingReviews = reviews,
+                        modifier = tabModifier,
+                    )
+
+                    2 -> CastTab(
+                        credits = credits,
+                        modifier = tabModifier,
+                    )
                 }
             }
         }
@@ -167,28 +225,59 @@ fun MovieScreen() {
 
 @Composable
 private fun AboutMovieTab(
+    movieOverview: String,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-        Text(text = "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.")
+        Text(text = movieOverview)
     }
 }
 
 @Composable
 private fun ReviewsTab(
+    pagingReviews: LazyPagingItems<Review>,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
-        Text(text = "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.")
+    LazyColumn(
+        state = rememberLazyListState(),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
+        contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        val reviewModifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+
+        //AHMED_TODO: make me shimmer
+        pagingInitialLoader(pagingReviews.loadState) {
+            item {
+                TheMovieLoader()
+            }
+        }
+
+        reviews(
+            reviews = pagingReviews,
+            reviewModifier = reviewModifier
+        )
+
+
+        pagingLoader(pagingReviews.loadState) {
+            item {
+                TheMovieLoader()
+            }
+        }
     }
 }
 
 @Composable
 private fun CastTab(
-    actors: List<Actor>,
+    credits: List<Credit>?,
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()
+
+    //AHMED_TODO: make me shimmer
+    if (credits == null) return TheMovieLoader()
 
     LazyVerticalGrid(
         state = lazyGridState,
@@ -199,7 +288,7 @@ private fun CastTab(
         modifier = modifier.fillMaxWidth(),
     ) {
         actors(
-            actors = actors,
+            credits = credits,
             actorModifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(.9f)
@@ -209,49 +298,96 @@ private fun CastTab(
 
 
 private fun LazyGridScope.actors(
-    actors: List<Actor>,
+    credits: List<Credit>,
     actorModifier: Modifier = Modifier,
 ) {
-    items(items = actors, key = Actor::id) { actor ->
-        ActorCard(actor = actor, modifier = actorModifier)
+    items(items = credits, key = Credit::id) { credit ->
+        ActorCard(credit = credit, modifier = actorModifier)
     }
 }
 
 
 @Composable
 fun ActorCard(
-    actor: Actor,
+    credit: Credit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .align(TopCenter)
                 .fillMaxWidth(.8f)
-                .aspectRatio(1f),
-            painter = painterResource(id = actor.imageId),
-            contentDescription = actor.name
+                .aspectRatio(1f)
+                .clip(CornerFull),
+            model = imageRequest(
+                data = credit.profilePath?.let { "$AVATAR_BASE_URL${it}" }
+                    ?: R.drawable.alt_avatar
+            ),
+            contentDescription = credit.name,
         )
         Text(
             modifier = Modifier.align(BottomCenter),
-            text = actor.name, maxLines = 2, minLines = 2
+            text = credit.name,
+            maxLines = 2,
+            minLines = 2,
+            textAlign = TextAlign.Center,
         )
     }
 }
 
-data class Actor(
-    val id: Int,
-    val name: String = "Tom Holland",
-    @DrawableRes val imageId: Int = R.drawable.alt_actor,
+
+private fun LazyListScope.reviews(
+    reviews: LazyPagingItems<Review>,
+    reviewModifier: Modifier = Modifier,
+) = items(
+    count = reviews.itemCount,
+    key = reviews.itemKey(Review::id),
+    itemContent = { index ->
+        ReviewCard(review = reviews[index]!!, modifier = reviewModifier)
+    },
 )
 
+
+@Composable
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+    ) {
+        Column(
+            horizontalAlignment = CenterHorizontally,
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CornerFull),
+                model = imageRequest(
+                    data = review.authorAvatarPath?.let { "$AVATAR_BASE_URL${it}" }
+                        ?: R.drawable.alt_avatar
+                ),
+                contentDescription = review.authorName,
+            )
+            SpacerMd()
+            if (review.rating != null)
+                Text(text = review.rating, color = MaterialTheme.colorScheme.primary)
+        }
+        SpacerSm()
+        Column {
+            Text(text = review.authorName, style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp))
+            SpacerSm()
+            ExpandingText(text = review.content)
+        }
+    }
+}
 
 @DevicePreviews
 @Composable
 fun MovieScreenPreview() {
     TheMoviePreviewSurface {
-        MovieScreen()
+//        MovieScreen(Movie()        )
     }
 }

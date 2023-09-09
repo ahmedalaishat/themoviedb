@@ -1,9 +1,12 @@
 package com.alaishat.ahmed.themoviedb.ui.extenstions
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -13,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.Density
+import androidx.core.graphics.ColorUtils
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -26,6 +32,20 @@ import androidx.paging.compose.LazyPagingItems
  * Created by Ahmed Al-Aishat on Jun/17/2023.
  * The Movie DB Project.
  */
+fun Modifier.silentClickable(
+    silent: Boolean = true,
+    onClick: () -> Unit
+) = if (!silent) clickable { onClick() }
+else clickable(
+    interactionSource = MutableInteractionSource(),
+    indication = null,
+    onClick = onClick
+)
+
+fun Color.darker(ratio: Float = .9f) = Color(ColorUtils.blendARGB(this.toArgb(), Color.Black.toArgb(), ratio))
+
+fun Color.lighter(ratio: Float = .9f) = Color(ColorUtils.blendARGB(this.toArgb(), Color.White.toArgb(), ratio))
+
 fun Modifier.verticalNestedScroll(
     outerScrollState: ScrollState,
     dispatcher: NestedScrollDispatcher? = null,
@@ -75,6 +95,22 @@ fun LazyGridScope.pagingInitialLoader(
 fun LazyGridScope.pagingLoader(
     loadState: CombinedLoadStates,
     content: LazyGridScope.() -> Unit
+) {
+    // Pagination Loading
+    if (loadState.append == LoadState.Loading) content()
+}
+
+fun LazyListScope.pagingInitialLoader(
+    loadState: CombinedLoadStates,
+    content: LazyListScope.() -> Unit
+) {
+    // First Loading
+    if (loadState.refresh == LoadState.Loading) content()
+}
+
+fun LazyListScope.pagingLoader(
+    loadState: CombinedLoadStates,
+    content: LazyListScope.() -> Unit
 ) {
     // Pagination Loading
     if (loadState.append == LoadState.Loading) content()

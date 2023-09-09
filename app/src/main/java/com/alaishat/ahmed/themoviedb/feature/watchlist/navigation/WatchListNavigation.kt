@@ -16,8 +16,12 @@ fun NavController.navigateToWatchList(navOptions: NavOptions? = null) {
     this.navigate(watchListRoute, navOptions)
 }
 
-fun NavGraphBuilder.watchListScreen() {
+fun NavGraphBuilder.watchListScreen(
+    onMovieClick: (movieId: Int) -> Unit,
+) {
     composable(route = watchListRoute) {
-        WatchListRoute()
+        WatchListRoute(
+            onMovieClick = onMovieClick,
+        )
     }
 }

@@ -53,13 +53,17 @@ import timber.log.Timber
  */
 @Composable
 fun SearchRoute(
-    viewModel: SearchViewModel = hiltViewModel()
+    onMovieClick: (movieId: Int) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val query by viewModel.queryFlow.collectAsStateWithLifecycle()
     val pagingItems = viewModel.searchMoviesFlow.collectAsLazyPagingItems()
 
     SearchScreen(
-        searchText = query, pagingItems = pagingItems, onSearchTextChange = viewModel::updateQueryText
+        searchText = query,
+        pagingItems = pagingItems,
+        onSearchTextChange = viewModel::updateQueryText,
+        onMovieClick = onMovieClick,
     )
 }
 
@@ -70,6 +74,7 @@ private fun SearchScreen(
     searchText: String,
     pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
+    onMovieClick: (movieId: Int) -> Unit,
 ) {
     val searchFocusRequester = remember { FocusRequester() }
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
@@ -152,6 +157,7 @@ private fun SearchScreen(
 
         movieInfoList(
             pagingItems = pagingItems,
+            onMovieClick = onMovieClick,
             itemModifier = itemModifier,
         )
 
@@ -171,6 +177,7 @@ private fun SearchScreenPreview() {
             searchText = "",
             pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
             onSearchTextChange = { },
+            onMovieClick = { },
         )
     }
 }

@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -61,15 +60,19 @@ import kotlinx.coroutines.flow.Flow
  * The Movie DB Project.
  */
 const val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w220_and_h330_face/"
+const val BACKDROP_BASE_URL = "https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces/"
+const val AVATAR_BASE_URL = "https://www.themoviedb.org/t/p/w300_and_h300_bestv2/"
 
 @Composable
 fun HomeRoute(
+    onMovieClick: (movieId: Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val topFiveMovies by viewModel.topFiveMoviesFlow.collectAsStateWithLifecycle()
 
     HomeScreen(
         topFiveMovies = topFiveMovies,
+        onMovieClick = onMovieClick,
         tabsMap = viewModel.tabs,
     )
 }
@@ -78,6 +81,7 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     topFiveMovies: MovieListUiState,
+    onMovieClick: (movieId: Int) -> Unit,
     tabsMap: Map<HomeTab, Flow<PagingData<Movie>>>,
 ) {
     BoxWithConstraints {
@@ -103,6 +107,7 @@ private fun HomeScreen(
             SpacerMd()
             TopFiveMovies(
                 topMovies = topFiveMovies,
+                onMovieClick = onMovieClick,
                 modifier = Modifier.requiredWidth(screenWidth)
             )
 
@@ -117,6 +122,7 @@ private fun HomeScreen(
                 val tabPagingItems = tabsMap[homeTabs[page]]!!.collectAsLazyPagingItems()
                 HomePageContent(
                     pagingItems = tabPagingItems,
+                    onMovieClick = onMovieClick,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -127,6 +133,7 @@ private fun HomeScreen(
 @Composable
 private fun TopFiveMovies(
     topMovies: MovieListUiState,
+    onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
@@ -149,6 +156,7 @@ private fun TopFiveMovies(
             is MovieListUiState.Success ->
                 topMoviesList(
                     topMovies = topMovies,
+                    onMovieClick = onMovieClick,
                     cardModifier = Modifier
                         .width(170.dp)
                         .height(240.dp)
@@ -162,6 +170,7 @@ private fun TopFiveMovies(
 @Composable
 fun HomePageContent(
     pagingItems: LazyPagingItems<Movie>,
+    onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -187,6 +196,7 @@ fun HomePageContent(
 
         movieCardsList(
             pagingItems = pagingItems,
+            onMovieClick = onMovieClick,
             cardModifier = movieCardModifier
         )
 
@@ -215,6 +225,7 @@ private fun HomeScreenPreview() {
     TheMoviePreviewSurface {
         HomeScreen(
             topFiveMovies = MovieListUiState.Loading,
+            onMovieClick = { },
             tabsMap = mapOf(),
         )
     }

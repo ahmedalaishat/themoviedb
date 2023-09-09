@@ -27,7 +27,7 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
  */
 @Composable
 fun MovieCard(
-    movie: Movie,
+    moviePosterPath:String,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -36,7 +36,7 @@ fun MovieCard(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data("$POSTER_BASE_URL${movie.posterPath}")
+                .data("$POSTER_BASE_URL${moviePosterPath}")
                 .crossfade(true)
                 .build(),
 //            placeholder = painterResource(R.drawable.alt_movie_1),
@@ -55,7 +55,7 @@ fun TopMovieCard(
 ) {
     Box(modifier = modifier) {
         MovieCard(
-            movie = movie,
+            moviePosterPath = movie.posterPath,
             modifier = Modifier
                 .padding(start = Dimensions.MarginSm, end = Dimensions.MarginSm, bottom = Dimensions.MarginSm.times(2))
                 .fillMaxSize(),
@@ -79,25 +79,5 @@ private fun getDrawableByRank(rank: Int): Int {
         3 -> R.drawable.number_3
         4 -> R.drawable.number_4
         else -> R.drawable.number_5
-    }
-}
-
-
-//AHMED_TODO: remove me
-@Composable
-fun MovieCard(
-    @DrawableRes movieImageId: Int,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier,
-        shape = Shapes.CornerLarge
-    ) {
-        Image(
-            painter = painterResource(id = movieImageId),
-            contentDescription = "",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
     }
 }
