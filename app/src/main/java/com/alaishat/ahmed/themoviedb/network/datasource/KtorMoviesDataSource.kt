@@ -20,7 +20,7 @@ class KtorMoviesDataSource @Inject constructor(
 
     override suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie> {
         val res: MovieListRes = ktorClient.call {
-            get("movie/$movieListPath?page=$page")
+            get("movie/$movieListPath?page=$page&without_keywords=158718")
         }
         delay(2000)
         return res.results
