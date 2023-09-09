@@ -1,9 +1,11 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
 import androidx.paging.PagingData
+import com.alaishat.ahmed.themoviedb.domain.model.Credit
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
+import com.alaishat.ahmed.themoviedb.domain.model.Review
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -17,4 +19,6 @@ interface MovieListRepository : Repository {
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>>
     fun getWatchListPagingFlow(): Flow<PagingData<Movie>>
     suspend fun getMovieDetails(movieId: Int): MovieDetails
+    suspend fun getMovieReviews(movieId: Int): List<Review>
+    suspend fun getMovieCredits(movieId: Int): List<Credit>
 }

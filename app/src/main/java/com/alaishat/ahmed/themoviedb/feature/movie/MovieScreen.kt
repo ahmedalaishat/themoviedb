@@ -1,7 +1,6 @@
 package com.alaishat.ahmed.themoviedb.feature.movie
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,24 +31,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.Credit
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
+import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.feature.home.ACTOR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
+import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.RowDivider
@@ -59,6 +60,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
+import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -69,18 +71,22 @@ fun MovieRoute(
     viewModel: MovieViewModel = hiltViewModel(),
 ) {
     val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
+    val reviews by viewModel.movieReviews.collectAsStateWithLifecycle()
+    val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
 
-    if (movie == null) Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
-        CircularProgressIndicator()
-    }
-    else {
-        MovieScreen(movie = movie!!)
-    }
+    if (movie == null) TheMovieLoader()
+    else MovieScreen(
+        movie = movie!!,
+        reviews = reviews,
+        credits = credits
+    )
 }
 
 @Composable
 private fun MovieScreen(
     movie: MovieDetails,
+    reviews: List<Review>?,
+    credits: List<Credit>?,
 ) {
     val scrollState = rememberScrollState()
 
@@ -171,7 +177,6 @@ private fun MovieScreen(
             SpacerLg()
             //AHMED_TODO: convert me to enums
             val tabs = remember { listOf("About Movie", "Reviews", "Cast") }
-            val actors = remember { listOf(Actor(1), Actor(2), Actor(3), Actor(4), Actor(5)) }
 
             AppHorizontalPager(
                 tabs = tabs,
@@ -189,8 +194,15 @@ private fun MovieScreen(
                         modifier = tabModifier,
                     )
 
-                    1 -> ReviewsTab(modifier = tabModifier)
-                    2 -> CastTab(actors = actors, modifier = tabModifier)
+                    1 -> ReviewsTab(
+                        reviews = reviews,
+                        modifier = tabModifier,
+                    )
+
+                    2 -> CastTab(
+                        credits = credits,
+                        modifier = tabModifier,
+                    )
                 }
             }
         }
@@ -209,6 +221,7 @@ private fun AboutMovieTab(
 
 @Composable
 private fun ReviewsTab(
+    reviews: List<Review>?,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
@@ -218,10 +231,12 @@ private fun ReviewsTab(
 
 @Composable
 private fun CastTab(
-    actors: List<Actor>,
+    credits: List<Credit>?,
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()
+
+    if (credits == null) return CircularProgressIndicator()
 
     LazyVerticalGrid(
         state = lazyGridState,
@@ -232,7 +247,7 @@ private fun CastTab(
         modifier = modifier.fillMaxWidth(),
     ) {
         actors(
-            actors = actors,
+            credits = credits,
             actorModifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(.9f)
@@ -242,34 +257,38 @@ private fun CastTab(
 
 
 private fun LazyGridScope.actors(
-    actors: List<Actor>,
+    credits: List<Credit>,
     actorModifier: Modifier = Modifier,
 ) {
-    items(items = actors, key = Actor::id) { actor ->
-        ActorCard(actor = actor, modifier = actorModifier)
+    items(items = credits, key = Credit::id) { credit ->
+        ActorCard(credit = credit, modifier = actorModifier)
     }
 }
 
 
 @Composable
 fun ActorCard(
-    actor: Actor,
+    credit: Credit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .align(TopCenter)
                 .fillMaxWidth(.8f)
-                .aspectRatio(1f),
-            painter = painterResource(id = actor.imageId),
-            contentDescription = actor.name
+                .aspectRatio(1f)
+                .clip(CornerFull),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data("$ACTOR_BASE_URL${credit.profilePath}")
+                .crossfade(true)
+                .build(),
+            contentDescription = credit.name,
         )
         Text(
             modifier = Modifier.align(BottomCenter),
-            text = actor.name, maxLines = 2, minLines = 2
+            text = credit.name, maxLines = 2, minLines = 2
         )
     }
 }

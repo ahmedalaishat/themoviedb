@@ -28,7 +28,7 @@ data class NetworkMovieDetails(
 )
 
 
-fun NetworkMovieDetails.toMovieDetails() = MovieDetails(
+fun NetworkMovieDetails.toMoviesDetails() = MovieDetails(
     id = id,
     overview = overview,
     posterPath = posterPath.orEmpty(),

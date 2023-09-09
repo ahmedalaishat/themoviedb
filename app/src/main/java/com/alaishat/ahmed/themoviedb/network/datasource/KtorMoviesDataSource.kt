@@ -1,12 +1,15 @@
 package com.alaishat.ahmed.themoviedb.network.datasource
 
+import com.alaishat.ahmed.themoviedb.data.model.NetworkCredit
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovieDetails
+import com.alaishat.ahmed.themoviedb.data.model.NetworkReview
 import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.network.KtorClient
+import com.alaishat.ahmed.themoviedb.network.model.MovieCreditsRes
 import com.alaishat.ahmed.themoviedb.network.model.MovieListRes
+import com.alaishat.ahmed.themoviedb.network.model.MovieReviewsRes
 import io.ktor.client.request.get
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +26,6 @@ class KtorMoviesDataSource @Inject constructor(
         val res: MovieListRes = ktorClient.call {
             get("movie/$movieListPath?page=$page&without_keywords=158718")
         }
-        delay(2000)
         return res.results
     }
 
@@ -46,5 +48,19 @@ class KtorMoviesDataSource @Inject constructor(
             get("movie/$movieId")
         }
         return res
+    }
+
+    override suspend fun getMovieCredits(movieId: Int): List<NetworkCredit> {
+        val res: MovieCreditsRes = ktorClient.call {
+            get("movie/$movieId/credits")
+        }
+        return res.cast
+    }
+
+    override suspend fun getMovieReviews(movieId: Int, page: Int): List<NetworkReview> {
+        val res: MovieReviewsRes = ktorClient.call {
+            get("movie/$movieId/reviews?page=$page")
+        }
+        return res.reviews
     }
 }

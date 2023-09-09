@@ -3,16 +3,19 @@ package com.alaishat.ahmed.themoviedb.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.alaishat.ahmed.themoviedb.data.model.mapToCredits
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.data.model.toMovie
-import com.alaishat.ahmed.themoviedb.data.model.toMovieDetails
+import com.alaishat.ahmed.themoviedb.data.model.mapToReviews
+import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetails
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.WatchListPagingSource
 import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
+import com.alaishat.ahmed.themoviedb.domain.model.Credit
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
+import com.alaishat.ahmed.themoviedb.domain.model.Review
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -77,6 +80,14 @@ class MovieListRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMovieDetails(movieId: Int): MovieDetails {
-        return moviesDataSource.getMovieDetails(movieId = movieId).toMovieDetails()
+        return moviesDataSource.getMovieDetails(movieId = movieId).toMoviesDetails()
+    }
+
+    override suspend fun getMovieReviews(movieId: Int): List<Review> {
+        return moviesDataSource.getMovieReviews(movieId = movieId, page = 1).mapToReviews()
+    }
+
+    override suspend fun getMovieCredits(movieId: Int): List<Credit> {
+        return moviesDataSource.getMovieCredits(movieId = movieId).mapToCredits()
     }
 }
