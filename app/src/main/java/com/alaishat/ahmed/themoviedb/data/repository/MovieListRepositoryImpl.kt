@@ -5,9 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.mapToCredits
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.data.model.mapToReviews
 import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetails
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
+import com.alaishat.ahmed.themoviedb.data.pagingsource.ReviewsPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.WatchListPagingSource
 import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
@@ -83,8 +83,16 @@ class MovieListRepositoryImpl @Inject constructor(
         return moviesDataSource.getMovieDetails(movieId = movieId).toMoviesDetails()
     }
 
-    override suspend fun getMovieReviews(movieId: Int): List<Review> {
-        return moviesDataSource.getMovieReviews(movieId = movieId, page = 1).mapToReviews()
+    override fun getMovieReviews(movieId: Int): Flow<PagingData<Review>> {
+        return Pager(
+            config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
+            pagingSourceFactory = {
+                ReviewsPagingSource(
+                    movieId = movieId,
+                    moviesDataSource = moviesDataSource,
+                )
+            }
+        ).flow
     }
 
     override suspend fun getMovieCredits(movieId: Int): List<Credit> {

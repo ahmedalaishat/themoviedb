@@ -61,7 +61,7 @@ import kotlinx.coroutines.flow.Flow
  */
 const val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w220_and_h330_face/"
 const val BACKDROP_BASE_URL = "https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces/"
-const val ACTOR_BASE_URL = "https://www.themoviedb.org/t/p/w300_and_h300_bestv2/"
+const val AVATAR_BASE_URL = "https://www.themoviedb.org/t/p/w300_and_h300_bestv2/"
 
 @Composable
 fun HomeRoute(

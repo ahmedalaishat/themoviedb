@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.feature.movie
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,15 +13,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,20 +40,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.domain.model.Credit
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.Review
-import com.alaishat.ahmed.themoviedb.feature.home.ACTOR_BASE_URL
+import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
+import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
+import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.RowDivider
@@ -58,6 +68,8 @@ import com.alaishat.ahmed.themoviedb.ui.component.SpacerLg
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
@@ -71,7 +83,7 @@ fun MovieRoute(
     viewModel: MovieViewModel = hiltViewModel(),
 ) {
     val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
-    val reviews by viewModel.movieReviews.collectAsStateWithLifecycle()
+    val reviews = viewModel.movieReviews.collectAsLazyPagingItems()
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
 
     if (movie == null) TheMovieLoader()
@@ -85,7 +97,7 @@ fun MovieRoute(
 @Composable
 private fun MovieScreen(
     movie: MovieDetails,
-    reviews: List<Review>?,
+    reviews: LazyPagingItems<Review>,
     credits: List<Credit>?,
 ) {
     val scrollState = rememberScrollState()
@@ -195,7 +207,7 @@ private fun MovieScreen(
                     )
 
                     1 -> ReviewsTab(
-                        reviews = reviews,
+                        pagingReviews = reviews,
                         modifier = tabModifier,
                     )
 
@@ -221,11 +233,40 @@ private fun AboutMovieTab(
 
 @Composable
 private fun ReviewsTab(
-    reviews: List<Review>?,
+    pagingReviews: LazyPagingItems<Review>,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
-        Text(text = "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.")
+    LazyColumn(
+        state = rememberLazyListState(),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
+        contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        val reviewModifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+
+        pagingInitialLoader(pagingReviews.loadState) {
+            // Shimmer
+            items(count = 9) {
+                ShimmerCard(
+                    modifier = reviewModifier,
+                    shape = Shapes.CornerLarge
+                )
+            }
+        }
+
+        reviews(
+            reviews = pagingReviews,
+            reviewModifier = reviewModifier
+        )
+
+
+        pagingLoader(pagingReviews.loadState) {
+            item {
+                TheMovieLoader()
+            }
+        }
     }
 }
 
@@ -236,7 +277,7 @@ private fun CastTab(
 ) {
     val lazyGridState = rememberLazyGridState()
 
-    if (credits == null) return CircularProgressIndicator()
+    if (credits == null) return TheMovieLoader()
 
     LazyVerticalGrid(
         state = lazyGridState,
@@ -280,25 +321,68 @@ fun ActorCard(
                 .fillMaxWidth(.8f)
                 .aspectRatio(1f)
                 .clip(CornerFull),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("$ACTOR_BASE_URL${credit.profilePath}")
-                .crossfade(true)
-                .build(),
+            model = imageRequest(
+                data = credit.profilePath?.let { "$AVATAR_BASE_URL${it}" }
+                    ?: R.drawable.alt_avatar
+            ),
             contentDescription = credit.name,
         )
         Text(
             modifier = Modifier.align(BottomCenter),
-            text = credit.name, maxLines = 2, minLines = 2
+            text = credit.name,
+            maxLines = 2,
+            minLines = 2,
+            textAlign = TextAlign.Center,
         )
     }
 }
 
-data class Actor(
-    val id: Int,
-    val name: String = "Tom Holland",
-    @DrawableRes val imageId: Int = R.drawable.alt_actor,
+
+private fun LazyListScope.reviews(
+    reviews: LazyPagingItems<Review>,
+    reviewModifier: Modifier = Modifier,
+) = items(
+    count = reviews.itemCount,
+    key = reviews.itemKey(Review::id),
+    itemContent = { index ->
+        ReviewCard(review = reviews[index]!!, modifier = reviewModifier)
+    },
 )
 
+
+@Composable
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+    ) {
+        Column(
+            horizontalAlignment = CenterHorizontally,
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CornerFull),
+                model = imageRequest(
+                    data = review.authorAvatarPath?.let { "$AVATAR_BASE_URL${it}" }
+                        ?: R.drawable.alt_avatar
+                ),
+                contentDescription = review.authorName,
+            )
+            SpacerMd()
+            if (review.rating != null)
+                Text(text = review.rating, color = MaterialTheme.colorScheme.primary)
+        }
+        SpacerSm()
+        Column {
+            Text(text = review.authorName, style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp))
+            SpacerSm()
+            Text(text = review.content)
+        }
+    }
+}
 
 @DevicePreviews
 @Composable

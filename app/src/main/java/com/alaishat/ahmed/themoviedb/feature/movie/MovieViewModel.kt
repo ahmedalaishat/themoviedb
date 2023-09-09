@@ -24,6 +24,6 @@ class MovieViewModel @Inject constructor(
     private val args = MovieDetailsArgs(savedStateHandle)
 
     val movieDetails = getMovieDetails(args.movieId).stateInViewModel(null)
-    val movieReviews = getMovieReviews(args.movieId).stateInViewModel(null)
+    val movieReviews = getMovieReviews(args.movieId)
     val movieCredits = getMovieCredits(args.movieId).stateInViewModel(null)
 }

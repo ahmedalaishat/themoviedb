@@ -9,5 +9,5 @@ data class Review(
     val content: String,
     val authorName: String,
     val authorAvatarPath: String?,
-    val rating: String,
+    val rating: String?,
 )

@@ -11,5 +11,5 @@ import kotlinx.serialization.Serializable
 data class AuthorDetails(
     @SerialName("username") val username: String,
     @SerialName("avatar_path") val avatarPath: String?,
-    @SerialName("rating") val rating: Float,
+    @SerialName("rating") val rating: Float?,
 )

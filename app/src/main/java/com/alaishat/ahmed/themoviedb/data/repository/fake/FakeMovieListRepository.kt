@@ -34,7 +34,7 @@ class FakeMovieListRepository : MovieListRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMovieReviews(movieId: Int): List<Review> {
+    override fun getMovieReviews(movieId: Int): Flow<PagingData<Review>> {
         TODO("Not yet implemented")
     }
 

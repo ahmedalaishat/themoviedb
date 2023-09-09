@@ -20,7 +20,7 @@ fun NetworkReview.toReview() = Review(
     content = content,
     authorName = authorDetails.username,
     authorAvatarPath = authorDetails.avatarPath,
-    rating = "%.1f".format(authorDetails.rating),
+    rating = authorDetails.rating?.let { "%.1f".format(it) },
 )
 
 fun List<NetworkReview>.mapToReviews() = map(NetworkReview::toReview)

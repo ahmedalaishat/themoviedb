@@ -4,6 +4,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -75,6 +76,22 @@ fun LazyGridScope.pagingInitialLoader(
 fun LazyGridScope.pagingLoader(
     loadState: CombinedLoadStates,
     content: LazyGridScope.() -> Unit
+) {
+    // Pagination Loading
+    if (loadState.append == LoadState.Loading) content()
+}
+
+fun LazyListScope.pagingInitialLoader(
+    loadState: CombinedLoadStates,
+    content: LazyListScope.() -> Unit
+) {
+    // First Loading
+    if (loadState.refresh == LoadState.Loading) content()
+}
+
+fun LazyListScope.pagingLoader(
+    loadState: CombinedLoadStates,
+    content: LazyListScope.() -> Unit
 ) {
     // Pagination Loading
     if (loadState.append == LoadState.Loading) content()
