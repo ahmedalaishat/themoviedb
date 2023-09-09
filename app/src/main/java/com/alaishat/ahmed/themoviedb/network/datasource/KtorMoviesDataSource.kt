@@ -8,8 +8,11 @@ import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.network.KtorClient
 import com.alaishat.ahmed.themoviedb.network.model.MovieCreditsRes
 import com.alaishat.ahmed.themoviedb.network.model.MovieListRes
+import com.alaishat.ahmed.themoviedb.network.model.MovieRatingReq
 import com.alaishat.ahmed.themoviedb.network.model.MovieReviewsRes
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -62,5 +65,13 @@ class KtorMoviesDataSource @Inject constructor(
             get("movie/$movieId/reviews?page=$page")
         }
         return res.reviews
+    }
+
+    override suspend fun addMovieRating(movieId: Int, rating: Int) {
+        ktorClient.call<Unit> {
+            post("movie/$movieId/rating") {
+                setBody(body = MovieRatingReq(value = rating))
+            }
+        }
     }
 }

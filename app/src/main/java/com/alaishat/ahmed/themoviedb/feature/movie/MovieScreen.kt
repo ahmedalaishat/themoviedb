@@ -27,10 +27,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
@@ -40,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +61,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.Review
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
+import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
@@ -67,7 +73,9 @@ import com.alaishat.ahmed.themoviedb.ui.component.RowDivider
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerLg
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
+import com.alaishat.ahmed.themoviedb.ui.component.SuccessDialog
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.component.rememberDialogState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
@@ -86,13 +94,16 @@ fun MovieRoute(
     val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
     val reviews = viewModel.movieReviews.collectAsLazyPagingItems()
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
+    val rated by viewModel.rated.collectAsStateWithLifecycle()
 
     //AHMED_TODO: make me shimmer
     if (movie == null) TheMovieLoader()
     else MovieScreen(
         movie = movie!!,
         reviews = reviews,
-        credits = credits
+        credits = credits,
+        rated = rated,
+        onRateSubmit = viewModel::rateMovie,
     )
 }
 
@@ -101,8 +112,36 @@ private fun MovieScreen(
     movie: MovieDetails,
     reviews: LazyPagingItems<Review>,
     credits: List<Credit>?,
+    rated: Boolean,
+    onRateSubmit: (rating: Int) -> Unit,
 ) {
     val scrollState = rememberScrollState()
+
+
+    var showSheet by remember { mutableStateOf(false) }
+
+    if (showSheet) {
+        RateBottomSheet(
+            onRateSubmit = onRateSubmit,
+            onDismiss = {
+                showSheet = false
+            },
+        )
+    }
+
+    val successDialogState = rememberDialogState()
+    SuccessDialog(
+        dialogState = successDialogState,
+        message = stringResource(id = R.string.rating_success_message),
+        onPositiveClick = { }
+    )
+
+    LaunchedEffect(rated) {
+        if (rated) {
+            successDialogState.show()
+            showSheet = false
+        }
+    }
 
     BoxWithConstraints {
         val screenHeight = maxHeight
@@ -137,7 +176,11 @@ private fun MovieScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(Shapes.CornerSmall)
-                            .background(MaterialTheme.colorScheme.onSurfaceVariant.darker(0.4f).copy(alpha = 0.6f))
+                            .background(
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                                    .darker(0.4f)
+                                    .copy(alpha = 0.6f)
+                            )
                     )
                     MovieInfo(
                         modifier = Modifier.padding(
@@ -205,6 +248,8 @@ private fun MovieScreen(
                 when (page) {
                     0 -> AboutMovieTab(
                         movieOverview = movie.overview,
+                        rated = rated,
+                        onRateClick = { showSheet = true },
                         modifier = tabModifier,
                     )
 
@@ -226,10 +271,23 @@ private fun MovieScreen(
 @Composable
 private fun AboutMovieTab(
     movieOverview: String,
+    rated: Boolean,
+    onRateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = CenterHorizontally
+    ) {
         Text(text = movieOverview)
+        SpacerLg()
+        if (!rated)
+            OutlinedButton(
+                onClick = onRateClick,
+                modifier = Modifier.fillMaxWidth(.5f),
+            ) {
+                Text(text = stringResource(R.string.rate_this_movie))
+            }
     }
 }
 

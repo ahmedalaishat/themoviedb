@@ -98,4 +98,8 @@ class MovieListRepositoryImpl @Inject constructor(
     override suspend fun getMovieCredits(movieId: Int): List<Credit> {
         return moviesDataSource.getMovieCredits(movieId = movieId).mapToCredits()
     }
+
+    override suspend fun addMovieRating(movieId: Int, rating: Int) {
+        return moviesDataSource.addMovieRating(movieId = movieId, rating = rating)
+    }
 }

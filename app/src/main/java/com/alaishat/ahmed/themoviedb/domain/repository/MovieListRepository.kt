@@ -21,4 +21,5 @@ interface MovieListRepository : Repository {
     suspend fun getMovieDetails(movieId: Int): MovieDetails
     fun getMovieReviews(movieId: Int): Flow<PagingData<Review>>
     suspend fun getMovieCredits(movieId: Int): List<Credit>
+    suspend fun addMovieRating(movieId: Int, rating: Int)
 }
