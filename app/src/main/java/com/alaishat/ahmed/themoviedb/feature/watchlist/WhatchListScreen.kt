@@ -1,7 +1,6 @@
 package com.alaishat.ahmed.themoviedb.feature.watchlist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,24 +9,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
-import com.alaishat.ahmed.themoviedb.ui.common.movieList
+import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
+import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
+import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingEmptyBox
+import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingErrorBox
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
+import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -38,11 +47,11 @@ fun WatchListRoute(
     viewModel: WatchListViewModel = hiltViewModel(),
 ) {
     val query by viewModel.queryFlow.collectAsStateWithLifecycle()
-    val uiState by viewModel.searchMoviesFlow.collectAsStateWithLifecycle()
+    val pagingItems = viewModel.watchListFlow.collectAsLazyPagingItems()
 
     WatchListScreen(
         searchText = query,
-        uiState = uiState,
+        pagingItems = pagingItems,
         onSearchTextChange = viewModel::updateQueryText
     )
 }
@@ -50,11 +59,12 @@ fun WatchListRoute(
 @Composable
 private fun WatchListScreen(
     searchText: String,
-    uiState: WatchListUiState,
+    pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
 ) {
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
         contentPadding = PaddingValues(
             start = Dimensions.ScreenPadding,
             end = Dimensions.ScreenPadding,
@@ -74,24 +84,40 @@ private fun WatchListScreen(
                 )
             }
         }
-        if (uiState is WatchListUiState.Success)
-            movieList(
-                movies = uiState.movies,
-                itemModifier = Modifier.height(110.dp),
-            )
+        val itemModifier = Modifier.height(110.dp)
+
+        pagingInitialLoader(pagingItems.loadState) {
+            items(count = 10) { // Shimmer
+                MovieListItemShimmer(modifier = itemModifier)
+            }
+        }
+
+        movieInfoList(
+            pagingItems = pagingItems,
+            itemModifier = itemModifier,
+        )
     }
-    Box(
+
+    PagingEmptyBox(
+        pagingItems = pagingItems,
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
-        if (uiState == WatchListUiState.Loading) CircularProgressIndicator()
-        if (uiState == WatchListUiState.NoResults)
-            EmptyContent(
-                imageId = R.drawable.ic_magic_box,
-                title = stringResource(R.string.watch_list_no_movies_title),
-                subtitle = stringResource(id = R.string.find_your_movie_by),
-                modifier = Modifier.fillMaxWidth(.5f),
-            )
+        EmptyContent(
+            imageId = R.drawable.ic_magic_box,
+            title = stringResource(R.string.watch_list_no_movies_title),
+            subtitle = stringResource(id = R.string.find_your_movie_by),
+            modifier = Modifier.fillMaxWidth(.5f),
+        )
+    }
+
+    PagingErrorBox(
+        pagingItems = pagingItems,
+        modifier = Modifier.fillMaxSize(),
+    ) { error ->
+        Text(
+            text = error.orEmpty(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -102,8 +128,7 @@ private fun WatchListScreenPreview() {
     TheMoviePreviewSurface {
         WatchListScreen(
             searchText = "",
-            uiState = WatchListUiState.Loading,
-            onSearchTextChange = { }
-        )
+            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems()
+        ) { }
     }
 }

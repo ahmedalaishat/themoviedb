@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,13 +26,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
-import com.alaishat.ahmed.themoviedb.ui.common.movieList
+import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
+import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SearchBar
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingEmptyBox
+import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingErrorBox
+import com.alaishat.ahmed.themoviedb.ui.extenstions.PagingInitialLoader
+import com.alaishat.ahmed.themoviedb.ui.extenstions.maxLineBox
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
+import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
+import kotlinx.coroutines.flow.flowOf
+import timber.log.Timber
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -41,12 +56,10 @@ fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val query by viewModel.queryFlow.collectAsStateWithLifecycle()
-    val uiState by viewModel.searchMoviesFlow.collectAsStateWithLifecycle()
+    val pagingItems = viewModel.searchMoviesFlow.collectAsLazyPagingItems()
 
     SearchScreen(
-        searchText = query,
-        uiState = uiState,
-        onSearchTextChange = viewModel::updateQueryText
+        searchText = query, pagingItems = pagingItems, onSearchTextChange = viewModel::updateQueryText
     )
 }
 
@@ -55,15 +68,55 @@ fun SearchRoute(
 @Composable
 private fun SearchScreen(
     searchText: String,
-    uiState: SearchUiState,
+    pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
 ) {
     val searchFocusRequester = remember { FocusRequester() }
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
-    if (uiState == SearchUiState.Loading) CircularProgressIndicator()
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        PagingInitialLoader(pagingItems.loadState) {
+            if (searchText.isEmpty()) EmptyContent(imageId = R.drawable.ic_no_results,
+                title = stringResource(R.string.find_your_movie_by),
+                subtitle = null,
+                modifier = Modifier.fillMaxWidth(.5f),
+                actionButtonText = stringResource(id = R.string.search),
+                onActionButtonClick = {
+                    searchFocusRequester.requestFocus()
+                    softwareKeyboardController?.show()
+                })
+//            else if (pagingItems.itemCount > 0) CircularProgressIndicator()
+        }
+    }
+
+    PagingEmptyBox(
+        pagingItems = pagingItems,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        EmptyContent(
+            imageId = R.drawable.ic_no_results,
+            title = stringResource(R.string.can_not_find_movie_title),
+            subtitle = stringResource(id = R.string.find_your_movie_by),
+            modifier = Modifier.fillMaxWidth(.5f),
+        )
+    }
+
+    PagingErrorBox(
+        pagingItems = pagingItems,
+        modifier = Modifier.fillMaxSize(),
+    ) { error ->
+        Text(
+            text = error.orEmpty(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
         contentPadding = PaddingValues(
             start = Dimensions.ScreenPadding,
             end = Dimensions.ScreenPadding,
@@ -82,38 +135,30 @@ private fun SearchScreen(
                     .focusRequester(searchFocusRequester)
             )
         }
-        if (uiState is SearchUiState.Success)
-            movieList(
-                movies = uiState.movies,
-                itemModifier = Modifier.height(110.dp),
-            )
-    }
 
-    if (uiState == SearchUiState.NoResults || uiState == SearchUiState.Initial || uiState is SearchUiState.Error) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            val titleId = if (uiState == SearchUiState.Initial) R.string.find_your_movie_by
-            else R.string.can_not_find_movie_title
+        val itemModifier = Modifier.height(110.dp)
+        Timber.e("pagingItems.loadState.refresh ${pagingItems.loadState.refresh}")
+        Timber.e("pagingItems.loadState.append ${pagingItems.loadState.append}")
+        Timber.e("pagingItems.loadState.mediator ${pagingItems.loadState.mediator}")
+        Timber.e("pagingItems.loadState.prepend ${pagingItems.loadState.prepend}")
+        Timber.e("pagingItems.loadState.source ${pagingItems.loadState.source}")
 
-            val subtitleId = if (uiState == SearchUiState.Initial) null
-            else R.string.find_your_movie_by
-
-            val actionButtonTextId = if (uiState == SearchUiState.Initial) R.string.search
-            else null
-
-            EmptyContent(
-                imageId = R.drawable.ic_no_results,
-                title = stringResource(titleId),
-                subtitle = subtitleId?.let { stringResource(it) },
-                modifier = Modifier.fillMaxWidth(.5f),
-                actionButtonText = actionButtonTextId?.let { stringResource(it) },
-                onActionButtonClick = {
-                    searchFocusRequester.requestFocus()
-                    softwareKeyboardController?.show()
+        pagingInitialLoader(pagingItems.loadState) {
+            if (/*pagingItems.itemCount == 0 &&*/ searchText.isNotEmpty())
+                items(count = 10) { // Shimmer
+                    MovieListItemShimmer(modifier = itemModifier)
                 }
-            )
+        }
+
+        movieInfoList(
+            pagingItems = pagingItems,
+            itemModifier = itemModifier,
+        )
+
+        pagingLoader(pagingItems.loadState) {
+            maxLineBox(Modifier.fillMaxWidth()) {
+                CircularProgressIndicator()
+            }
         }
     }
 }
@@ -124,8 +169,8 @@ private fun SearchScreenPreview() {
     TheMoviePreviewSurface {
         SearchScreen(
             searchText = "",
-            uiState = SearchUiState.Initial,
-            onSearchTextChange = { }
+            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
+            onSearchTextChange = { },
         )
     }
 }

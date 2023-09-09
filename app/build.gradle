@@ -108,6 +108,10 @@ dependencies {
 //    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 //    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
 
+
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-compose:$paging_compose_version"
+
     implementation "io.coil-kt:coil-compose:$coil_version"
 
 

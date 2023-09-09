@@ -8,15 +8,15 @@ import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
  * The Movie DB Project.
  */
 class FakeMoviesDataSource : NetworkMoviesDataSource {
-    override suspend fun getList(movieListPath: String): List<NetworkMovie> {
+    override suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun searchMovie(query: String): List<NetworkMovie> {
+    override suspend fun searchMovie(query: String, page: Int): List<NetworkMovie> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getWatchList(): List<NetworkMovie> {
+    override suspend fun getWatchList(page: Int): List<NetworkMovie> {
         TODO("Not yet implemented")
     }
 }

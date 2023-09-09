@@ -1,5 +1,6 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
+import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +11,8 @@ import kotlinx.coroutines.flow.Flow
  */
 interface MovieListRepository : Repository {
 
-
-    //AHMED_TODO: make me pager flow
-    fun getMovieListByType(movieListType: MovieListType): Flow<List<Movie>>
-    fun searchMovie(query: String): Flow<List<Movie>>
-    fun getWatchList(): Flow<List<Movie>>
+    suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie>
+    fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<Movie>>
+    fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>>
+    fun getWatchListPagingFlow(): Flow<PagingData<Movie>>
 }

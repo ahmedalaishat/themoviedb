@@ -38,7 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.feature.home.MovieCard
+import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews

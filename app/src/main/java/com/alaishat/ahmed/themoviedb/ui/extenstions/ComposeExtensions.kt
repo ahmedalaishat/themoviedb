@@ -2,7 +2,14 @@ package com.alaishat.ahmed.themoviedb.ui.extenstions
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -11,6 +18,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.Density
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.
@@ -51,5 +61,88 @@ val FooterArrangement = object : Arrangement.Vertical {
                 currentOffset += size
             }
         }
+    }
+}
+
+fun LazyGridScope.pagingInitialLoader(
+    loadState: CombinedLoadStates,
+    content: LazyGridScope.() -> Unit
+) {
+    // First Loading
+    if (loadState.refresh == LoadState.Loading) content()
+}
+
+fun LazyGridScope.pagingLoader(
+    loadState: CombinedLoadStates,
+    content: LazyGridScope.() -> Unit
+) {
+    // Pagination Loading
+    if (loadState.append == LoadState.Loading) content()
+}
+
+@Composable
+fun PagingInitialLoader(
+    loadState: CombinedLoadStates,
+    content: @Composable () -> Unit
+) {
+    // First Loading
+    if (loadState.refresh == LoadState.Loading) content()
+}
+
+@Composable
+fun PagingErrorBox(
+    pagingItems: LazyPagingItems<*>,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.Center,
+    content: @Composable BoxScope.(errorMessage:String?) -> Unit
+) {
+    // Pagination Error
+    if (pagingItems.loadState.refresh is LoadState.Error)
+        Box(
+            modifier = modifier,
+            contentAlignment = contentAlignment,
+            content = { content((pagingItems.loadState.refresh as LoadState.Error).error.message) }
+        )
+}
+
+@Composable
+fun PagingEmptyBox(
+    pagingItems: LazyPagingItems<*>,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.Center,
+    content: @Composable BoxScope.() -> Unit
+) {
+    // Pagination Reached End && Not Loading
+    if (pagingItems.loadState.append.endOfPaginationReached && pagingItems.itemCount == 0)
+        Box(
+            modifier = modifier,
+            contentAlignment = contentAlignment,
+            content = content
+        )
+}
+
+fun LazyGridScope.maxLineBox(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun <T : Any> LazyPagingItems<T>.rememberLazyListState(): LazyListState {
+    // After recreation, LazyPagingItems first return 0 items, then the cached items.
+    // This behavior/issue is resetting the LazyListState scroll position.
+    // Below is a workaround. More info: https://issuetracker.google.com/issues/177245496.
+    return when (itemCount) {
+        // Return a different LazyListState instance.
+        0 -> remember(this) { LazyListState(0, 0) }
+        // Return rememberLazyListState (normal case).
+        else -> androidx.compose.foundation.lazy.rememberLazyListState()
     }
 }

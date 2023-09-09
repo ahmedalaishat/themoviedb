@@ -5,6 +5,7 @@ import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.network.KtorClient
 import com.alaishat.ahmed.themoviedb.network.model.MovieListRes
 import io.ktor.client.request.get
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,26 +18,24 @@ class KtorMoviesDataSource @Inject constructor(
     private val ktorClient: KtorClient,
 ) : NetworkMoviesDataSource {
 
-    override suspend fun getList(movieListPath: String): List<NetworkMovie> {
-        //AHMED_TODO: convert me to pager
+    override suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie> {
         val res: MovieListRes = ktorClient.call {
-            get("movie/$movieListPath")
+            get("movie/$movieListPath?page=$page&without_keywords=158718")
+        }
+        delay(2000)
+        return res.results
+    }
+
+    override suspend fun searchMovie(query: String, page: Int): List<NetworkMovie> {
+        val res: MovieListRes = ktorClient.call {
+            get("search/movie?query=$query&page=$page")
         }
         return res.results
     }
 
-    override suspend fun searchMovie(query: String): List<NetworkMovie> {
-        //AHMED_TODO: convert me to pager
+    override suspend fun getWatchList(page: Int): List<NetworkMovie> {
         val res: MovieListRes = ktorClient.call {
-            get("search/movie?query=$query")
-        }
-        return res.results
-    }
-
-    override suspend fun getWatchList(): List<NetworkMovie> {
-        //AHMED_TODO: convert me to pager
-        val res: MovieListRes = ktorClient.call {
-            get("account/9712119/watchlist/movies")
+            get("account/9712119/watchlist/movies?page=$page")
         }
         return res.results
     }

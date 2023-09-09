@@ -8,7 +8,7 @@ import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
  */
 interface NetworkMoviesDataSource {
 
-    suspend fun getList(movieListPath: String): List<NetworkMovie>
-    suspend fun searchMovie(query: String): List<NetworkMovie>
-    suspend fun getWatchList(): List<NetworkMovie>
+    suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie>
+    suspend fun searchMovie(query: String,page: Int): List<NetworkMovie>
+    suspend fun getWatchList(page: Int): List<NetworkMovie>
 }

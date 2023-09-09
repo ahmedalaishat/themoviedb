@@ -1,5 +1,6 @@
 package com.alaishat.ahmed.themoviedb.data.repository.fake
 
+import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
@@ -10,15 +11,19 @@ import kotlinx.coroutines.flow.Flow
  * The Movie DB Project.
  */
 class FakeMovieListRepository : MovieListRepository {
-    override fun getMovieListByType(movieListType: MovieListType): Flow<List<Movie>> {
+    override suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie> {
         TODO("Not yet implemented")
     }
 
-    override fun searchMovie(query: String): Flow<List<Movie>> {
+    override fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<Movie>> {
         TODO("Not yet implemented")
     }
 
-    override fun getWatchList(): Flow<List<Movie>> {
+    override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getWatchListPagingFlow(): Flow<PagingData<Movie>> {
         TODO("Not yet implemented")
     }
 }
