@@ -1,6 +1,7 @@
 package com.alaishat.ahmed.themoviedb.network.datasource
 
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
+import com.alaishat.ahmed.themoviedb.data.model.NetworkMovieDetails
 import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.network.KtorClient
 import com.alaishat.ahmed.themoviedb.network.model.MovieListRes
@@ -38,5 +39,12 @@ class KtorMoviesDataSource @Inject constructor(
             get("account/9712119/watchlist/movies?page=$page")
         }
         return res.results
+    }
+
+    override suspend fun getMovieDetails(movieId: Int): NetworkMovieDetails {
+        val res: NetworkMovieDetails = ktorClient.call {
+            get("movie/$movieId")
+        }
+        return res
     }
 }

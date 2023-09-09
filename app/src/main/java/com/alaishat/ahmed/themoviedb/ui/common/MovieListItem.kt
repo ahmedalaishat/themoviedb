@@ -32,7 +32,7 @@ fun MovieListItem(
         modifier = modifier,
     ) {
         MovieCard(
-            movie = movie,
+            moviePosterPath = movie.posterPath,
             modifier = Modifier
                 .fillMaxHeight()
                 .aspectRatio(.8f, true),

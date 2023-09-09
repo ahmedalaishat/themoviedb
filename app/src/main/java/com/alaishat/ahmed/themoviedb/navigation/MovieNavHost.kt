@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeRoute
 import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeScreen
 import com.alaishat.ahmed.themoviedb.feature.movie.navigation.movieScreen
+import com.alaishat.ahmed.themoviedb.feature.movie.navigation.navigateToMovie
 import com.alaishat.ahmed.themoviedb.feature.search.navigation.searchScreen
 import com.alaishat.ahmed.themoviedb.feature.watchlist.navigation.watchListScreen
 
@@ -26,7 +27,9 @@ fun MovieNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeScreen()
+        homeScreen(
+            onMovieClick = navController::navigateToMovie
+        )
         searchScreen()
         watchListScreen()
         movieScreen()

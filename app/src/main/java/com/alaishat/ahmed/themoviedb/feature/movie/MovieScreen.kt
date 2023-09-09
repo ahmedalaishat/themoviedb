@@ -23,21 +23,31 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
+import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
@@ -55,7 +65,23 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
  * The Movie DB Project.
  */
 @Composable
-fun MovieScreen() {
+fun MovieRoute(
+    viewModel: MovieViewModel = hiltViewModel(),
+) {
+    val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
+
+    if (movie == null) Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
+        CircularProgressIndicator()
+    }
+    else {
+        MovieScreen(movie = movie!!)
+    }
+}
+
+@Composable
+private fun MovieScreen(
+    movie: MovieDetails,
+) {
     val scrollState = rememberScrollState()
 
     BoxWithConstraints {
@@ -69,14 +95,16 @@ fun MovieScreen() {
                     .fillMaxWidth(),
                 contentAlignment = Alignment.BottomStart
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.alt_movie_cover),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("$BACKDROP_BASE_URL${movie.backdropPath}")
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .padding(bottom = 60.dp)
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
-//                    .fillMaxWidth(),
                 )
                 Box(
                     modifier = Modifier
@@ -97,7 +125,7 @@ fun MovieScreen() {
                             horizontal = Dimensions.MarginXSm.times(2)
                         ),
                         iconId = R.drawable.ic_star,
-                        text = "9.5",
+                        text = movie.voteAverage,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -106,13 +134,13 @@ fun MovieScreen() {
                     verticalAlignment = Alignment.Bottom
                 ) {
                     MovieCard(
-                        movieImageId = R.drawable.alt_movie_2,
+                        moviePosterPath = movie.posterPath,
                         modifier = Modifier
                             .height(120.dp)
                             .width(95.dp),
                     )
                     SpacerSm()
-                    Text(text = "Spiderman No Way Home", maxLines = 2, minLines = 2)
+                    Text(text = movie.title, maxLines = 2, minLines = 2)
                 }
             }
             SpacerMd()
@@ -123,21 +151,22 @@ fun MovieScreen() {
             ) {
                 MovieInfo(
                     iconId = R.drawable.ic_calendar,
-                    text = "2021",
+                    text = movie.releaseYear,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
                 MovieInfo(
                     iconId = R.drawable.ic_clock,
-                    text = "148 minutes",
+                    text = movie.runtime,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
-                MovieInfo(
-                    iconId = R.drawable.ic_ticket,
-                    text = "Action",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (movie.genre != null)
+                    MovieInfo(
+                        iconId = R.drawable.ic_ticket,
+                        text = movie.genre,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
             }
             SpacerLg()
             //AHMED_TODO: convert me to enums
@@ -155,8 +184,11 @@ fun MovieScreen() {
                     .padding(vertical = Dimensions.MarginMd)
                     .fillMaxSize()
                 when (page) {
-//                    0 -> CastTab(actors = actors, modifier = tabModifier)
-                    0 -> AboutMovieTab(modifier = tabModifier)
+                    0 -> AboutMovieTab(
+                        movieOverview = movie.overview,
+                        modifier = tabModifier,
+                    )
+
                     1 -> ReviewsTab(modifier = tabModifier)
                     2 -> CastTab(actors = actors, modifier = tabModifier)
                 }
@@ -167,10 +199,11 @@ fun MovieScreen() {
 
 @Composable
 private fun AboutMovieTab(
+    movieOverview: String,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-        Text(text = "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.")
+        Text(text = movieOverview)
     }
 }
 
@@ -252,6 +285,6 @@ data class Actor(
 @Composable
 fun MovieScreenPreview() {
     TheMoviePreviewSurface {
-        MovieScreen()
+//        MovieScreen(Movie()        )
     }
 }

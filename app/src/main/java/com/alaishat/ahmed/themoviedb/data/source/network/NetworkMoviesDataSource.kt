@@ -1,6 +1,7 @@
 package com.alaishat.ahmed.themoviedb.data.source.network
 
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
+import com.alaishat.ahmed.themoviedb.data.model.NetworkMovieDetails
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
@@ -11,4 +12,5 @@ interface NetworkMoviesDataSource {
     suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie>
     suspend fun searchMovie(query: String,page: Int): List<NetworkMovie>
     suspend fun getWatchList(page: Int): List<NetworkMovie>
+    suspend fun getMovieDetails(movieId: Int): NetworkMovieDetails
 }

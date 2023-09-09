@@ -1,8 +1,8 @@
 package com.alaishat.ahmed.themoviedb.ui.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
@@ -16,13 +16,14 @@ import com.alaishat.ahmed.themoviedb.feature.home.MovieListUiState
  */
 fun LazyListScope.topMoviesList(
     topMovies: MovieListUiState.Success,
+    onMovieClick: (movieId: Int) -> Unit,
     cardModifier: Modifier = Modifier,
 ) {
     itemsIndexed(topMovies.movies, key = { _, item -> item.id }) { index, movie ->
         TopMovieCard(
             movie = movie,
             rank = index + 1,
-            modifier = cardModifier,
+            modifier = cardModifier.then(Modifier.clickable { onMovieClick(movie.id) }),
         )
     }
 }
@@ -51,7 +52,7 @@ fun LazyGridScope.movieCardsList(
     itemContent = { index ->
         val movie = pagingItems[index]!!
         MovieCard(
-            movie = movie,
+            moviePosterPath = movie.posterPath,
             modifier = cardModifier,
         )
     }

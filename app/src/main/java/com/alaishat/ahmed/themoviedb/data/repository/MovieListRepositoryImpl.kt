@@ -4,15 +4,17 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
+import com.alaishat.ahmed.themoviedb.data.model.toMovie
+import com.alaishat.ahmed.themoviedb.data.model.toMovieDetails
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.WatchListPagingSource
 import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -72,5 +74,9 @@ class MovieListRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
+    }
+
+    override suspend fun getMovieDetails(movieId: Int): MovieDetails {
+        return moviesDataSource.getMovieDetails(movieId = movieId).toMovieDetails()
     }
 }
