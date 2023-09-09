@@ -34,4 +34,8 @@ class FakeMoviesDataSource : NetworkMoviesDataSource {
     override suspend fun getMovieReviews(movieId: Int, page: Int): List<NetworkReview> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun addMovieRating(movieId: Int, rating: Int) {
+        TODO("Not yet implemented")
+    }
 }

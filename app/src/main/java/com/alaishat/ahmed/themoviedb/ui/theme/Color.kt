@@ -11,3 +11,6 @@ val OnSurfaceGray = Color(0xFF4E4B66)
 //val Gray = Color(0xFFA0A0A0)
 
 val DarkTeal = Color(0xFF002029)
+
+val AppRed = Color(0xFFFB0001)
+val AppGreen = Color(0xFF00B767)

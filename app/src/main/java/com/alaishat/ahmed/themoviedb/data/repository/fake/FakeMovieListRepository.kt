@@ -41,4 +41,8 @@ class FakeMovieListRepository : MovieListRepository {
     override suspend fun getMovieCredits(movieId: Int): List<Credit> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun addMovieRating(movieId: Int, rating: Int) {
+        TODO("Not yet implemented")
+    }
 }

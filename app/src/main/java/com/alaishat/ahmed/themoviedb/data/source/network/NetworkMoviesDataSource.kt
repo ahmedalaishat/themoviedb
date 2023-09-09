@@ -17,4 +17,5 @@ interface NetworkMoviesDataSource {
     suspend fun getMovieDetails(movieId: Int): NetworkMovieDetails
     suspend fun getMovieCredits(movieId: Int): List<NetworkCredit>
     suspend fun getMovieReviews(movieId: Int, page: Int): List<NetworkReview>
+    suspend fun addMovieRating(movieId: Int, rating: Int)
 }

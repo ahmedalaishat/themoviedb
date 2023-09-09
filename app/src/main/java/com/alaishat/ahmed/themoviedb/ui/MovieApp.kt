@@ -33,14 +33,17 @@ fun MovieApp() {
                     selectedDestination = BottomBarDestination.getByRoute(currentDestination),
                     onNavigateToDestination = { navController.navigate(it.route) }
                 )
-            }
+            },
         ) { contentPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)
             ) {
-                MovieNavHost(navController = navController)
+                MovieNavHost(
+                    navController = navController,
+                    onRateClick ={}
+                    )
             }
         }
     }

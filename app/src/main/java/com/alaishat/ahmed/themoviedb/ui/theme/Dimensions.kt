@@ -28,5 +28,6 @@ object Dimensions {
     val IconLg = 48.dp
     val IconXLg = 80.dp
 
+    val BorderSize = 1.dp
 }
 
