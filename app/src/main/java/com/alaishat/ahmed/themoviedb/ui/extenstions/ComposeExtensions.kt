@@ -1,6 +1,8 @@
 package com.alaishat.ahmed.themoviedb.ui.extenstions
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -27,6 +29,16 @@ import androidx.paging.compose.LazyPagingItems
  * Created by Ahmed Al-Aishat on Jun/17/2023.
  * The Movie DB Project.
  */
+fun Modifier.silentClickable(
+    silent: Boolean = true,
+    onClick: () -> Unit
+) = if (!silent) clickable { onClick() }
+else clickable(
+    interactionSource = MutableInteractionSource(),
+    indication = null,
+    onClick = onClick
+)
+
 fun Modifier.verticalNestedScroll(
     outerScrollState: ScrollState,
     dispatcher: NestedScrollDispatcher? = null,

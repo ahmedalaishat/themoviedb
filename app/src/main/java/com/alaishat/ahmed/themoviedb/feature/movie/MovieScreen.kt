@@ -63,6 +63,7 @@ import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
 import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
+import com.alaishat.ahmed.themoviedb.ui.component.ExpandingText
 import com.alaishat.ahmed.themoviedb.ui.component.RowDivider
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerLg
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
@@ -379,7 +380,7 @@ fun ReviewCard(
         Column {
             Text(text = review.authorName, style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp))
             SpacerSm()
-            Text(text = review.content)
+            ExpandingText(text = review.content)
         }
     }
 }
