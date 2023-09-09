@@ -115,6 +115,9 @@ dependencies {
     implementation "io.coil-kt:coil-compose:$coil_version"
 
 
+    implementation "androidx.core:core-splashscreen:1.0.1"
+
+
     // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
