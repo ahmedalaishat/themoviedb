@@ -5,6 +5,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LocalContentColor
@@ -35,9 +36,9 @@ fun AppHorizontalPager(
     tabs: List<String>,
     modifier: Modifier = Modifier,
     outerScrollState: ScrollState? = null,
-    pageContent: @Composable (page: Int) -> Unit
+    pageContent: @Composable PagerScope.(page: Int) -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = modifier) {
@@ -55,7 +56,6 @@ fun AppHorizontalPager(
         else Modifier.verticalNestedScroll(outerScrollState)
 
         HorizontalPager(
-            pageCount = tabs.size,
             state = pagerState,
             userScrollEnabled = false,
             modifier = pagerModifier,
@@ -126,7 +126,7 @@ fun PagerTab(
         text = {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelMedium
             )
         },
         icon = icon,

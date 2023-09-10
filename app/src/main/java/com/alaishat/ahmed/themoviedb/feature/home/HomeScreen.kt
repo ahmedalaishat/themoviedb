@@ -1,5 +1,6 @@
 package com.alaishat.ahmed.themoviedb.feature.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -78,6 +79,7 @@ fun HomeRoute(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
     topFiveMovies: MovieListUiState,
@@ -96,7 +98,10 @@ private fun HomeScreen(
                 .fillMaxSize()
                 .padding(Dimensions.ScreenPadding)
         ) {
-            Text(text = stringResource(R.string.what_do_you_want_to_watch))
+            Text(
+                text = stringResource(R.string.what_do_you_want_to_watch),
+                style = MaterialTheme.typography.titleLarge
+            )
             SpacerMd()
             SearchBar(
                 searchText = text,

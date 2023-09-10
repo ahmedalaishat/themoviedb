@@ -23,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.ui.component.AppButton
 import com.alaishat.ahmed.themoviedb.ui.component.DevicePreviews
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerMd
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
+import com.alaishat.ahmed.themoviedb.ui.extenstions.lighter
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 
 /**
@@ -61,14 +63,23 @@ private fun RateBottomSheetContent(
 
     Box(
         modifier = Modifier
-            .padding(Dimensions.ScreenPadding)
+            .padding(horizontal = Dimensions.ScreenPadding)
+            .padding(bottom = Dimensions.ScreenPadding)
             .wrapContentSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "Rate this movie", color = MaterialTheme.colorScheme.background)
+            Text(
+                text = stringResource(id = R.string.rate_this_movie),
+                color = MaterialTheme.colorScheme.background.lighter(.5f),
+                style = MaterialTheme.typography.titleMedium
+            )
             SpacerMd()
-            Text(text = rating.toString(), color = MaterialTheme.colorScheme.background)
+            Text(
+                text = "%.1f".format(rating.toFloat()),
+                color = MaterialTheme.colorScheme.background.lighter(.2f),
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp)
+            )
             SpacerMd()
             Slider(
                 value = rating.toFloat(),
