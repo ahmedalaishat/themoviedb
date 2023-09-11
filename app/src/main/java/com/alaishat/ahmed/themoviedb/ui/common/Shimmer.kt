@@ -36,7 +36,7 @@ fun ShimmerCard(
         color.copy(alpha = 0.9f)
     )
 
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "")
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
@@ -45,7 +45,8 @@ fun ShimmerCard(
                 durationMillis = 1000, // duration for the animation
                 easing = FastOutLinearInEasing
             )
-        )
+        ),
+        label = ""
     )
     val brush = Brush.linearGradient(
         colors = gradient,

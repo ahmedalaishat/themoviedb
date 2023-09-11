@@ -42,7 +42,11 @@ fun MovieListItem(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = movie.title, maxLines = 1)
+            Text(
+                text = movie.title,
+                maxLines = 1,
+                style = MaterialTheme.typography.titleMedium,
+            )
             Column {
                 MovieInfo(
                     iconId = R.drawable.ic_star,

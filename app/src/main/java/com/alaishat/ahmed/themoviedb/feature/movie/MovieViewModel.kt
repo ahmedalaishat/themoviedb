@@ -7,12 +7,12 @@ import com.alaishat.ahmed.themoviedb.domain.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.GetMovieDetailsUseCase
 import com.alaishat.ahmed.themoviedb.domain.GetMovieReviewsUseCase
+import com.alaishat.ahmed.themoviedb.domain.ToggleWatchlistMovieUseCase
 import com.alaishat.ahmed.themoviedb.feature.movie.navigation.MovieDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.
@@ -21,6 +21,7 @@ import kotlin.math.absoluteValue
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     private val addMovieRating: AddMovieRatingUseCase,
+    private val toggleWatchlistMovie: ToggleWatchlistMovieUseCase,
     getMovieDetails: GetMovieDetailsUseCase,
     getMovieReviews: GetMovieReviewsUseCase,
     getMovieCredits: GetMovieCreditsUseCase,
@@ -39,6 +40,12 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             addMovieRating(args.movieId, rating)
             rated.value = true
+        }
+    }
+
+    fun toggleWatchlist(watchlist: Boolean) {
+        viewModelScope.launch {
+            toggleWatchlistMovie(args.movieId, watchlist)
         }
     }
 }

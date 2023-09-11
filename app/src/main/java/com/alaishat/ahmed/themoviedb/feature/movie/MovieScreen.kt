@@ -1,6 +1,8 @@
 package com.alaishat.ahmed.themoviedb.feature.movie
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -26,6 +30,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -39,15 +44,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -64,6 +73,7 @@ import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
+import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
 import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
@@ -79,6 +89,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.rememberDialogState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
+import com.alaishat.ahmed.themoviedb.ui.theme.AppRed
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
@@ -96,17 +107,19 @@ fun MovieRoute(
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
     val rated by viewModel.rated.collectAsStateWithLifecycle()
 
-    //AHMED_TODO: make me shimmer
-    if (movie == null) TheMovieLoader()
-    else MovieScreen(
+    if (movie == null) {
+        MovieDetailsShimmer()
+    } else MovieScreen(
         movie = movie!!,
         reviews = reviews,
         credits = credits,
         rated = rated,
         onRateSubmit = viewModel::rateMovie,
+        onToggleWatchlist = viewModel::toggleWatchlist,
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MovieScreen(
     movie: MovieDetails,
@@ -114,6 +127,7 @@ private fun MovieScreen(
     credits: List<Credit>?,
     rated: Boolean,
     onRateSubmit: (rating: Int) -> Unit,
+    onToggleWatchlist: (watchlist: Boolean) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -150,7 +164,7 @@ private fun MovieScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .height(270.dp)
+                    .height(300.dp)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.BottomStart
             ) {
@@ -161,14 +175,14 @@ private fun MovieScreen(
                         .build(),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(bottom = 60.dp)
+                        .padding(bottom = 75.dp)
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
                 Box(
                     modifier = Modifier
                         .align(BottomEnd)
-                        .padding(bottom = 60.dp + Dimensions.MarginSm, end = Dimensions.MarginSm)
+                        .padding(bottom = 75.dp + Dimensions.MarginSm, end = Dimensions.MarginSm)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
                 ) {
@@ -192,6 +206,18 @@ private fun MovieScreen(
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
+                Icon(
+                    modifier = Modifier
+                        .padding(top = Dimensions.MarginSm, end = Dimensions.MarginSm)
+                        .align(TopEnd)
+                        .alpha(.9f)
+                        .clickable {
+                            onToggleWatchlist(movie.watchlist.not())
+                        },
+                    painter = painterResource(id = R.drawable.ic_bookmark),
+                    contentDescription = null,
+                    tint = if (movie.watchlist) AppRed else Color.Unspecified
+                )
                 Row(
                     modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
                     verticalAlignment = Alignment.Bottom
@@ -199,11 +225,22 @@ private fun MovieScreen(
                     MovieCard(
                         moviePosterPath = movie.posterPath,
                         modifier = Modifier
-                            .height(120.dp)
-                            .width(95.dp),
+                            .height(150.dp)
+                            .width(100.dp),
                     )
                     SpacerSm()
-                    Text(text = movie.title, maxLines = 2, minLines = 2)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(75.dp),
+                        contentAlignment = CenterStart
+                    ) {
+                        Text(
+                            text = movie.title,
+                            maxLines = 2,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
                 }
             }
             SpacerMd()
@@ -215,23 +252,26 @@ private fun MovieScreen(
                 MovieInfo(
                     iconId = R.drawable.ic_calendar,
                     text = movie.releaseYear,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconSize = 20.dp,
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
                 MovieInfo(
                     iconId = R.drawable.ic_clock,
                     text = movie.runtime,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconSize = 20.dp,
                 )
                 RowDivider(modifier = Modifier.padding(horizontal = Dimensions.MarginSm))
                 if (movie.genre != null)
                     MovieInfo(
                         iconId = R.drawable.ic_ticket,
                         text = movie.genre,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        iconSize = 20.dp,
                     )
             }
-            SpacerLg()
+            SpacerMd()
             //AHMED_TODO: convert me to enums
             val tabs = remember { listOf("About Movie", "Reviews", "Cast") }
 
@@ -391,6 +431,7 @@ fun ActorCard(
             maxLines = 2,
             minLines = 2,
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
         )
     }
 }
@@ -431,13 +472,98 @@ fun ReviewCard(
             )
             SpacerMd()
             if (review.rating != null)
-                Text(text = review.rating, color = MaterialTheme.colorScheme.primary)
+                Text(
+                    text = review.rating,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelMedium
+                )
         }
         SpacerSm()
         Column {
-            Text(text = review.authorName, style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp))
+            Text(text = review.authorName, style = MaterialTheme.typography.titleSmall)
             SpacerSm()
             ExpandingText(text = review.content)
+        }
+    }
+}
+
+@Composable
+private fun MovieDetailsShimmer() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .padding(top = 150.dp, start = Dimensions.ScreenPadding)
+                .fillMaxWidth()
+                .height(150.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShimmerCard(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(150.dp),
+                shape = Shapes.CornerLarge
+            )
+            ShimmerCard(
+                modifier = Modifier
+                    .padding(top = 75.dp, start = Dimensions.MarginSm)
+                    .width(200.dp)
+                    .height(20.dp),
+                shape = Shapes.CornerLarge,
+            )
+        }
+        Column {
+            ShimmerCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(225.dp),
+                shape = Shapes.CornerNone
+            )
+            Spacer(modifier = Modifier.height(75.dp))
+            SpacerMd()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(.7f)
+                    .align(CenterHorizontally),
+            ) {
+                repeat(3) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .padding(horizontal = Dimensions.MarginSm)
+                            .weight(1f)
+                            .widthIn(100.dp)
+                            .height(15.dp),
+                        shape = Shapes.CornerLarge,
+                    )
+                }
+            }
+            SpacerLg()
+            Row(
+                modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
+                horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginMd)
+            ) {
+                repeat(3) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(20.dp),
+                        shape = Shapes.CornerSmall,
+                    )
+                }
+            }
+            SpacerLg()
+            Column(
+                modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.MarginXSm.times(2))
+            ) {
+                repeat(10) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .width((200..400).random().dp)
+                            .height(15.dp),
+                        shape = Shapes.CornerLarge,
+                    )
+                }
+            }
         }
     }
 }
@@ -446,6 +572,6 @@ fun ReviewCard(
 @Composable
 fun MovieScreenPreview() {
     TheMoviePreviewSurface {
-//        MovieScreen(Movie()        )
+//        MovieScreen(null, flowOf(PagingData.empty<Review>()).collectAsLazyPagingItems(), listOf(), false, { }, {})
     }
 }

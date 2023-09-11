@@ -84,7 +84,8 @@ private fun SearchScreen(
         contentAlignment = Alignment.Center,
     ) {
         PagingInitialLoader(pagingItems.loadState) {
-            if (searchText.isEmpty()) EmptyContent(imageId = R.drawable.ic_no_results,
+            if (searchText.isEmpty()) EmptyContent(
+                imageId = R.drawable.ic_no_results,
                 title = stringResource(R.string.find_your_movie_by),
                 subtitle = null,
                 modifier = Modifier.fillMaxWidth(.5f),
@@ -92,7 +93,8 @@ private fun SearchScreen(
                 onActionButtonClick = {
                     searchFocusRequester.requestFocus()
                     softwareKeyboardController?.show()
-                })
+                }
+            )
 //            else if (pagingItems.itemCount > 0) CircularProgressIndicator()
         }
     }

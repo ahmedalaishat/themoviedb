@@ -8,6 +8,6 @@ import kotlinx.serialization.Serializable
  * The Movie DB Project.
  */
 @Serializable
-class MovieRatingReq(
+data class MovieRatingReq(
     @SerialName("value") val value: Int
 )

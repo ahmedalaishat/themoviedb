@@ -3,7 +3,8 @@ package com.alaishat.ahmed.themoviedb.domain
 import androidx.paging.PagingData
 import androidx.paging.filter
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -19,11 +20,11 @@ import javax.inject.Inject
 private const val DEBOUNCE_TIMEOUT = 300L
 
 class GetWatchListUseCase @Inject constructor(
-    private val movieListRepository: MovieListRepository,
+    private val accountRepository: AccountRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     operator fun invoke(queryFlow: Flow<String>): Flow<PagingData<Movie>> {
-        val pagingFlow = movieListRepository.getWatchListPagingFlow()
+        val pagingFlow = accountRepository.getWatchListPagingFlow()
 
         return queryFlow
             .debounce(DEBOUNCE_TIMEOUT)

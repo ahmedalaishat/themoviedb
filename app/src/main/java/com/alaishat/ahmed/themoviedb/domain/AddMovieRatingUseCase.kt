@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.domain
 
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import javax.inject.Inject
 
 /**
@@ -8,8 +8,8 @@ import javax.inject.Inject
  * The Movie DB Project.
  */
 class AddMovieRatingUseCase @Inject constructor(
-    private val movieListRepository: MovieListRepository,
+    private val moviesRepository: MoviesRepository,
 ) {
     suspend operator fun invoke(movieId: Int, rating: Int) =
-        movieListRepository.addMovieRating(movieId = movieId, rating = rating)
+        moviesRepository.addMovieRating(movieId = movieId, rating = rating)
 }

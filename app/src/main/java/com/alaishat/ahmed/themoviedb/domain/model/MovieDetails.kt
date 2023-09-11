@@ -14,4 +14,5 @@ data class MovieDetails(
     val voteAverage: String,
     val genre: String?,
     val runtime: String,
+    val watchlist: Boolean,
 )
