@@ -1,10 +1,9 @@
 package com.alaishat.ahmed.themoviedb.domain
 
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 /**
@@ -12,10 +11,12 @@ import javax.inject.Inject
  * The Movie DB Project.
  */
 class GetMovieDetailsUseCase @Inject constructor(
-    private val movieListRepository: MovieListRepository,
+    private val moviesRepository: MoviesRepository,
 ) {
-    operator fun invoke(movieId: Int): Flow<MovieDetails> = flow {
-        val movie = movieListRepository.getMovieDetails(movieId = movieId)
-        emit(movie)
+    operator fun invoke(movieId: Int): Flow<MovieDetails> = combine(
+        moviesRepository.getMovieDetails(movieId = movieId),
+        moviesRepository.observeWatchlist()
+    ) { details, moviesStatus ->
+        details.copy(watchlist = moviesStatus.contains(details.id))
     }
 }

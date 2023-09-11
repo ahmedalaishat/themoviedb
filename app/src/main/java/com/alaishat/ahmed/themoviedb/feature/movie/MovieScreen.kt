@@ -2,6 +2,7 @@ package com.alaishat.ahmed.themoviedb.feature.movie
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -42,10 +44,14 @@ import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,6 +86,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.rememberDialogState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
+import com.alaishat.ahmed.themoviedb.ui.theme.AppRed
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
@@ -105,6 +112,7 @@ fun MovieRoute(
         credits = credits,
         rated = rated,
         onRateSubmit = viewModel::rateMovie,
+        onToggleWatchlist = viewModel::toggleWatchlist,
     )
 }
 
@@ -116,6 +124,7 @@ private fun MovieScreen(
     credits: List<Credit>?,
     rated: Boolean,
     onRateSubmit: (rating: Int) -> Unit,
+    onToggleWatchlist: (watchlist: Boolean) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -194,6 +203,18 @@ private fun MovieScreen(
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
+                Icon(
+                    modifier = Modifier
+                        .padding(top = Dimensions.MarginSm, end = Dimensions.MarginSm)
+                        .align(TopEnd)
+                        .alpha(.9f)
+                        .clickable {
+                            onToggleWatchlist(movie.watchlist.not())
+                        },
+                    painter = painterResource(id = R.drawable.ic_bookmark),
+                    contentDescription = null,
+                    tint = if (movie.watchlist) AppRed else Color.Unspecified
+                )
                 Row(
                     modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
                     verticalAlignment = Alignment.Bottom

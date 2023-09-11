@@ -1,11 +1,14 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.repository.MovieListRepositoryImpl
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.data.repository.AccountRepositoryImpl
+import com.alaishat.ahmed.themoviedb.data.repository.MoviesRepositoryImpl
+import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
@@ -16,7 +19,14 @@ import dagger.hilt.components.SingletonComponent
 interface RepositoryModule {
 
     @Binds
-    fun bindsMovieListRepository(
-        movieListRepository: MovieListRepositoryImpl,
-    ): MovieListRepository
+    @Singleton
+    fun bindsAccountRepository(
+        accountRepositoryImpl: AccountRepositoryImpl,
+    ): AccountRepository
+
+    @Binds
+    @Singleton
+    fun bindsMoviesRepository(
+        movieListRepository: MoviesRepositoryImpl,
+    ): MoviesRepository
 }

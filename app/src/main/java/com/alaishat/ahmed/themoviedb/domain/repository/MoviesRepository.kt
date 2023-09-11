@@ -12,13 +12,14 @@ import kotlinx.coroutines.flow.Flow
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-interface MovieListRepository : Repository {
+interface MoviesRepository : Repository {
 
     suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie>
     fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<Movie>>
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>>
-    fun getWatchListPagingFlow(): Flow<PagingData<Movie>>
-    suspend fun getMovieDetails(movieId: Int): MovieDetails
+    fun getMovieDetails(movieId: Int): Flow<MovieDetails>
+    suspend fun toggleCachedWatchlistMovie(movieId: Int, watchlist: Boolean)
+    fun observeWatchlist(): Flow<Set<Int>>
     fun getMovieReviews(movieId: Int): Flow<PagingData<Review>>
     suspend fun getMovieCredits(movieId: Int): List<Credit>
     suspend fun addMovieRating(movieId: Int, rating: Int)

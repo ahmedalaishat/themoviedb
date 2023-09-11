@@ -4,7 +4,7 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.model.Movie
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 private const val DEBOUNCE_TIMEOUT = 300L
 
 class SearchMovieUseCase @Inject constructor(
-    private val movieListRepository: MovieListRepository,
+    private val moviesRepository: MoviesRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     operator fun invoke(queryFlow: Flow<String>): Flow<PagingData<Movie>> {
@@ -38,7 +38,7 @@ class SearchMovieUseCase @Inject constructor(
             .debounce(DEBOUNCE_TIMEOUT)
             .flatMapLatest {
                 if (it.isEmpty()) flowOf(emptyPagingData)
-                else movieListRepository.getSearchMoviePagingFlow(it)
+                else moviesRepository.getSearchMoviePagingFlow(it)
                     .catch { emitAll(flowOf()) }
             }
     }

@@ -6,14 +6,14 @@ import com.alaishat.ahmed.themoviedb.domain.model.Movie
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.model.Review
-import com.alaishat.ahmed.themoviedb.domain.repository.MovieListRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-class FakeMovieListRepository : MovieListRepository {
+class FakeMoviesRepository : MoviesRepository {
     override suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie> {
         TODO("Not yet implemented")
     }
@@ -26,11 +26,15 @@ class FakeMovieListRepository : MovieListRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getWatchListPagingFlow(): Flow<PagingData<Movie>> {
+    override fun getMovieDetails(movieId: Int): Flow<MovieDetails> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getMovieDetails(movieId: Int): MovieDetails {
+    override suspend fun toggleCachedWatchlistMovie(movieId: Int, watchlist: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun observeWatchlist(): Flow<Set<Int>> {
         TODO("Not yet implemented")
     }
 

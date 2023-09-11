@@ -4,8 +4,9 @@ import com.alaishat.ahmed.themoviedb.data.model.NetworkCredit
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovie
 import com.alaishat.ahmed.themoviedb.data.model.NetworkMovieDetails
 import com.alaishat.ahmed.themoviedb.data.model.NetworkReview
-import com.alaishat.ahmed.themoviedb.data.source.network.NetworkMoviesDataSource
+import com.alaishat.ahmed.themoviedb.data.source.network.MoviesDataSource
 import com.alaishat.ahmed.themoviedb.network.KtorClient
+import com.alaishat.ahmed.themoviedb.network.model.MovieAccountStatusRes
 import com.alaishat.ahmed.themoviedb.network.model.MovieCreditsRes
 import com.alaishat.ahmed.themoviedb.network.model.MovieListRes
 import com.alaishat.ahmed.themoviedb.network.model.MovieRatingReq
@@ -23,7 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class KtorMoviesDataSource @Inject constructor(
     private val ktorClient: KtorClient,
-) : NetworkMoviesDataSource {
+) : MoviesDataSource {
 
     override suspend fun getMoviesPage(movieListPath: String, page: Int): List<NetworkMovie> {
         val res: MovieListRes = ktorClient.call {
@@ -35,13 +36,6 @@ class KtorMoviesDataSource @Inject constructor(
     override suspend fun searchMovie(query: String, page: Int): List<NetworkMovie> {
         val res: MovieListRes = ktorClient.call {
             get("search/movie?query=$query&page=$page")
-        }
-        return res.results
-    }
-
-    override suspend fun getWatchList(page: Int): List<NetworkMovie> {
-        val res: MovieListRes = ktorClient.call {
-            get("account/9712119/watchlist/movies?page=$page")
         }
         return res.results
     }
@@ -73,5 +67,12 @@ class KtorMoviesDataSource @Inject constructor(
                 setBody(body = MovieRatingReq(value = rating))
             }
         }
+    }
+
+    override suspend fun getMovieAccountStatus(movieId: Int): MovieAccountStatusRes {
+        val res: MovieAccountStatusRes = ktorClient.call {
+            get("movie/$movieId/account_states")
+        }
+        return res
     }
 }

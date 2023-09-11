@@ -37,5 +37,6 @@ fun NetworkMovieDetails.toMoviesDetails() = MovieDetails(
     runtime = "${runtime / 60}h ${runtime % 60}m",
     title = title,
     voteAverage = "%.1f".format(voteAverage),
-    genre = genres.firstOrNull()?.name
+    genre = genres.firstOrNull()?.name,
+    watchlist = false
 )
