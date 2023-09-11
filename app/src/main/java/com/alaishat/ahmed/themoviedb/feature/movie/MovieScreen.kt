@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -71,6 +73,7 @@ import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
+import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.TheMovieLoader
 import com.alaishat.ahmed.themoviedb.ui.common.imageRequest
 import com.alaishat.ahmed.themoviedb.ui.component.AppHorizontalPager
@@ -104,9 +107,9 @@ fun MovieRoute(
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
     val rated by viewModel.rated.collectAsStateWithLifecycle()
 
-    //AHMED_TODO: make me shimmer
-    if (movie == null) TheMovieLoader()
-    else MovieScreen(
+    if (movie == null) {
+        MovieDetailsShimmer()
+    } else MovieScreen(
         movie = movie!!,
         reviews = reviews,
         credits = credits,
@@ -484,10 +487,91 @@ fun ReviewCard(
     }
 }
 
+@Composable
+private fun MovieDetailsShimmer() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .padding(top = 150.dp, start = Dimensions.ScreenPadding)
+                .fillMaxWidth()
+                .height(150.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShimmerCard(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(150.dp),
+                shape = Shapes.CornerLarge
+            )
+            ShimmerCard(
+                modifier = Modifier
+                    .padding(top = 75.dp, start = Dimensions.MarginSm)
+                    .width(200.dp)
+                    .height(20.dp),
+                shape = Shapes.CornerLarge,
+            )
+        }
+        Column {
+            ShimmerCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(225.dp),
+                shape = Shapes.CornerNone
+            )
+            Spacer(modifier = Modifier.height(75.dp))
+            SpacerMd()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(.7f)
+                    .align(CenterHorizontally),
+            ) {
+                repeat(3) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .padding(horizontal = Dimensions.MarginSm)
+                            .weight(1f)
+                            .widthIn(100.dp)
+                            .height(15.dp),
+                        shape = Shapes.CornerLarge,
+                    )
+                }
+            }
+            SpacerLg()
+            Row(
+                modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
+                horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginMd)
+            ) {
+                repeat(3) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(20.dp),
+                        shape = Shapes.CornerSmall,
+                    )
+                }
+            }
+            SpacerLg()
+            Column(
+                modifier = Modifier.padding(horizontal = Dimensions.ScreenPadding),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.MarginXSm.times(2))
+            ) {
+                repeat(10) {
+                    ShimmerCard(
+                        modifier = Modifier
+                            .width((200..400).random().dp)
+                            .height(15.dp),
+                        shape = Shapes.CornerLarge,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @DevicePreviews
 @Composable
 fun MovieScreenPreview() {
     TheMoviePreviewSurface {
-//        MovieScreen(Movie()        )
+//        MovieScreen(null, flowOf(PagingData.empty<Review>()).collectAsLazyPagingItems(), listOf(), false, { }, {})
     }
 }
