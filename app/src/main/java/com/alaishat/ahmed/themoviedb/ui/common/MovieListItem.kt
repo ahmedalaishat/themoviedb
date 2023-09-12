@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 
 /**
@@ -24,7 +24,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
  */
 @Composable
 fun MovieListItem(
-    movie: Movie,
+    movieDomainModel: MovieDomainModel,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -32,7 +32,7 @@ fun MovieListItem(
         modifier = modifier,
     ) {
         MovieCard(
-            moviePosterPath = movie.posterPath,
+            moviePosterPath = movieDomainModel.posterPath,
             modifier = Modifier
                 .fillMaxHeight()
                 .aspectRatio(.8f, true),
@@ -43,18 +43,18 @@ fun MovieListItem(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = movie.title,
+                text = movieDomainModel.title,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium,
             )
             Column {
                 MovieInfo(
                     iconId = R.drawable.ic_star,
-                    text = movie.voteAverage,
+                    text = movieDomainModel.voteAverage,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 MovieInfo(iconId = R.drawable.ic_ticket, text = "Action")
-                MovieInfo(iconId = R.drawable.ic_calendar, text = movie.releaseDate)
+                MovieInfo(iconId = R.drawable.ic_calendar, text = movieDomainModel.releaseDate)
 //                MovieInfo(iconId = R.drawable.ic_clock, text = "139 minutes")
             }
         }

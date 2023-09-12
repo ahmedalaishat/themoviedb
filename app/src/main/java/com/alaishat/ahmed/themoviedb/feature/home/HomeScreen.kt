@@ -36,8 +36,8 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.common.HomeTab
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.architecture.HomeTab
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.movieCardsList
 import com.alaishat.ahmed.themoviedb.ui.common.topMoviesList
@@ -84,7 +84,7 @@ fun HomeRoute(
 private fun HomeScreen(
     topFiveMovies: MovieListUiState,
     onMovieClick: (movieId: Int) -> Unit,
-    tabsMap: Map<HomeTab, Flow<PagingData<Movie>>>,
+    tabsMap: Map<HomeTab, Flow<PagingData<MovieDomainModel>>>,
 ) {
     BoxWithConstraints {
         val screenHeight = maxHeight
@@ -174,7 +174,7 @@ private fun TopFiveMovies(
 
 @Composable
 fun HomePageContent(
-    pagingItems: LazyPagingItems<Movie>,
+    pagingItems: LazyPagingItems<MovieDomainModel>,
     onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {

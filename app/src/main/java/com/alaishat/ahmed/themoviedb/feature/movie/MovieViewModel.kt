@@ -2,12 +2,12 @@ package com.alaishat.ahmed.themoviedb.feature.movie
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.alaishat.ahmed.themoviedb.common.BaseViewModel
-import com.alaishat.ahmed.themoviedb.domain.AddMovieRatingUseCase
-import com.alaishat.ahmed.themoviedb.domain.GetMovieCreditsUseCase
-import com.alaishat.ahmed.themoviedb.domain.GetMovieDetailsUseCase
-import com.alaishat.ahmed.themoviedb.domain.GetMovieReviewsUseCase
-import com.alaishat.ahmed.themoviedb.domain.ToggleWatchlistMovieUseCase
+import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieReviewsUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.ToggleWatchlistMovieUseCase
 import com.alaishat.ahmed.themoviedb.feature.movie.navigation.MovieDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

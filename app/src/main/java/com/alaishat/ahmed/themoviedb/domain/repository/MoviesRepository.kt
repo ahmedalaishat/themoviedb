@@ -1,11 +1,11 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.domain.model.Credit
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
+import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
-import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,13 +14,13 @@ import kotlinx.coroutines.flow.Flow
  */
 interface MoviesRepository : Repository {
 
-    suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie>
-    fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<Movie>>
-    fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>>
-    fun getMovieDetails(movieId: Int): Flow<MovieDetails>
+    suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<MovieDomainModel>
+    fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<MovieDomainModel>>
+    fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
+    fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
     suspend fun toggleCachedWatchlistMovie(movieId: Int, watchlist: Boolean)
     fun observeWatchlist(): Flow<Set<Int>>
-    fun getMovieReviews(movieId: Int): Flow<PagingData<Review>>
-    suspend fun getMovieCredits(movieId: Int): List<Credit>
+    fun getMovieReviews(movieId: Int): Flow<PagingData<ReviewDomainModel>>
+    suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
 }

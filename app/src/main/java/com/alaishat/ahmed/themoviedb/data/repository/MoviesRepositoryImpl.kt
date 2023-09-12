@@ -3,21 +3,19 @@ package com.alaishat.ahmed.themoviedb.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.data.model.mapToCredits
+import com.alaishat.ahmed.themoviedb.data.model.mapToCreditsDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetails
+import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.ReviewsPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
-import com.alaishat.ahmed.themoviedb.data.source.network.MoviesDataSource
-import com.alaishat.ahmed.themoviedb.domain.model.Credit
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
+import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
-import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
-import io.ktor.client.utils.EmptyContent
-import io.ktor.client.utils.EmptyContent.status
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -45,12 +43,12 @@ class MoviesRepositoryImpl @Inject constructor(
             MovieListType.UPCOMING -> "upcoming"
         }
 
-    override suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<Movie> {
+    override suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<MovieDomainModel> {
         val movieListPath = getMovieListPathByType(movieListType)
         return moviesDataSource.getMoviesPage(movieListPath, page).mapToMovies()
     }
 
-    override fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<Movie>> {
+    override fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<MovieDomainModel>> {
         val movieListPath = getMovieListPathByType(movieListType)
         return Pager(
             config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
@@ -63,7 +61,7 @@ class MoviesRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<Movie>> {
+    override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>> {
         return Pager(
             config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
             pagingSourceFactory = {
@@ -75,12 +73,12 @@ class MoviesRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getMovieDetails(movieId: Int): Flow<MovieDetails> = flow {
+    override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> = flow {
         coroutineScope {
             val status = async { moviesDataSource.getMovieAccountStatus(movieId = movieId) }
             val movieDetails = async { moviesDataSource.getMovieDetails(movieId = movieId) }
             toggleCachedWatchlistMovie(movieId = movieId, watchlist = status.await().watchlist)
-            emit(movieDetails.await().toMoviesDetails())
+            emit(movieDetails.await().toMoviesDetailsDomainModel())
         }
     }
 
@@ -95,7 +93,7 @@ class MoviesRepositoryImpl @Inject constructor(
         return watchlistSet
     }
 
-    override fun getMovieReviews(movieId: Int): Flow<PagingData<Review>> {
+    override fun getMovieReviews(movieId: Int): Flow<PagingData<ReviewDomainModel>> {
         return Pager(
             config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
             pagingSourceFactory = {
@@ -107,8 +105,8 @@ class MoviesRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getMovieCredits(movieId: Int): List<Credit> {
-        return moviesDataSource.getMovieCredits(movieId = movieId).mapToCredits()
+    override suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel> {
+        return moviesDataSource.getMovieCredits(movieId = movieId).mapToCreditsDomainModels()
     }
 
     override suspend fun addMovieRating(movieId: Int, rating: Int) {

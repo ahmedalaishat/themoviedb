@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
  * The Movie DB Project.
  */
 interface AccountRepository : Repository {
-    fun getWatchListPagingFlow(): Flow<PagingData<Movie>>
+    fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>>
     suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean)
 }

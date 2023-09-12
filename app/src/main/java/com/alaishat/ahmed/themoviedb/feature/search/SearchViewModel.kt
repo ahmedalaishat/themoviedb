@@ -2,11 +2,8 @@ package com.alaishat.ahmed.themoviedb.feature.search
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.alaishat.ahmed.themoviedb.common.BaseViewModel
-import com.alaishat.ahmed.themoviedb.common.result.Result
-import com.alaishat.ahmed.themoviedb.common.usermessage.UserMessage
-import com.alaishat.ahmed.themoviedb.domain.SearchMovieUseCase
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.domain.usecase.SearchMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

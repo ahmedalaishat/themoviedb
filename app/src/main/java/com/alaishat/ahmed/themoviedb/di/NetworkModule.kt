@@ -1,9 +1,9 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.source.network.AccountDataSource
-import com.alaishat.ahmed.themoviedb.data.source.network.MoviesDataSource
-import com.alaishat.ahmed.themoviedb.network.datasource.KtorAccountDataSource
-import com.alaishat.ahmed.themoviedb.network.datasource.KtorMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.AccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource.KtorAccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.KtorMoviesDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

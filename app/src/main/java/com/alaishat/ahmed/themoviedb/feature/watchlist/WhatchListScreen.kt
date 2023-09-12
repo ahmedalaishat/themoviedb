@@ -23,7 +23,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
@@ -59,7 +59,7 @@ fun WatchListRoute(
 @Composable
 private fun WatchListScreen(
     searchText: String,
-    pagingItems: LazyPagingItems<Movie>,
+    pagingItems: LazyPagingItems<MovieDomainModel>,
     onSearchTextChange: (String) -> Unit,
     onMovieClick: (movieId: Int) -> Unit,
 ) {
@@ -130,7 +130,7 @@ private fun WatchListScreenPreview() {
     TheMoviePreviewSurface {
         WatchListScreen(
             searchText = "",
-            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
+            pagingItems = flowOf(PagingData.empty<MovieDomainModel>()).collectAsLazyPagingItems(),
             onSearchTextChange = { },
             onMovieClick = { },
         )

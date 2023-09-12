@@ -65,9 +65,9 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Credit
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetails
-import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
@@ -112,7 +112,7 @@ fun MovieRoute(
     } else MovieScreen(
         movie = movie!!,
         reviews = reviews,
-        credits = credits,
+        creditDomainModels = credits,
         rated = rated,
         onRateSubmit = viewModel::rateMovie,
         onToggleWatchlist = viewModel::toggleWatchlist,
@@ -122,9 +122,9 @@ fun MovieRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MovieScreen(
-    movie: MovieDetails,
-    reviews: LazyPagingItems<Review>,
-    credits: List<Credit>?,
+    movie: MovieDetailsDomainModel,
+    reviews: LazyPagingItems<ReviewDomainModel>,
+    creditDomainModels: List<CreditDomainModel>?,
     rated: Boolean,
     onRateSubmit: (rating: Int) -> Unit,
     onToggleWatchlist: (watchlist: Boolean) -> Unit,
@@ -299,7 +299,7 @@ private fun MovieScreen(
                     )
 
                     2 -> CastTab(
-                        credits = credits,
+                        creditDomainModels = creditDomainModels,
                         modifier = tabModifier,
                     )
                 }
@@ -333,7 +333,7 @@ private fun AboutMovieTab(
 
 @Composable
 private fun ReviewsTab(
-    pagingReviews: LazyPagingItems<Review>,
+    pagingReviews: LazyPagingItems<ReviewDomainModel>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -369,13 +369,13 @@ private fun ReviewsTab(
 
 @Composable
 private fun CastTab(
-    credits: List<Credit>?,
+    creditDomainModels: List<CreditDomainModel>?,
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()
 
     //AHMED_TODO: make me shimmer
-    if (credits == null) return TheMovieLoader()
+    if (creditDomainModels == null) return TheMovieLoader()
 
     LazyVerticalGrid(
         state = lazyGridState,
@@ -386,7 +386,7 @@ private fun CastTab(
         modifier = modifier.fillMaxWidth(),
     ) {
         actors(
-            credits = credits,
+            creditDomainModels = creditDomainModels,
             actorModifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(.9f)
@@ -396,18 +396,18 @@ private fun CastTab(
 
 
 private fun LazyGridScope.actors(
-    credits: List<Credit>,
+    creditDomainModels: List<CreditDomainModel>,
     actorModifier: Modifier = Modifier,
 ) {
-    items(items = credits, key = Credit::id) { credit ->
-        ActorCard(credit = credit, modifier = actorModifier)
+    items(items = creditDomainModels, key = CreditDomainModel::id) { credit ->
+        ActorCard(creditDomainModel = credit, modifier = actorModifier)
     }
 }
 
 
 @Composable
 fun ActorCard(
-    credit: Credit,
+    creditDomainModel: CreditDomainModel,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -420,14 +420,14 @@ fun ActorCard(
                 .aspectRatio(1f)
                 .clip(CornerFull),
             model = imageRequest(
-                data = credit.profilePath?.let { "$AVATAR_BASE_URL${it}" }
+                data = creditDomainModel.profilePath?.let { "$AVATAR_BASE_URL${it}" }
                     ?: R.drawable.alt_avatar
             ),
-            contentDescription = credit.name,
+            contentDescription = creditDomainModel.name,
         )
         Text(
             modifier = Modifier.align(BottomCenter),
-            text = credit.name,
+            text = creditDomainModel.name,
             maxLines = 2,
             minLines = 2,
             textAlign = TextAlign.Center,
@@ -438,20 +438,20 @@ fun ActorCard(
 
 
 private fun LazyListScope.reviews(
-    reviews: LazyPagingItems<Review>,
+    reviews: LazyPagingItems<ReviewDomainModel>,
     reviewModifier: Modifier = Modifier,
 ) = items(
     count = reviews.itemCount,
-    key = reviews.itemKey(Review::id),
+    key = reviews.itemKey(ReviewDomainModel::id),
     itemContent = { index ->
-        ReviewCard(review = reviews[index]!!, modifier = reviewModifier)
+        ReviewCard(reviewDomainModel = reviews[index]!!, modifier = reviewModifier)
     },
 )
 
 
 @Composable
 fun ReviewCard(
-    review: Review,
+    reviewDomainModel: ReviewDomainModel,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -465,24 +465,24 @@ fun ReviewCard(
                     .size(44.dp)
                     .clip(CornerFull),
                 model = imageRequest(
-                    data = review.authorAvatarPath?.let { "$AVATAR_BASE_URL${it}" }
+                    data = reviewDomainModel.authorAvatarPath?.let { "$AVATAR_BASE_URL${it}" }
                         ?: R.drawable.alt_avatar
                 ),
-                contentDescription = review.authorName,
+                contentDescription = reviewDomainModel.authorName,
             )
             SpacerMd()
-            if (review.rating != null)
+            if (reviewDomainModel.rating != null)
                 Text(
-                    text = review.rating,
+                    text = reviewDomainModel.rating,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium
                 )
         }
         SpacerSm()
         Column {
-            Text(text = review.authorName, style = MaterialTheme.typography.titleSmall)
+            Text(text = reviewDomainModel.authorName, style = MaterialTheme.typography.titleSmall)
             SpacerSm()
-            ExpandingText(text = review.content)
+            ExpandingText(text = reviewDomainModel.content)
         }
     }
 }

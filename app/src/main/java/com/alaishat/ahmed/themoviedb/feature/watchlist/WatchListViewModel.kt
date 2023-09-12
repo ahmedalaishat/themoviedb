@@ -2,8 +2,8 @@ package com.alaishat.ahmed.themoviedb.feature.watchlist
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.alaishat.ahmed.themoviedb.common.BaseViewModel
-import com.alaishat.ahmed.themoviedb.domain.GetWatchListUseCase
+import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetWatchListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

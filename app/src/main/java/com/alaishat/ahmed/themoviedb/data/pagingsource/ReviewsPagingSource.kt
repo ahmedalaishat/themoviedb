@@ -2,9 +2,9 @@ package com.alaishat.ahmed.themoviedb.data.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.alaishat.ahmed.themoviedb.data.model.mapToReviews
-import com.alaishat.ahmed.themoviedb.data.source.network.MoviesDataSource
-import com.alaishat.ahmed.themoviedb.domain.model.Review
+import com.alaishat.ahmed.themoviedb.data.model.mapToReviewsDataModels
+import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.
@@ -13,19 +13,19 @@ import com.alaishat.ahmed.themoviedb.domain.model.Review
 class ReviewsPagingSource(
     private val moviesDataSource: MoviesDataSource,
     private val movieId: Int,
-) : PagingSource<Int, Review>() {
-    override fun getRefreshKey(state: PagingState<Int, Review>): Int? {
+) : PagingSource<Int, ReviewDomainModel>() {
+    override fun getRefreshKey(state: PagingState<Int, ReviewDomainModel>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Review> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ReviewDomainModel> {
         return try {
             val page = params.key ?: 1
             // calling the paging api
-            val fetchedMovies = moviesDataSource.getMovieReviews(movieId, page).mapToReviews()
+            val fetchedMovies = moviesDataSource.getMovieReviews(movieId, page).mapToReviewsDataModels()
 
             LoadResult.Page(
                 data = fetchedMovies,
