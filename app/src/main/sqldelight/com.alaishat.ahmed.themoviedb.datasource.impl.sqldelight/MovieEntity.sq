@@ -1,0 +1,16 @@
+import java.lang.String;
+import java.util.List;
+
+CREATE TABLE MovieEntity (
+  id INTEGER PRIMARY KEY NOT NULL,
+  title TEXT NOT NULL,
+  backdropPath TEXT NOT NULL,
+  posterPath TEXT NOT NULL,
+  overview TEXT NOT NULL,
+  voteAverage REAL NOT NULL,
+  releaseDate Text NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM MovieEntity;

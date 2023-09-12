@@ -10,11 +10,12 @@ import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.ReviewsPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
@@ -23,7 +24,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -33,7 +36,8 @@ import javax.inject.Inject
 const val DEFAULT_PAGE_SIZE = 20
 
 class MoviesRepositoryImpl @Inject constructor(
-    private val moviesDataSource: MoviesDataSource,
+    private val remoteMoviesDataSource: RemoteMoviesDataSource,
+    private val localMoviesDataSource: LocalMoviesDataSource,
 ) : MoviesRepository {
     private val watchlistSet = MutableStateFlow(setOf<Int>())
 
@@ -47,7 +51,7 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<MovieDomainModel> {
         val movieListPath = getMovieListPathByType(movieListType)
-        return moviesDataSource.getMoviesPage(movieListPath, page).mapToMovies()
+        return remoteMoviesDataSource.getMoviesPage(movieListPath, page).mapToMovies()
     }
 
     override fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<MovieDomainModel>> {
@@ -57,7 +61,7 @@ class MoviesRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 MoviesPagingSource(
                     movieListPath = movieListPath,
-                    moviesDataSource = moviesDataSource,
+                    remoteMoviesDataSource = remoteMoviesDataSource,
                 )
             }
         ).flow
@@ -69,7 +73,7 @@ class MoviesRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 SearchPagingSource(
                     query = query,
-                    moviesDataSource = moviesDataSource,
+                    remoteMoviesDataSource = remoteMoviesDataSource,
                 )
             }
         ).flow
@@ -77,8 +81,8 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> = flow {
         coroutineScope {
-            val status = async { moviesDataSource.getMovieAccountStatus(movieId = movieId) }
-            val movieDetails = async { moviesDataSource.getMovieDetails(movieId = movieId) }
+            val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
+            val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
             toggleCachedWatchlistMovie(movieId = movieId, watchlist = status.await().watchlist)
             emit(movieDetails.await().toMoviesDetailsDomainModel())
         }
@@ -101,21 +105,29 @@ class MoviesRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 ReviewsPagingSource(
                     movieId = movieId,
-                    moviesDataSource = moviesDataSource,
+                    remoteMoviesDataSource = remoteMoviesDataSource,
                 )
             }
         ).flow
     }
 
     override suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel> {
-        return moviesDataSource.getMovieCredits(movieId = movieId).mapToCreditsDomainModels()
+        return remoteMoviesDataSource.getMovieCredits(movieId = movieId).mapToCreditsDomainModels()
     }
 
     override suspend fun addMovieRating(movieId: Int, rating: Int) {
-        return moviesDataSource.addMovieRating(movieId = movieId, rating = rating)
+        return remoteMoviesDataSource.addMovieRating(movieId = movieId, rating = rating)
     }
 
-    override suspend fun getMovieGenreList(): List<GenreDomainModel> {
-        return moviesDataSource.getMovieGenreList().mapToGenresDomainModels()
+    override fun getMovieGenreList(): Flow<List<GenreDomainModel>> {
+        return localMoviesDataSource.getMovieGenreList().map { it.mapToGenresDomainModels() }
+    }
+
+    //AHMED_TODO: refactor me
+    override suspend fun syncGenres(): Boolean {
+        val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList()
+        localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
+        Timber.e("Syncedd")
+        return true
     }
 }

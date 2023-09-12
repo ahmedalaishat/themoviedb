@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.data.pagingsource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 
 /**
@@ -11,7 +11,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
  * The Movie DB Project.
  */
 class SearchPagingSource(
-    private val moviesDataSource: MoviesDataSource,
+    private val remoteMoviesDataSource: RemoteMoviesDataSource,
     private val query: String,
 ) : PagingSource<Int, MovieDomainModel>() {
     override fun getRefreshKey(state: PagingState<Int, MovieDomainModel>): Int? {
@@ -25,7 +25,7 @@ class SearchPagingSource(
         return try {
             val page = params.key ?: 1
             // calling the paging api
-            val fetchedMovies = moviesDataSource.searchMovie(query, page).mapToMovies()
+            val fetchedMovies = remoteMoviesDataSource.searchMovie(query, page).mapToMovies()
 
             LoadResult.Page(
                 data = fetchedMovies,

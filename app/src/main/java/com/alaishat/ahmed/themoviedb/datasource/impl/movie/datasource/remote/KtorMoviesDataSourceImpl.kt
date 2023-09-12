@@ -1,19 +1,17 @@
-package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource
+package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote
 
-import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
-import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
-import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
-import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieAccountStatus
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieCreditsRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieGenreListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieRatingReq
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieReviewsRes
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieAccountStatus
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieDetails
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToCreditsDataModels
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToGenresDataModels
@@ -21,10 +19,11 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToMoviesData
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToReviewsDataModels
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMoviesDetailsDataModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,9 +32,9 @@ import javax.inject.Singleton
  * The Movie DB Project.
  */
 @Singleton
-class KtorMoviesDataSource @Inject constructor(
+class KtorMoviesDataSourceImpl @Inject constructor(
     private val ktorClient: KtorClient,
-) : MoviesDataSource {
+) : RemoteMoviesDataSource {
 
     override suspend fun getMoviesPage(movieListPath: String, page: Int): List<MovieDataModel> {
         val res: MovieListRes = ktorClient.call {

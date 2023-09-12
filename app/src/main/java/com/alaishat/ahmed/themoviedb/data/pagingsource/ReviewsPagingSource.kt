@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.data.pagingsource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.alaishat.ahmed.themoviedb.data.model.mapToReviewsDataModels
-import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 
 /**
@@ -11,7 +11,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
  * The Movie DB Project.
  */
 class ReviewsPagingSource(
-    private val moviesDataSource: MoviesDataSource,
+    private val remoteMoviesDataSource: RemoteMoviesDataSource,
     private val movieId: Int,
 ) : PagingSource<Int, ReviewDomainModel>() {
     override fun getRefreshKey(state: PagingState<Int, ReviewDomainModel>): Int? {
@@ -25,7 +25,7 @@ class ReviewsPagingSource(
         return try {
             val page = params.key ?: 1
             // calling the paging api
-            val fetchedMovies = moviesDataSource.getMovieReviews(movieId, page).mapToReviewsDataModels()
+            val fetchedMovies = remoteMoviesDataSource.getMovieReviews(movieId, page).mapToReviewsDataModels()
 
             LoadResult.Page(
                 data = fetchedMovies,

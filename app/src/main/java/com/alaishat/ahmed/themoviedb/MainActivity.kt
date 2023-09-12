@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     .collect()
             }
         }
+        viewModel.sync()
 
         // Keep the splash screen on-screen until the UI state is loaded. This condition is
         // evaluated each time the app needs to be redrawn so it should be fast to avoid blocking
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition {
             when (uiState) {
                 MainActivityUiState.Loading -> true
-                is MainActivityUiState.Success -> false
+                is MainActivityUiState.Success -> (uiState as MainActivityUiState.Success).genres.isEmpty()
             }
         }
 

@@ -24,5 +24,6 @@ interface MoviesRepository : Repository {
     fun getMovieReviews(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
-    suspend fun getMovieGenreList(): List<GenreDomainModel>
+    fun getMovieGenreList(): Flow<List<GenreDomainModel>>
+    suspend fun syncGenres(): Boolean
 }

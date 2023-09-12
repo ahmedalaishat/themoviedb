@@ -11,7 +11,7 @@ import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-interface MoviesDataSource {
+interface RemoteMoviesDataSource {
     suspend fun getMoviesPage(movieListPath: String, page: Int): List<MovieDataModel>
     suspend fun searchMovie(query: String, page: Int): List<MovieDataModel>
     suspend fun getMovieDetails(movieId: Int): MovieDetailsDataModel

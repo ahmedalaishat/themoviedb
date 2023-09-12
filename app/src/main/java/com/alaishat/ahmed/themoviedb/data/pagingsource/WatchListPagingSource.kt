@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.data.pagingsource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
-import com.alaishat.ahmed.themoviedb.datasource.source.network.AccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 
 /**
@@ -11,7 +11,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
  * The Movie DB Project.
  */
 class WatchListPagingSource(
-    private val accountDataSource: AccountDataSource,
+    private val remoteAccountDataSource: RemoteAccountDataSource,
 ) : PagingSource<Int, MovieDomainModel>() {
     override fun getRefreshKey(state: PagingState<Int, MovieDomainModel>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -24,7 +24,7 @@ class WatchListPagingSource(
         return try {
             val page = params.key ?: 1
             // calling the paging api
-            val fetchedMovies = accountDataSource.getWatchList(page).mapToMovies()
+            val fetchedMovies = remoteAccountDataSource.getWatchList(page).mapToMovies()
 
             LoadResult.Page(
                 data = fetchedMovies,

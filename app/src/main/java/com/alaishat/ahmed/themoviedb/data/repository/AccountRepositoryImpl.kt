@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.pagingsource.WatchListPagingSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.AccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +15,7 @@ import javax.inject.Inject
  * The Movie DB Project.
  */
 class AccountRepositoryImpl @Inject constructor(
-    private val accountDataSource: AccountDataSource,
+    private val remoteAccountDataSource: RemoteAccountDataSource,
 ) : AccountRepository {
 
     override fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>> {
@@ -23,13 +23,13 @@ class AccountRepositoryImpl @Inject constructor(
             config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
             pagingSourceFactory = {
                 WatchListPagingSource(
-                    accountDataSource = accountDataSource,
+                    remoteAccountDataSource = remoteAccountDataSource,
                 )
             }
         ).flow
     }
 
     override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) {
-        accountDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
+        remoteAccountDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
     }
 }

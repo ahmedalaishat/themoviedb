@@ -1,7 +1,7 @@
-package com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource
+package com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource.remote
 
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
-import com.alaishat.ahmed.themoviedb.datasource.source.network.AccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.ToggleWatchlistMovieReq
@@ -21,7 +21,7 @@ const val ACCOUNT_ID = 9712119
 @Singleton
 class KtorAccountDataSource @Inject constructor(
     private val ktorClient: KtorClient,
-) : AccountDataSource {
+) : RemoteAccountDataSource {
 
     override suspend fun getWatchList(page: Int): List<MovieDataModel> {
         val res: MovieListRes = ktorClient.call {
