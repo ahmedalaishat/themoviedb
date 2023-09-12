@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.mapToCreditsDomainModels
+import com.alaishat.ahmed.themoviedb.data.model.mapToGenresDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
 import com.alaishat.ahmed.themoviedb.data.model.toMoviesDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.data.pagingsource.MoviesPagingSource
@@ -11,6 +12,7 @@ import com.alaishat.ahmed.themoviedb.data.pagingsource.ReviewsPagingSource
 import com.alaishat.ahmed.themoviedb.data.pagingsource.SearchPagingSource
 import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
@@ -111,5 +113,9 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieRating(movieId: Int, rating: Int) {
         return moviesDataSource.addMovieRating(movieId = movieId, rating = rating)
+    }
+
+    override suspend fun getMovieGenreList(): List<GenreDomainModel> {
+        return moviesDataSource.getMovieGenreList().mapToGenresDomainModels()
     }
 }

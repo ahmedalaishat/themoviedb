@@ -2,6 +2,7 @@ package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource
 
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
+import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
@@ -9,11 +10,13 @@ import com.alaishat.ahmed.themoviedb.datasource.source.network.MoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieAccountStatus
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieCreditsRes
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieGenreListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieRatingReq
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieReviewsRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieDetails
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToCreditsDataModels
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToGenresDataModels
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToMoviesDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToReviewsDataModels
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMovieAccountStatusDataModel
@@ -81,5 +84,12 @@ class KtorMoviesDataSource @Inject constructor(
             get("movie/$movieId/account_states")
         }
         return res.toMovieAccountStatusDataModel()
+    }
+
+    override suspend fun getMovieGenreList(): List<GenreDataModel> {
+        val res: MovieGenreListRes = ktorClient.call {
+            get("genre/movie/list")
+        }
+        return res.genres.mapToGenresDataModels()
     }
 }

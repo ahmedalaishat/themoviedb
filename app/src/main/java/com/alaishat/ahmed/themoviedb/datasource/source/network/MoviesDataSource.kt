@@ -1,7 +1,8 @@
 package com.alaishat.ahmed.themoviedb.datasource.source.network
 
-import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
+import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
@@ -18,4 +19,5 @@ interface MoviesDataSource {
     suspend fun getMovieReviews(movieId: Int, page: Int): List<ReviewDataModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
     suspend fun getMovieAccountStatus(movieId: Int): MovieAccountStatusDataModel
+    suspend fun getMovieGenreList(): List<GenreDataModel>
 }
