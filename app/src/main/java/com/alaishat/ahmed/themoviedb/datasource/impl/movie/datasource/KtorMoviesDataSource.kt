@@ -24,6 +24,7 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMoviesDetails
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 

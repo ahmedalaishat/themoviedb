@@ -1,6 +1,7 @@
 package com.alaishat.ahmed.themoviedb.domain.usecase
 
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -10,5 +11,7 @@ import javax.inject.Inject
 class GetMovieGenreListUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
-    suspend operator fun invoke() = moviesRepository.getMovieGenreList()
+    operator fun invoke() = flow {
+        emit(moviesRepository.getMovieGenreList())
+    }
 }
