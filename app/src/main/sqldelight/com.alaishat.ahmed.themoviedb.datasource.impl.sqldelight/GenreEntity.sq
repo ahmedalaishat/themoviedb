@@ -1,5 +1,5 @@
 CREATE TABLE GenreEntity (
-  id INTEGER PRIMARY KEY NOT NULL,
+  genreId INTEGER PRIMARY KEY NOT NULL,
   name TEXT NOT NULL
 );
 
@@ -9,11 +9,11 @@ FROM GenreEntity;
 
 
 insert:
-INSERT INTO GenreEntity(id, name)
+INSERT INTO GenreEntity(genreId, name)
 VALUES (?, ?);
 
 insertFullGenreObject:
-INSERT INTO GenreEntity(id, name)
+INSERT INTO GenreEntity(genreId, name)
 VALUES ?;
 
 

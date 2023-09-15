@@ -1,8 +1,5 @@
-import java.lang.String;
-import java.util.List;
-
 CREATE TABLE MovieEntity (
-  id INTEGER PRIMARY KEY NOT NULL,
+  movieId INTEGER PRIMARY KEY NOT NULL,
   title TEXT NOT NULL,
   backdropPath TEXT NOT NULL,
   posterPath TEXT NOT NULL,
@@ -14,3 +11,18 @@ CREATE TABLE MovieEntity (
 selectAll:
 SELECT *
 FROM MovieEntity;
+
+selelctMovieById:
+SELECT m.*, md.*, g.name
+FROM MovieEntity AS m
+JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
+JOIN GenreEntity AS g ON gm.genreId = g.genreId
+JOIN MovieDetailsEntity AS md ON md.movieId = m.movieId
+WHERE m.movieId = ?;
+
+selectAllMovies:
+SELECT m.*, GROUP_CONCAT(ge.genreId, ', ') AS genres
+FROM MovieEntity AS m
+LEFT JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
+LEFT JOIN GenreEntity AS ge ON gm.genreId = ge.genreId
+GROUP BY m.movieId;

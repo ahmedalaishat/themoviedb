@@ -9,7 +9,7 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
  */
 fun MovieEntity.toMovieDataModel() = MovieDataModel(
     backdropPath = backdropPath,
-    id = id.toInt(),
+    id = movieId.toInt(),
     overview = overview,
     posterPath = posterPath,
     releaseDate = releaseDate,

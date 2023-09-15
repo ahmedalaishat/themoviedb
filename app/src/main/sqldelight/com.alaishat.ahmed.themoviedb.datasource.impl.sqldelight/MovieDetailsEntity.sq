@@ -1,0 +1,5 @@
+CREATE TABLE MovieDetailsEntity (
+  movieId INTEGER PRIMARY KEY NOT NULL,
+  runtime INTEGER NOT NULL,
+  FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId)
+);

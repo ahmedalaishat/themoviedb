@@ -1,0 +1,4 @@
+CREATE TABLE AuthorEntity (
+  username TEXT PRIMARY KEY NOT NULL,
+  avatarPath TEXT
+);

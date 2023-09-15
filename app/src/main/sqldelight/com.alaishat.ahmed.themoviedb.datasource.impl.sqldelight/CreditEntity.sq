@@ -1,0 +1,7 @@
+CREATE TABLE CreditEntity (
+  creditId INTEGER PRIMARY KEY NOT NULL,
+  movieId INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  profilePath TEXT NOT NULL,
+  FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId)
+);

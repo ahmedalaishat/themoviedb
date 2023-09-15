@@ -1,0 +1,18 @@
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListType;
+import kotlin.Int;
+import kotlin.collections.List;
+
+CREATE TABLE MovieListEntity (
+  type TEXT AS MovieListType PRIMARY KEY NOT NULL,
+  movies TEXT AS List<Int>
+);
+
+selectall:
+SELECT * FROM MovieListEntity;
+
+
+insert:
+INSERT INTO MovieListEntity(type, movies)
+VALUES (?, ?);
+
+

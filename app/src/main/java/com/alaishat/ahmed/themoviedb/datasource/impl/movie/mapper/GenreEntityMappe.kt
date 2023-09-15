@@ -8,7 +8,7 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntity
  * The Movie DB Project.
  */
 fun GenreEntity.toGenreDataModel() = GenreDataModel(
-    id = id.toInt(),
+    id = genreId.toInt(),
     name = name,
 )
 
@@ -16,6 +16,6 @@ fun List<GenreEntity>.mapToGenreDataModel() = map(GenreEntity::toGenreDataModel)
 
 
 fun GenreDataModel.asEntity() = GenreEntity(
-    id = id.toLong(),
+    genreId = id.toLong(),
     name = name,
 )

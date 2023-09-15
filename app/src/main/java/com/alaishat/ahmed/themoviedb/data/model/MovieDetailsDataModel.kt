@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.data.model
+ package com.alaishat.ahmed.themoviedb.data.model
 
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
 
