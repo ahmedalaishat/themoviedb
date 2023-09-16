@@ -1,14 +1,19 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote
 
+import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.CacheablePagingSource
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.NormalPagingSource
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieCreditsRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieGenreListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieRatingReq
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieReviewsRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.NetworkMovieAccountStatus
@@ -24,6 +29,7 @@ import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataS
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,15 +38,34 @@ import javax.inject.Singleton
  * The Movie DB Project.
  */
 @Singleton
-class KtorMoviesDataSourceImpl @Inject constructor(
+class KtorMoviesDataSource @Inject constructor(
     private val ktorClient: KtorClient,
 ) : RemoteMoviesDataSource {
 
-    override suspend fun getMoviesPage(movieListPath: String, page: Int): List<MovieDataModel> {
+    override suspend fun getMoviesPage(
+        movieListTypeDataModel: MovieListTypeDataModel,
+        page: Int
+    ): List<MovieDataModel> {
         val res: MovieListRes = ktorClient.call {
-            get("movie/$movieListPath?page=$page&without_keywords=158718")
+            get("movie/${movieListTypeDataModel.listApiPath}?page=$page")
+//            &without_keywords=158718
         }
         return res.results.mapToMoviesDataModel()
+    }
+
+    override fun getCacheableMoviesPagingFlow(
+        movieListTypeDataModel: MovieListTypeDataModel,
+        pageCachingHandler: suspend (page: Int, pageData: List<MovieDataModel>) -> Unit
+    ): Flow<PagingData<MovieDataModel>> {
+        val pager = defaultPagerOf(
+            pagingSource = CacheablePagingSource(
+                pageDataProvider = { page ->
+                    getMoviesPage(movieListTypeDataModel = movieListTypeDataModel, page = page)
+                },
+                pageCachingHandler = pageCachingHandler,
+            )
+        )
+        return pager.flow
     }
 
     override suspend fun searchMovie(query: String, page: Int): List<MovieDataModel> {
@@ -48,6 +73,17 @@ class KtorMoviesDataSourceImpl @Inject constructor(
             get("search/movie?query=$query&page=$page")
         }
         return res.results.mapToMoviesDataModel()
+    }
+
+    override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDataModel>> {
+        val pager = defaultPagerOf(
+            pagingSource = NormalPagingSource(
+                pageDataProvider = { page ->
+                    searchMovie(query, page)
+                },
+            )
+        )
+        return pager.flow
     }
 
     override suspend fun getMovieDetails(movieId: Int): MovieDetailsDataModel {
@@ -69,6 +105,20 @@ class KtorMoviesDataSourceImpl @Inject constructor(
             get("movie/$movieId/reviews?page=$page")
         }
         return res.reviews.mapToReviewsDataModels()
+    }
+
+    override fun getMovieReviewsPagingFlow(
+        movieId: Int,
+        pageCachingHandler: suspend (page: Int, pageData: List<ReviewDataModel>) -> Unit
+    ): Flow<PagingData<ReviewDataModel>> {
+        return defaultPagerOf(
+            pagingSource = CacheablePagingSource(
+                pageDataProvider = { page ->
+                    getMovieReviews(movieId = movieId, page = page)
+                },
+                pageCachingHandler = pageCachingHandler
+            )
+        ).flow
     }
 
     override suspend fun addMovieRating(movieId: Int, rating: Int) {

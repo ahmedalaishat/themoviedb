@@ -1,8 +1,8 @@
 CREATE TABLE MovieEntity (
   movieId INTEGER PRIMARY KEY NOT NULL,
   title TEXT NOT NULL,
-  backdropPath TEXT NOT NULL,
-  posterPath TEXT NOT NULL,
+  backdropPath TEXT,
+  posterPath TEXT,
   overview TEXT NOT NULL,
   voteAverage REAL NOT NULL,
   releaseDate Text NOT NULL
@@ -12,11 +12,12 @@ selectAll:
 SELECT *
 FROM MovieEntity;
 
-selelctMovieById:
-SELECT m.*, md.*, g.name
+selectMovieWithDetailsById:
+SELECT m.*, md.*, g.*
 FROM MovieEntity AS m
 JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
 JOIN GenreEntity AS g ON gm.genreId = g.genreId
+JOIN CreditEntity AS c ON m.movieId == c.movieId
 JOIN MovieDetailsEntity AS md ON md.movieId = m.movieId
 WHERE m.movieId = ?;
 
@@ -26,3 +27,20 @@ FROM MovieEntity AS m
 LEFT JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
 LEFT JOIN GenreEntity AS ge ON gm.genreId = ge.genreId
 GROUP BY m.movieId;
+
+selectMoviesCountByType:
+SELECT count(*)
+FROM MovieEntity
+JOIN TypeMovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?;
+
+selectMoviesByType:
+SELECT MovieEntity.*
+FROM TypeMovieEntity
+JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?
+LIMIT :limit OFFSET :offset;
+
+upsertMovie:
+INSERT OR REPLACE INTO MovieEntity(movieId, title,backdropPath,posterPath,overview,voteAverage,releaseDate)
+VALUES ?;

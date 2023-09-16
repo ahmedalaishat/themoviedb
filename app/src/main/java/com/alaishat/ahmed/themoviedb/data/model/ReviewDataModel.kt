@@ -20,4 +20,4 @@ fun ReviewDataModel.toReviewDomainModel() = ReviewDomainModel(
     rating = authorDetailsDataModel.rating?.let { "%.1f".format(it) },
 )
 
-fun List<ReviewDataModel>.mapToReviewsDataModels() = map(ReviewDataModel::toReviewDomainModel)
+fun List<ReviewDataModel>.mapToReviewsDomainModels() = map(ReviewDataModel::toReviewDomainModel)

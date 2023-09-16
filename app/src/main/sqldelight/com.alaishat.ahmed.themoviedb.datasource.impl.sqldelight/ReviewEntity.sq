@@ -1,8 +1,19 @@
 CREATE TABLE ReviewEntity (
-  reviewId INTEGER PRIMARY KEY NOT NULL,
+  reviewId TEXT PRIMARY KEY NOT NULL,
   movieId INTEGER NOT NULL,
-  authorUserName INTEGER NOT NULL,
+  authorUserName TEXT NOT NULL,
   content TEXT,
   FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId),
   FOREIGN KEY(authorUserName) REFERENCES AuthorEntity(username)
 );
+
+upsertReview:
+INSERT OR REPLACE INTO ReviewEntity(reviewId, movieId,authorUserName,content)
+VALUES ?;
+
+selectReviewsByMovieId:
+SELECT r.*, a.*
+FROM ReviewEntity AS r
+JOIN AuthorEntity AS a
+ON r.authorUserName = a.username
+WHERE movieId = ?;

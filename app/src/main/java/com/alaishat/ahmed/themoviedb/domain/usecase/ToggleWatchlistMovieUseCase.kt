@@ -13,12 +13,12 @@ class ToggleWatchlistMovieUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
     suspend operator fun invoke(movieId: Int, watchlist: Boolean) {
-        moviesRepository.toggleCachedWatchlistMovie(movieId = movieId, watchlist = watchlist)
+        moviesRepository.cacheMovieWatchlistStatus(movieId = movieId, watchlist = watchlist)
         try {
             accountRepository.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
         } catch (e: Exception) {
             // in case the request fails undo toggle cached movie
-            moviesRepository.toggleCachedWatchlistMovie(movieId = movieId, watchlist = watchlist.not())
+            moviesRepository.cacheMovieWatchlistStatus(movieId = movieId, watchlist = watchlist.not())
         }
     }
 }

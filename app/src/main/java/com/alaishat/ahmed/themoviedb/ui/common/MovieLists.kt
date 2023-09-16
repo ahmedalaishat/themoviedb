@@ -52,7 +52,8 @@ fun LazyGridScope.movieCardsList(
     count = pagingItems.itemCount,
     key = pagingItems.itemKey(MovieDomainModel::id),
     itemContent = { index ->
-        val movie = pagingItems[index]!!
+        val movie = pagingItems[index] ?: return@items
+
         MovieCard(
             moviePosterPath = movie.posterPath,
             modifier = cardModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),

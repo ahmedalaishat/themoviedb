@@ -5,7 +5,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieListType
+import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import kotlinx.coroutines.flow.Flow
 
@@ -15,13 +15,13 @@ import kotlinx.coroutines.flow.Flow
  */
 interface MoviesRepository : Repository {
 
-    suspend fun getMoviesPageByType(movieListType: MovieListType, page: Int): List<MovieDomainModel>
-    fun getMoviesPagingFlowByType(movieListType: MovieListType): Flow<PagingData<MovieDomainModel>>
+    suspend fun getTopFiveMovies(): List<MovieDomainModel>
+    fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>>
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
-    suspend fun toggleCachedWatchlistMovie(movieId: Int, watchlist: Boolean)
+    suspend fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean)
     fun observeWatchlist(): Flow<Set<Int>>
-    fun getMovieReviews(movieId: Int): Flow<PagingData<ReviewDomainModel>>
+    fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
     fun getMovieGenreList(): Flow<List<GenreDomainModel>>

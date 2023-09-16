@@ -3,3 +3,7 @@ CREATE TABLE MovieDetailsEntity (
   runtime INTEGER NOT NULL,
   FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId)
 );
+
+upsertMovieDetails:
+INSERT OR REPLACE INTO MovieDetailsEntity(movieId, runtime)
+VALUES ?;

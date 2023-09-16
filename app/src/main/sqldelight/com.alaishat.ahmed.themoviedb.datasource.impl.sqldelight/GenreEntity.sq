@@ -9,11 +9,11 @@ FROM GenreEntity;
 
 
 insert:
-INSERT INTO GenreEntity(genreId, name)
+INSERT OR REPLACE INTO GenreEntity(genreId, name)
 VALUES (?, ?);
 
-insertFullGenreObject:
-INSERT INTO GenreEntity(genreId, name)
+upsertGenre:
+INSERT OR REPLACE INTO GenreEntity(genreId, name)
 VALUES ?;
 
 

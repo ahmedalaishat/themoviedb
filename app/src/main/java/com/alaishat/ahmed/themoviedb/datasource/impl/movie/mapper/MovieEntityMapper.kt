@@ -16,3 +16,13 @@ fun MovieEntity.toMovieDataModel() = MovieDataModel(
     title = title,
     voteAverage = voteAverage.toFloat(),
 )
+
+fun MovieDataModel.toEntity() = MovieEntity(
+    movieId = id.toLong(),
+    title = title,
+    backdropPath = backdropPath,
+    posterPath = posterPath,
+    overview = overview,
+    voteAverage = voteAverage.toDouble(),
+    releaseDate = releaseDate,
+)

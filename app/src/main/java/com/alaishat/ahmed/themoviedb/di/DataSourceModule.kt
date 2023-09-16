@@ -4,7 +4,7 @@ import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountData
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource.remote.KtorAccountDataSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.local.DelightLocalMovieDataSource
-import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.KtorMoviesDataSourceImpl
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.KtorMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import dagger.Binds
 import dagger.Module
@@ -26,7 +26,7 @@ interface DataSourceModule {
 
     @Binds
     fun providesMoviesDataSource(
-        moviesDataSource: KtorMoviesDataSourceImpl,
+        moviesDataSource: KtorMoviesDataSource,
     ): RemoteMoviesDataSource
 
     @Binds

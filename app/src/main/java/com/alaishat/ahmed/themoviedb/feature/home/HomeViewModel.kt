@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private fun getMoviesFlowOf(homeTab: HomeTab): Flow<PagingData<MovieDomainModel>> {
-        return getMoviesPagingFlowUseCase(homeTab.movieListType).cachedIn(viewModelScope)
+        return getMoviesPagingFlowUseCase(homeTab.movieListTypeDomainModel).cachedIn(viewModelScope)
     }
 
     val topFiveMoviesFlow = getTopFiveMoviesUseCase()

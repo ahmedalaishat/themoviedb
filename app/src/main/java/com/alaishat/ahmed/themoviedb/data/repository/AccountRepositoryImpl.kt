@@ -1,9 +1,11 @@
 package com.alaishat.ahmed.themoviedb.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.data.pagingsource.WatchListPagingSource
+import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
+import com.alaishat.ahmed.themoviedb.data.model.toMovieDomainModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
+import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
@@ -16,17 +18,20 @@ import javax.inject.Inject
  */
 class AccountRepositoryImpl @Inject constructor(
     private val remoteAccountDataSource: RemoteAccountDataSource,
+    private val localMoviesDataSource: LocalMoviesDataSource,
 ) : AccountRepository {
 
     override fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>> {
-        return Pager(
-            config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE),
-            pagingSourceFactory = {
-                WatchListPagingSource(
-                    remoteAccountDataSource = remoteAccountDataSource,
+        val pagingFlow = remoteAccountDataSource.getWatchlistPagingFlow(
+            pageCachingHandler = { page, movies ->
+                localMoviesDataSource.cacheMovieList(
+                    deleteCached = page == 1,
+                    movieListTypeDataModel = MovieListTypeDataModel.WATCHLIST,
+                    movies = movies,
                 )
             }
-        ).flow
+        )
+        return pagingFlow.mapData(MovieDataModel::toMovieDomainModel)
     }
 
     override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) {

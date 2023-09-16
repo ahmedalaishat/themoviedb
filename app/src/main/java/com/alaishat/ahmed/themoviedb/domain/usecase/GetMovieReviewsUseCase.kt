@@ -14,5 +14,5 @@ class GetMovieReviewsUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
     operator fun invoke(movieId: Int): Flow<PagingData<ReviewDomainModel>> =
-        moviesRepository.getMovieReviews(movieId = movieId)
+        moviesRepository.getMovieReviewsPagingFlow(movieId = movieId)
 }

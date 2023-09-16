@@ -1,6 +1,12 @@
 CREATE TABLE GenreMovieEntity (
   movieId INTEGER NOT NULL,
   genreId INTEGER NOT NULL,
+  PRIMARY KEY (movieId, genreId),
   FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId),
   FOREIGN KEY(genreId) REFERENCES GenreEntity(genreId)
 );
+
+
+upsertGenreMovieDetails:
+INSERT OR REPLACE INTO GenreMovieEntity(movieId, genreId)
+VALUES (?, ?);
