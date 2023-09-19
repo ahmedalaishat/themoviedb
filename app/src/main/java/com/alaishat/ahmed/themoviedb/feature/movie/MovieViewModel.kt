@@ -3,6 +3,7 @@ package com.alaishat.ahmed.themoviedb.feature.movie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
@@ -30,7 +31,7 @@ class MovieViewModel @Inject constructor(
 
     private val args = MovieDetailsArgs(savedStateHandle)
 
-    val movieDetails = getMovieDetails(args.movieId).stateInViewModel(null)
+    val movieDetails = getMovieDetails(args.movieId).stateInViewModel(MovieDetailsDomainModel.Loading)
     val movieReviews = getMovieReviews(args.movieId)
     val movieCredits = getMovieCredits(args.movieId).stateInViewModel(null)
 

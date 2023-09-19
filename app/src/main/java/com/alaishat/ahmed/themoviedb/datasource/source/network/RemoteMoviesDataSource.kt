@@ -5,7 +5,7 @@ import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import kotlinx.coroutines.flow.Flow

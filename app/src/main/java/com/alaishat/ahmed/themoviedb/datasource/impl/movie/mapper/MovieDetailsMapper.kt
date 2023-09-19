@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper
 
+import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.SelectMovieWithDetailsById
 
@@ -14,8 +14,9 @@ fun MovieDetailsDataModel.toEntity() = MovieDetailsEntity(
     runtime = runtime.toLong(),
 )
 
-fun List<SelectMovieWithDetailsById>.toMovieDetailsDataModel() = with(first()) {
-    MovieDetailsDataModel(
+fun List<SelectMovieWithDetailsById>.toMovieDetailsDataModel() = with(firstOrNull()) {
+    return@with if (this == null) null
+    else MovieDetailsDataModel(
         backdropPath = backdropPath,
         genreDataModels = map {
             GenreDataModel(id = genreId.toInt(), name = name)

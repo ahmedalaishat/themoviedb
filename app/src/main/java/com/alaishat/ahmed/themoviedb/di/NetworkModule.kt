@@ -24,11 +24,4 @@ class NetworkModule {
     fun providesConnectivityManager(@ApplicationContext context: Context) =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
-    @Provides
-    fun providesConnectionDataSource(
-        connectivityManager: ConnectivityManager,
-        ioDispatcher: CoroutineDispatcher,
-    ): ConnectionDataSource =
-        ConnectionDataSourceImpl(connectivityManager, MainScope(), ioDispatcher)
 }

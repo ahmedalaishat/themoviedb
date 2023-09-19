@@ -7,8 +7,12 @@ import com.alaishat.ahmed.themoviedb.data.model.toMovieDomainModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
+import com.alaishat.ahmed.themoviedb.di.AppDispatchers
+import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -19,10 +23,11 @@ import javax.inject.Inject
 class AccountRepositoryImpl @Inject constructor(
     private val remoteAccountDataSource: RemoteAccountDataSource,
     private val localMoviesDataSource: LocalMoviesDataSource,
-) : AccountRepository {
+    @Dispatcher(AppDispatchers.IO) override val ioDispatcher: CoroutineDispatcher,
+) : AccountRepository, BackgroundExecutor {
 
-    override fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>> {
-        val pagingFlow = remoteAccountDataSource.getWatchlistPagingFlow(
+    override fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>> =
+        remoteAccountDataSource.getWatchlistPagingFlow(
             pageCachingHandler = { page, movies ->
                 localMoviesDataSource.cacheMovieList(
                     deleteCached = page == 1,
@@ -31,10 +36,10 @@ class AccountRepositoryImpl @Inject constructor(
                 )
             }
         )
-        return pagingFlow.mapData(MovieDataModel::toMovieDomainModel)
-    }
+            .mapData(MovieDataModel::toMovieDomainModel)
+            .flowOnBackground()
 
-    override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) {
+    override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) = doInBackground {
         remoteAccountDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
     }
 }

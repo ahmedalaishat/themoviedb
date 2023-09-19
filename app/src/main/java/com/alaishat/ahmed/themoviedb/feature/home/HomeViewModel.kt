@@ -8,9 +8,9 @@ import com.alaishat.ahmed.themoviedb.architecture.HomeTab
 import com.alaishat.ahmed.themoviedb.architecture.result.Result
 import com.alaishat.ahmed.themoviedb.architecture.result.asResult
 import com.alaishat.ahmed.themoviedb.architecture.usermessage.UserMessage
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +40,8 @@ class HomeViewModel @Inject constructor(
         )
 
     // Each tab with its flow
-    val tabs: Map<HomeTab, Flow<PagingData<MovieDomainModel>>> = HomeTab.values().associateWith { tab -> getMoviesFlowOf(tab) }
+    val tabs: Map<HomeTab, Flow<PagingData<MovieDomainModel>>> =
+        HomeTab.values().associateWith { tab -> getMoviesFlowOf(tab) }
 }
 
 

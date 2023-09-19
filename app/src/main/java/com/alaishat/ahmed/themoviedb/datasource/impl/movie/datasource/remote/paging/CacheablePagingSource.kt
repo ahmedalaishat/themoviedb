@@ -1,5 +1,7 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging
 
+import timber.log.Timber
+
 /**
  * Created by Ahmed Al-Aishat on Sep/15/2023.
  * The Movie DB Project.

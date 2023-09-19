@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.domain.repository
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel

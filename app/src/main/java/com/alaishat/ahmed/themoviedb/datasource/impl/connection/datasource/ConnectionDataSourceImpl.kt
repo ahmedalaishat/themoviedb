@@ -9,27 +9,32 @@ import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.Connecti
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Connected
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Disconnected
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Unset
+import com.alaishat.ahmed.themoviedb.di.AppDispatchers
+import com.alaishat.ahmed.themoviedb.di.ApplicationScope
+import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Created by Ahmed Al-Aishat on Sep/16/2023.
  * The Movie DB Project.
  */
-class ConnectionDataSourceImpl(
+class ConnectionDataSourceImpl @Inject constructor(
     private val connectivityManager: ConnectivityManager,
-    private val coroutineScope: CoroutineScope,
-    private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationScope private val coroutineScope: CoroutineScope,
+    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : ConnectionDataSource {
+    private val stateFlow = MutableStateFlow<ConnectionStateDataModel>(Unset)
+
     private val networkRequestProvider: () -> NetworkRequest = {
         NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
     }
-) : ConnectionDataSource {
-    private val stateFlow = MutableStateFlow<ConnectionStateDataModel>(Unset)
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {

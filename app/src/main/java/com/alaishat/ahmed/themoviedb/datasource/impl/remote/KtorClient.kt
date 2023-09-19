@@ -1,10 +1,10 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.remote
 
 import com.alaishat.ahmed.themoviedb.BuildConfig
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
-import com.alaishat.ahmed.themoviedb.di.MovieDispatcher
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.error.KtorExceptionHandler
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.log.KtorLogger
+import com.alaishat.ahmed.themoviedb.di.AppDispatchers
+import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -40,7 +40,7 @@ private const val TIME_OUT = 30_000L
 
 @Singleton
 class KtorClient @Inject constructor(
-    @Dispatcher(MovieDispatcher.IO) val ioDispatcher: CoroutineDispatcher,
+    @Dispatcher(AppDispatchers.IO) val ioDispatcher: CoroutineDispatcher,
     private val networkJson: Json,
     private val exceptionHandler: KtorExceptionHandler,
     private val ktorLogger: KtorLogger,
@@ -78,13 +78,15 @@ class KtorClient @Inject constructor(
             }
 
             HttpResponseValidator {
-                handleResponseExceptionWithRequest(exceptionHandler::handle)
+//                handleResponseExceptionWithRequest(exceptionHandler::handle)
             }
         }
 
     suspend inline fun <reified T> call(crossinline caller: suspend HttpClient.() -> HttpResponse): T {
         return withContext(ioDispatcher) {
-            httpClient.use { client -> client.caller().body() }
+            httpClient.use { client ->
+                    client.caller().body()
+            }
         }
     }
 }

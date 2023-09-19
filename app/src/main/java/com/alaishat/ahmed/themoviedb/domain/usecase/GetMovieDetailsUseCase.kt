@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.domain.usecase
 
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -17,6 +17,9 @@ class GetMovieDetailsUseCase @Inject constructor(
         moviesRepository.getMovieDetails(movieId = movieId),
         moviesRepository.observeWatchlist()
     ) { details, moviesStatus ->
-        details.copy(watchlist = moviesStatus.contains(details.id))
+        //AHMED_TODO: refactor watchlist
+        if (details is MovieDetailsDomainModel.Success)
+            details.copy(watchlist = moviesStatus.contains(details.id))
+        else details
     }
 }

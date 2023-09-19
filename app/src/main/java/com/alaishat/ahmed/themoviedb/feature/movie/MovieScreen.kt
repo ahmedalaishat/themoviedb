@@ -66,7 +66,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
@@ -107,22 +107,26 @@ fun MovieRoute(
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
     val rated by viewModel.rated.collectAsStateWithLifecycle()
 
-    if (movie == null) {
-        MovieDetailsShimmer()
-    } else MovieScreen(
-        movie = movie!!,
-        reviews = reviews,
-        creditDomainModels = credits,
-        rated = rated,
-        onRateSubmit = viewModel::rateMovie,
-        onToggleWatchlist = viewModel::toggleWatchlist,
-    )
+
+    when(movie){
+        is MovieDetailsDomainModel.Loading-> MovieDetailsShimmer()
+        MovieDetailsDomainModel.Disconnected -> Text(text = "Error")
+        is MovieDetailsDomainModel.Error -> Text(text = "error")
+        is MovieDetailsDomainModel.Success -> MovieScreen(
+            movie = movie as MovieDetailsDomainModel.Success,
+            reviews = reviews,
+            creditDomainModels = credits,
+            rated = rated,
+            onRateSubmit = viewModel::rateMovie,
+            onToggleWatchlist = viewModel::toggleWatchlist,
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MovieScreen(
-    movie: MovieDetailsDomainModel,
+    movie: MovieDetailsDomainModel.Success,
     reviews: LazyPagingItems<ReviewDomainModel>,
     creditDomainModels: List<CreditDomainModel>?,
     rated: Boolean,

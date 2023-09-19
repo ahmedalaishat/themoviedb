@@ -5,10 +5,10 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.mapToGenreDataModel
@@ -17,6 +17,8 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDataMod
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
+import com.alaishat.ahmed.themoviedb.di.AppDispatchers
+import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntityQueries
@@ -26,6 +28,7 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -129,7 +132,7 @@ class DelightLocalMovieDataSource @Inject constructor(
         }
     }
 
-    override fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {
+    override suspend fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {
         movieDetailsEntityQueries.upsertMovieDetails(movieDetailsDataModel.toEntity())
         genreEntityQueries.transaction {
             movieDetailsDataModel.genreDataModels.forEach { genre ->
@@ -142,7 +145,7 @@ class DelightLocalMovieDataSource @Inject constructor(
         }
     }
 
-    override fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel {
+    override suspend fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel? {
         return movieEntityQueries.selectMovieWithDetailsById(movieId = movieId.toLong()).executeAsList()
             .toMovieDetailsDataModel()
     }

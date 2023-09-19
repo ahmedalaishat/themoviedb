@@ -35,9 +35,9 @@ interface DataSourceModule {
     fun providesLocalMoviesDataSource(
         delightLocalMovieDataSource: DelightLocalMovieDataSource,
     ): LocalMoviesDataSource
-//
-//    @Binds
-//    fun providesConnectionSDataSource(
-//        connectionDataSourceImpl: ConnectionDataSourceImpl,
-//    ): ConnectionDataSource
+
+    @Binds
+    fun providesConnectionSDataSource(
+        connectionDataSourceImpl: ConnectionDataSourceImpl,
+    ): ConnectionDataSource
 }

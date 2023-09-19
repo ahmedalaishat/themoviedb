@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.model
 
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
