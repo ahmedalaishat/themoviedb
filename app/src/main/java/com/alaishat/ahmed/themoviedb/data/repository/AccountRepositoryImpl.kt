@@ -40,6 +40,12 @@ class AccountRepositoryImpl @Inject constructor(
             .flowOnBackground()
 
     override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) = doInBackground {
-        remoteAccountDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
+        localMoviesDataSource.cacheMovieWatchlistStatus(movieId = movieId, watchlist = watchlist)
+        try {
+            remoteAccountDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
+        } catch (e: Exception) {
+            // in case the request fails undo toggle cached movie
+            localMoviesDataSource.cacheMovieWatchlistStatus(movieId = movieId, watchlist = !watchlist)
+        }
     }
 }

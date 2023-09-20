@@ -15,11 +15,10 @@ class GetMovieDetailsUseCase @Inject constructor(
 ) {
     operator fun invoke(movieId: Int): Flow<MovieDetailsDomainModel> = combine(
         moviesRepository.getMovieDetails(movieId = movieId),
-        moviesRepository.observeWatchlist()
-    ) { details, moviesStatus ->
-        //AHMED_TODO: refactor watchlist
+        moviesRepository.observeWatchlist(movieId = movieId)
+    ) { details, watchlistStatus ->
         if (details is MovieDetailsDomainModel.Success)
-            details.copy(watchlist = moviesStatus.contains(details.id))
+            details.copy(watchlist = watchlistStatus)
         else details
     }
 }

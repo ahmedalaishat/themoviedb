@@ -87,19 +87,23 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> {
         return connectionDataSource.observeIsConnected().map { connected ->
+            Timber.e("connectionStat: $connected")
             movieDetailsToDomainResolver.toDomain(
                 connectionState = connected,
                 remoteMovieProvider = {
                     coroutineScope {
                         val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
                         val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
-                        cacheMovieWatchlistStatus(movieId = movieId, watchlist = status.await().watchlist)
                         localMoviesDataSource.cacheMovieDetails(movieDetails.await())
+                        localMoviesDataSource.cacheMovieWatchlistStatus(
+                            movieId = movieId,
+                            watchlist = status.await().watchlist
+                        )
                         movieDetails.await()
                     }
                 },
                 localMovieProvider = {
-                    delay(2000)
+                    delay(200)
                     localMoviesDataSource.getCachedMovieDetails(movieId = movieId)
                 }
             )
@@ -118,8 +122,8 @@ class MoviesRepositoryImpl @Inject constructor(
             watchlistSet.update { it - movieId }
     }
 
-    override fun observeWatchlist(): Flow<Set<Int>> {
-        return watchlistSet
+    override fun observeWatchlist(movieId: Int): Flow<Boolean> {
+        return localMoviesDataSource.observeMovieWatchlistStatus(movieId = movieId)
     }
 
     override fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>> =

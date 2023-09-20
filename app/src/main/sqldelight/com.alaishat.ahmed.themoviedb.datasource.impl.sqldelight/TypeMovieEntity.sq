@@ -13,6 +13,17 @@ insert:
 INSERT INTO TypeMovieEntity(type, movieId)
 VALUES (?, ?);
 
+selecctByIdAndType:
+SELECT movieId
+FROM TypeMovieEntity
+WHERE movieId = ? AND type = ?
+LIMIT 1;
+
+deleteByIdAndType:
+DELETE
+FROM TypeMovieEntity
+WHERE movieId = ? AND type = ?;
+
 deleteListByType:
 DELETE
 FROM TypeMovieEntity

@@ -17,8 +17,6 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDataMod
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntityQueries
@@ -28,7 +26,6 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -148,5 +145,22 @@ class DelightLocalMovieDataSource @Inject constructor(
     override suspend fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel? {
         return movieEntityQueries.selectMovieWithDetailsById(movieId = movieId.toLong()).executeAsList()
             .toMovieDetailsDataModel()
+    }
+
+    override fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean) {
+        if (watchlist)
+            typeMovieEntityQueries.insert(type = MovieListTypeDataModel.WATCHLIST, movieId = movieId.toLong())
+        else
+            typeMovieEntityQueries.deleteByIdAndType(
+                type = MovieListTypeDataModel.WATCHLIST,
+                movieId = movieId.toLong()
+            )
+    }
+
+    override fun observeMovieWatchlistStatus(movieId: Int): Flow<Boolean> {
+        return typeMovieEntityQueries.selecctByIdAndType(
+            movieId = movieId.toLong(),
+            type = MovieListTypeDataModel.WATCHLIST
+        ).asFlow().map { it.executeAsOneOrNull() == movieId.toLong() }
     }
 }

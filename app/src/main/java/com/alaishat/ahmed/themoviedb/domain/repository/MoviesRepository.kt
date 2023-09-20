@@ -20,7 +20,7 @@ interface MoviesRepository : Repository {
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
     suspend fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean)
-    fun observeWatchlist(): Flow<Set<Int>>
+    fun observeWatchlist(movieId: Int): Flow<Boolean>
     fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
