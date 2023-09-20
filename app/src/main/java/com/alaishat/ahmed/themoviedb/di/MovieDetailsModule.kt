@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.feature.movie.mapper.MovieDetailsToDomainResolver
+import com.alaishat.ahmed.themoviedb.data.mapper.MovieDetailsToDomainResolver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

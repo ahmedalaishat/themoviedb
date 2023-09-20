@@ -2,8 +2,8 @@ package com.alaishat.ahmed.themoviedb.data.repository
 
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
-import com.alaishat.ahmed.themoviedb.data.feature.movie.mapper.MovieDetailsToDomainResolver
-import com.alaishat.ahmed.themoviedb.data.feature.movie.mapper.toMovieDomainException
+import com.alaishat.ahmed.themoviedb.data.mapper.MovieDetailsToDomainResolver
+import com.alaishat.ahmed.themoviedb.data.mapper.toMovieDomainException
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.data.model.mapToCreditsDomainModels
@@ -15,7 +15,6 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDa
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.ApiDataException
 import com.alaishat.ahmed.themoviedb.di.AppDispatchers
 import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
@@ -86,32 +85,32 @@ class MoviesRepositoryImpl @Inject constructor(
             .flowOnBackground()
 
     override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> {
-        return connectionDataSource.observeIsConnected().map { connected ->
-            Timber.e("connectionStat: $connected")
-            movieDetailsToDomainResolver.toDomain(
-                connectionState = connected,
-                remoteMovieProvider = {
-                    coroutineScope {
-                        val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
-                        val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
-                        localMoviesDataSource.cacheMovieDetails(movieDetails.await())
-                        localMoviesDataSource.cacheMovieWatchlistStatus(
-                            movieId = movieId,
-                            watchlist = status.await().watchlist
-                        )
-                        movieDetails.await()
+        return connectionDataSource.observeIsConnected()
+            .map { connected ->
+                movieDetailsToDomainResolver.toDomain(
+                    connectionState = connected,
+                    remoteMovieProvider = {
+                        coroutineScope {
+                            val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
+                            val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
+                            localMoviesDataSource.cacheMovieDetails(movieDetails.await())
+                            localMoviesDataSource.cacheMovieWatchlistStatus(
+                                movieId = movieId,
+                                watchlist = status.await().watchlist
+                            )
+                            movieDetails.await()
+                        }
+                    },
+                    localMovieProvider = {
+                        delay(200)
+                        localMoviesDataSource.getCachedMovieDetails(movieId = movieId)
                     }
-                },
-                localMovieProvider = {
-                    delay(200)
-                    localMoviesDataSource.getCachedMovieDetails(movieId = movieId)
-                }
-            )
-        }.retryWhen { cause, _ ->
-            emit(MovieDetailsDomainModel.Error(cause.toMovieDomainException()))
-            delay(1000)
-            cause !is ApiDataException
-        }
+                )
+            }.retryWhen { cause, _ ->
+                emit(MovieDetailsDomainModel.Error(cause.toMovieDomainException()))
+                delay(1000)
+                true
+            }
             .flowOnBackground()
     }
 

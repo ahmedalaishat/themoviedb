@@ -10,7 +10,7 @@ import javax.inject.Inject
  * Created by Ahmed Al-Aishat on Sep/09/2023.
  * The Movie DB Project.
  */
-class GetMovieReviewsUseCase @Inject constructor(
+class GetMovieReviewsPagingFlowUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
     operator fun invoke(movieId: Int): Flow<PagingData<ReviewDomainModel>> =

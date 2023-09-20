@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.movie.navigation
+package com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
@@ -7,7 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.alaishat.ahmed.themoviedb.feature.movie.MovieRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.movie.MovieRoute
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.

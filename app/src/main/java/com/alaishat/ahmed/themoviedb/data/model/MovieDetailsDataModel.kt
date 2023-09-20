@@ -1,8 +1,4 @@
-package com.alaishat.ahmed.themoviedb.data.feature.movie.model
-
-import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
-import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
+package com.alaishat.ahmed.themoviedb.data.model
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.

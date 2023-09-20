@@ -1,7 +1,7 @@
-package com.alaishat.ahmed.themoviedb.data.feature.movie.mapper
+package com.alaishat.ahmed.themoviedb.data.mapper
 
 import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.ApiDataException
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.RequestTimeoutDataException
+import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.RequestFailedDataException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.DomainException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.UnknownDomainException
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.exception.FetchFailedDomainException
@@ -12,6 +12,6 @@ import com.alaishat.ahmed.themoviedb.domain.feature.movie.exception.FetchFailedD
  */
 fun Throwable.toMovieDomainException(): DomainException = when (this) {
     is ApiDataException -> FetchFailedDomainException(this)
-    is RequestTimeoutDataException -> FetchFailedDomainException(this)
+    is RequestFailedDataException -> FetchFailedDomainException(this)
     else -> UnknownDomainException(this)
 }

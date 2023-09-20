@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel

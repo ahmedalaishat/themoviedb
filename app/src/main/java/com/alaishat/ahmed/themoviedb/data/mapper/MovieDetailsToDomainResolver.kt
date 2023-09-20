@@ -1,6 +1,6 @@
-package com.alaishat.ahmed.themoviedb.data.feature.movie.mapper
+package com.alaishat.ahmed.themoviedb.data.mapper
 
-import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 
@@ -16,8 +16,7 @@ class MovieDetailsToDomainResolver {
         localMovieProvider: suspend () -> MovieDetailsDataModel?,
     ) = when (connectionState) {
         ConnectionStateDataModel.Connected -> remoteMovieProvider().toMoviesDetailsDomainModel()
-        ConnectionStateDataModel.Disconnected -> localMovieProvider()?.toMoviesDetailsDomainModel() ?: MovieDetailsDomainModel.Disconnected
-        ConnectionStateDataModel.Unset -> MovieDetailsDomainModel.Loading
+        else -> localMovieProvider()?.toMoviesDetailsDomainModel() ?: MovieDetailsDomainModel.Disconnected
     }
 }
 

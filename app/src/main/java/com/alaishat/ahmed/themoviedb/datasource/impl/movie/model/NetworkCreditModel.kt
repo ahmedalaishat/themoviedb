@@ -1,7 +1,6 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.model
 
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

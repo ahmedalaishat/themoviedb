@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -71,6 +72,7 @@ class ConnectionDataSourceImpl @Inject constructor(
     override fun getConnectionState(): ConnectionStateDataModel = stateFlow.value
 
     private fun emitConnectionUpdate(connectionState: ConnectionStateDataModel) {
+        Timber.i("ConnectivityStatus: $connectionState")
         coroutineScope.launch(ioDispatcher) {
             stateFlow.emit(connectionState)
         }

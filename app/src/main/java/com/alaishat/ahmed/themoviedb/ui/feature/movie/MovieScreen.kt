@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.movie
+package com.alaishat.ahmed.themoviedb.ui.feature.movie
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -66,11 +66,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.MovieViewModel
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
@@ -109,11 +110,11 @@ fun MovieRoute(
 
 
     when(movie){
-        is MovieDetailsDomainModel.Loading-> MovieDetailsShimmer()
-        MovieDetailsDomainModel.Disconnected -> Text(text = "Error")
-        is MovieDetailsDomainModel.Error -> Text(text = "error")
-        is MovieDetailsDomainModel.Success -> MovieScreen(
-            movie = movie as MovieDetailsDomainModel.Success,
+        is MovieDetailsViewState.Loading-> MovieDetailsShimmer()
+        MovieDetailsViewState.Disconnected -> Text(text = "You are offline")
+        is MovieDetailsViewState.Error -> Text(text = "Something went wrong")
+        is MovieDetailsViewState.Success -> MovieScreen(
+            movie = movie as MovieDetailsViewState.Success,
             reviews = reviews,
             creditDomainModels = credits,
             rated = rated,
@@ -126,7 +127,7 @@ fun MovieRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MovieScreen(
-    movie: MovieDetailsDomainModel.Success,
+    movie: MovieDetailsViewState.Success,
     reviews: LazyPagingItems<ReviewDomainModel>,
     creditDomainModels: List<CreditDomainModel>?,
     rated: Boolean,

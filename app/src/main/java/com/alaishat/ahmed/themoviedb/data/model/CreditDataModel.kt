@@ -12,10 +12,10 @@ data class CreditDataModel(
     val profilePath: String?,
 )
 
-fun CreditDataModel.toCredit() = CreditDomainModel(
+fun CreditDataModel.toDomain() = CreditDomainModel(
     id = creditId,
     name = name,
     profilePath = profilePath,
 )
 
-fun List<CreditDataModel>.mapToCreditsDomainModels() = map(CreditDataModel::toCredit)
+fun List<CreditDataModel>.mapToCreditsDomainModels() = map(CreditDataModel::toDomain)

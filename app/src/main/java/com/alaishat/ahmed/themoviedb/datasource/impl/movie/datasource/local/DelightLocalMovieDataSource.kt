@@ -5,7 +5,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
-import com.alaishat.ahmed.themoviedb.data.feature.movie.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
@@ -129,7 +129,7 @@ class DelightLocalMovieDataSource @Inject constructor(
         }
     }
 
-    override suspend fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {
+    override fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {
         movieDetailsEntityQueries.upsertMovieDetails(movieDetailsDataModel.toEntity())
         genreEntityQueries.transaction {
             movieDetailsDataModel.genreDataModels.forEach { genre ->
@@ -142,7 +142,7 @@ class DelightLocalMovieDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel? {
+    override fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel? {
         return movieEntityQueries.selectMovieWithDetailsById(movieId = movieId.toLong()).executeAsList()
             .toMovieDetailsDataModel()
     }
