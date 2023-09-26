@@ -16,8 +16,11 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toEntity
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
+import com.alaishat.ahmed.themoviedb.di.AppDispatchers
+import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
@@ -27,7 +30,9 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntityQuer
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
+import comalaishatahmedthemoviedbdatasourceimplsqldelight.SelectMoviesReviewsPage
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -48,6 +53,7 @@ class DelightLocalMovieDataSource @Inject constructor(
     private val reviewEntityQueries: ReviewEntityQueries,
     private val authorEntityQueries: AuthorEntityQueries,
     private val creditEntityQueries: CreditEntityQueries,
+    @Dispatcher(AppDispatchers.IO) val ioDispatcher: CoroutineDispatcher,
 ) : LocalMoviesDataSource {
 
     override fun cacheMovieList(
@@ -80,7 +86,7 @@ class DelightLocalMovieDataSource @Inject constructor(
                 QueryPagingSource(
                     countQuery = movieEntityQueries.selectMoviesCountByType(movieListTypeDataModel),
                     transacter = movieEntityQueries,
-                    context = Dispatchers.IO,
+                    context = ioDispatcher,
                     queryProvider = { limit, offset ->
                         movieEntityQueries.selectMoviesPageByType(
                             type = movieListTypeDataModel,
@@ -101,6 +107,26 @@ class DelightLocalMovieDataSource @Inject constructor(
                 reviewEntityQueries.upsertReview(review.toEntity(movieId = movieId))
             }
         }
+    }
+
+    override fun getCachedReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDataModel>> {
+        val pager = defaultPagerOf(
+            pagingSourceFactory = {
+                QueryPagingSource(
+                    countQuery = reviewEntityQueries.selectMovieReviewsCount(movieId = movieId.toLong()),
+                    transacter = reviewEntityQueries,
+                    context = Dispatchers.IO,
+                    queryProvider = { limit, offset ->
+                        reviewEntityQueries.selectMoviesReviewsPage(
+                            movieId = movieId.toLong(),
+                            limit = limit,
+                            offset = offset,
+                        )
+                    },
+                )
+            }
+        )
+        return pager.flow.mapData(SelectMoviesReviewsPage::toReviewDataModel)
     }
 
     override fun getMovieReviewsFlow(movieId: Int): List<ReviewDataModel> {

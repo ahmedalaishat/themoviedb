@@ -3,8 +3,10 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.movie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.data.architecture.mapData
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
@@ -13,6 +15,7 @@ import com.alaishat.ahmed.themoviedb.domain.usecase.ToggleWatchlistMovieUseCase
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.mapper.toViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.toPresentation
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation.MovieDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +44,7 @@ class MovieViewModel @Inject constructor(
         .stateInViewModel(MovieDetailsViewState.Loading)
 
     val movieReviews = getPagingMovieReviews(args.movieId)
+        .mapData(ReviewDomainModel::toPresentation)
 
     val movieCredits = getMovieCredits(args.movieId)
         .map(CreditsDomainModel::toViewState)

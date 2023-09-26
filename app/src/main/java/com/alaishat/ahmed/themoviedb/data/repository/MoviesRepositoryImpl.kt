@@ -143,15 +143,22 @@ class MoviesRepositoryImpl @Inject constructor(
         return localMoviesDataSource.observeMovieWatchlistStatus(movieId = movieId)
     }
 
-    override fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>> =
-        remoteMoviesDataSource.getMovieReviewsPagingFlow(
-            movieId = movieId,
-            pageCachingHandler = { _, reviews ->
-                localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
-            }
-        )
-            .mapData(ReviewDataModel::toReviewDomainModel)
+    override fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>> {
+        val flow = if (connectionDataSource.getConnectionState() == ConnectionStateDataModel.Connected) {
+            remoteMoviesDataSource.getMovieReviewsPagingFlow(
+                movieId = movieId,
+                pageCachingHandler = { _, reviews ->
+                    localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
+                }
+            )
+        } else {
+            localMoviesDataSource.getCachedReviewsPagingFlow(
+                movieId = movieId
+            )
+        }
+        return flow.mapData(ReviewDataModel::toReviewDomainModel)
             .flowOnBackground()
+    }
 
     override fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel> =
         localMoviesDataSource.getCachedMovieCredits(movieId).combine(
@@ -159,8 +166,7 @@ class MoviesRepositoryImpl @Inject constructor(
         ) { cached, connected ->
             if (cached.isNotEmpty()) {
                 CreditsDomainModel.Success(cached.mapToCreditsDomainModels())
-            }
-            else {
+            } else {
                 if (connected == ConnectionStateDataModel.Connected) {
                     val credits = remoteMoviesDataSource.getMovieCredits(movieId = movieId)
                     localMoviesDataSource.cacheMovieCredits(movieId, credits)

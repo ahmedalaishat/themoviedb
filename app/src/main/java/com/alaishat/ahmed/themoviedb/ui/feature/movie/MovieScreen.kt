@@ -65,8 +65,6 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
@@ -74,6 +72,7 @@ import com.alaishat.ahmed.themoviedb.presentation.feature.movie.MovieViewModel
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Credit
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Review
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
@@ -130,7 +129,7 @@ fun MovieRoute(
 @Composable
 private fun MovieScreen(
     movie: MovieDetailsViewState.Success,
-    reviews: LazyPagingItems<ReviewDomainModel>,
+    reviews: LazyPagingItems<Review>,
     creditsViewState: CreditsViewState,
     rated: Boolean,
     onRateSubmit: (rating: Int) -> Unit,
@@ -340,7 +339,7 @@ private fun AboutMovieTab(
 
 @Composable
 private fun ReviewsTab(
-    pagingReviews: LazyPagingItems<ReviewDomainModel>,
+    pagingReviews: LazyPagingItems<Review>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -448,11 +447,11 @@ fun ActorCard(
 
 
 private fun LazyListScope.reviews(
-    reviews: LazyPagingItems<ReviewDomainModel>,
+    reviews: LazyPagingItems<Review>,
     reviewModifier: Modifier = Modifier,
 ) = items(
     count = reviews.itemCount,
-    key = reviews.itemKey(ReviewDomainModel::id),
+    key = reviews.itemKey(Review::id),
     itemContent = { index ->
         ReviewCard(reviewDomainModel = reviews[index]!!, modifier = reviewModifier)
     },
@@ -461,7 +460,7 @@ private fun LazyListScope.reviews(
 
 @Composable
 fun ReviewCard(
-    reviewDomainModel: ReviewDomainModel,
+    reviewDomainModel: Review,
     modifier: Modifier = Modifier,
 ) {
     Row(
