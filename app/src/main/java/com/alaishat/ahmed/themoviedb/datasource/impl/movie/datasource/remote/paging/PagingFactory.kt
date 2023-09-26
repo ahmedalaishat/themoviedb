@@ -13,8 +13,8 @@ private const val DEFAULT_PAGE_SIZE = 20
 private val defaultPagingConfig = PagingConfig(pageSize = DEFAULT_PAGE_SIZE)
 
 fun <Value : Any> defaultPagerOf(
-    pagingSource: PagingSource<Int, Value>
+    pagingSourceFactory: () -> PagingSource<Int, Value>,
 ) = Pager(
     config = defaultPagingConfig,
-    pagingSourceFactory = { pagingSource }
+    pagingSourceFactory = pagingSourceFactory
 )

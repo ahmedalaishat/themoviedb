@@ -1,11 +1,11 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.CacheablePagingSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.NormalPagingSource
@@ -58,13 +58,14 @@ class KtorMoviesDataSource @Inject constructor(
         pageCachingHandler: suspend (page: Int, pageData: List<MovieDataModel>) -> Unit
     ): Flow<PagingData<MovieDataModel>> {
         val pager = defaultPagerOf(
-            pagingSource = CacheablePagingSource(
-                pageDataProvider = { page ->
-                    getMoviesPage(movieListTypeDataModel = movieListTypeDataModel, page = page)
-                },
-                pageCachingHandler = pageCachingHandler,
-            )
-        )
+            pagingSourceFactory = {
+                CacheablePagingSource(
+                    pageDataProvider = { page ->
+                        getMoviesPage(movieListTypeDataModel = movieListTypeDataModel, page = page)
+                    },
+                    pageCachingHandler = pageCachingHandler,
+                )
+            })
         return pager.flow
     }
 
@@ -77,12 +78,13 @@ class KtorMoviesDataSource @Inject constructor(
 
     override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDataModel>> {
         val pager = defaultPagerOf(
-            pagingSource = NormalPagingSource(
-                pageDataProvider = { page ->
-                    searchMovie(query, page)
-                },
-            )
-        )
+            pagingSourceFactory = {
+                NormalPagingSource(
+                    pageDataProvider = { page ->
+                        searchMovie(query, page)
+                    },
+                )
+            })
         return pager.flow
     }
 
@@ -112,12 +114,14 @@ class KtorMoviesDataSource @Inject constructor(
         pageCachingHandler: suspend (page: Int, pageData: List<ReviewDataModel>) -> Unit
     ): Flow<PagingData<ReviewDataModel>> {
         return defaultPagerOf(
-            pagingSource = CacheablePagingSource(
-                pageDataProvider = { page ->
-                    getMovieReviews(movieId = movieId, page = page)
-                },
-                pageCachingHandler = pageCachingHandler
-            )
+            pagingSourceFactory = {
+                CacheablePagingSource(
+                    pageDataProvider = { page ->
+                        getMovieReviews(movieId = movieId, page = page)
+                    },
+                    pageCachingHandler = pageCachingHandler
+                )
+            }
         ).flow
     }
 

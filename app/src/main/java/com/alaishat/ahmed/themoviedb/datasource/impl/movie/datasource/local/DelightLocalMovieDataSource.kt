@@ -5,10 +5,10 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.mapToGenreDataModel
@@ -29,7 +29,6 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,20 +66,28 @@ class DelightLocalMovieDataSource @Inject constructor(
         }
     }
 
+    override fun getCachedMovieList(movieListTypeDataModel: MovieListTypeDataModel): List<MovieDataModel> {
+        return movieEntityQueries.selectMoviesListByType(
+            type = movieListTypeDataModel,
+        ).executeAsList().map(MovieEntity::toMovieDataModel)
+    }
+
     override fun getCachedMoviesPagingFlow(movieListTypeDataModel: MovieListTypeDataModel): Flow<PagingData<MovieDataModel>> {
         val pager = defaultPagerOf(
-            pagingSource = QueryPagingSource(
-                countQuery = movieEntityQueries.selectMoviesCountByType(movieListTypeDataModel),
-                transacter = movieEntityQueries,
-                context = Dispatchers.IO,
-                queryProvider = { limit, offset ->
-                    movieEntityQueries.selectMoviesByType(
-                        type = movieListTypeDataModel,
-                        limit = limit,
-                        offset = offset,
-                    )
-                },
-            )
+            pagingSourceFactory = {
+                QueryPagingSource(
+                    countQuery = movieEntityQueries.selectMoviesCountByType(movieListTypeDataModel),
+                    transacter = movieEntityQueries,
+                    context = Dispatchers.IO,
+                    queryProvider = { limit, offset ->
+                        movieEntityQueries.selectMoviesPageByType(
+                            type = movieListTypeDataModel,
+                            limit = limit,
+                            offset = offset,
+                        )
+                    },
+                )
+            }
         )
         return pager.flow.mapData(MovieEntity::toMovieDataModel)
     }
@@ -97,14 +104,6 @@ class DelightLocalMovieDataSource @Inject constructor(
     override fun getMovieReviewsFlow(movieId: Int): List<ReviewDataModel> {
         return listOf()
 //        val a: List<SelectReviewsByMovieId> = reviewEntityQueries.selectReviewsByMovieId(movieId = movieId.toLong()).executeAsList()
-    }
-
-    override fun getMovieListByType(movieListTypeDataModel: MovieListTypeDataModel): List<MovieEntity> {
-        Timber.e("fetching idds")
-        val movies =
-            movieEntityQueries.selectMoviesByType(movieListTypeDataModel, limit = 5, offset = 0).executeAsList()
-        Timber.e("moies: $movies")
-        return movies
     }
 
     override fun getMovieGenreList(): Flow<List<GenreDataModel>> {

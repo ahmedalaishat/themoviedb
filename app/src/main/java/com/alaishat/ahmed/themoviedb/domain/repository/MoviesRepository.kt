@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface MoviesRepository : Repository {
 
-    suspend fun getTopFiveMovies(): List<MovieDomainModel>
+    fun getTopFiveMovies(): Flow<List<MovieDomainModel>>
     fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>>
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>

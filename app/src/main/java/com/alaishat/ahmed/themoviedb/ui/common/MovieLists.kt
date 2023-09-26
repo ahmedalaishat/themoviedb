@@ -50,7 +50,8 @@ fun LazyGridScope.movieCardsList(
     cardModifier: Modifier = Modifier,
 ) = items(
     count = pagingItems.itemCount,
-    key = pagingItems.itemKey(MovieDomainModel::id),
+    //AHMED_TODO: the api keeps duplicate keys
+//    key = pagingItems.itemKey(MovieDomainModel::id),
     itemContent = { index ->
         val movie = pagingItems[index] ?: return@items
 

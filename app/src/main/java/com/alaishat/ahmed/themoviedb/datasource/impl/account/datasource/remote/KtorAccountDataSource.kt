@@ -38,12 +38,14 @@ class KtorAccountDataSource @Inject constructor(
         pageCachingHandler: suspend (page: Int, pageData: List<MovieDataModel>) -> Unit,
     ): Flow<PagingData<MovieDataModel>> {
         val pager = defaultPagerOf(
-            pagingSource = CacheablePagingSource(
-                pageDataProvider = { page ->
-                    getWatchlist(page)
-                },
-                pageCachingHandler = pageCachingHandler
-            )
+            pagingSourceFactory = {
+                CacheablePagingSource(
+                    pageDataProvider = { page ->
+                        getWatchlist(page)
+                    },
+                    pageCachingHandler = pageCachingHandler
+                )
+            }
         )
         return pager.flow
     }

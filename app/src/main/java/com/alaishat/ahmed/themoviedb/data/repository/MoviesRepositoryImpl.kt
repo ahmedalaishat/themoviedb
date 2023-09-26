@@ -13,6 +13,7 @@ import com.alaishat.ahmed.themoviedb.data.model.toMovieDomainModel
 import com.alaishat.ahmed.themoviedb.data.model.toReviewDomainModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.di.AppDispatchers
@@ -26,6 +27,7 @@ import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -50,34 +52,50 @@ class MoviesRepositoryImpl @Inject constructor(
 ) : MoviesRepository, BackgroundExecutor {
     private val watchlistSet = MutableStateFlow(setOf<Int>())
 
-    override suspend fun getTopFiveMovies(): List<MovieDomainModel> = doInBackground {
-        val movies = remoteMoviesDataSource.getMoviesPage(
-            movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
-            page = 1,
-        ).take(5)
-        localMoviesDataSource.cacheMovieList(
-            deleteCached = true,
-            movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
-            movies = movies,
-        )
-        movies.mapToMovies()
-    }
-
-    override fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>> =
-        remoteMoviesDataSource.getCacheableMoviesPagingFlow(
-            movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel),
-            pageCachingHandler = { page, pageData ->
+    override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = connectionDataSource.observeIsConnected()
+        .map { connected ->
+            if (connected == ConnectionStateDataModel.Connected) {
+                val movies = remoteMoviesDataSource.getMoviesPage(
+                    movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
+                    page = 1,
+                ).take(5)
                 localMoviesDataSource.cacheMovieList(
-                    deleteCached = page == 1,
-                    movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
-                        movieListTypeDomainModel
-                    ),
-                    movies = pageData,
+                    deleteCached = true,
+                    movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
+                    movies = movies,
                 )
+                movies.mapToMovies()
+            } else {
+                localMoviesDataSource.getCachedMovieList(MovieListTypeDataModel.TOP_FIVE).mapToMovies()
             }
-        )
-            .mapData(MovieDataModel::toMovieDomainModel)
+        }.retryWhen { cause, _ ->
+            delay(1000)
+            true
+        }
+        .flowOnBackground()
+
+    override fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>> {
+        val flow = if (connectionDataSource.getConnectionState() == ConnectionStateDataModel.Connected) {
+            remoteMoviesDataSource.getCacheableMoviesPagingFlow(
+                movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel),
+                pageCachingHandler = { page, pageData ->
+                    localMoviesDataSource.cacheMovieList(
+                        deleteCached = page == 1,
+                        movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
+                            movieListTypeDomainModel
+                        ),
+                        movies = pageData,
+                    )
+                }
+            )
+        } else {
+            localMoviesDataSource.getCachedMoviesPagingFlow(
+                MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel)
+            )
+        }
+        return flow.mapData(MovieDataModel::toMovieDomainModel)
             .flowOnBackground()
+    }
 
     override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>> =
         remoteMoviesDataSource.getSearchMoviePagingFlow(query = query)
@@ -159,9 +177,13 @@ class MoviesRepositoryImpl @Inject constructor(
 
     //AHMED_TODO: refactor me
     override suspend fun syncGenres(): Boolean {
-        val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList()
-        localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
-        Timber.e("Syncedd")
-        return true
+        return try {
+            val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList()
+            localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
+            Timber.e("Syncedd")
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

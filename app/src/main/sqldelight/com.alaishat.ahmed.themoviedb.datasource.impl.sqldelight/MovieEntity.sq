@@ -34,12 +34,18 @@ FROM MovieEntity
 JOIN TypeMovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
 WHERE TypeMovieEntity.type = ?;
 
-selectMoviesByType:
+selectMoviesPageByType:
 SELECT MovieEntity.*
 FROM TypeMovieEntity
 JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
 WHERE TypeMovieEntity.type = ?
 LIMIT :limit OFFSET :offset;
+
+selectMoviesListByType:
+SELECT MovieEntity.*
+FROM TypeMovieEntity
+JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?;
 
 upsertMovie:
 INSERT OR REPLACE INTO MovieEntity(movieId, title,backdropPath,posterPath,overview,voteAverage,releaseDate)
