@@ -142,11 +142,6 @@ private fun SearchScreen(
         }
 
         val itemModifier = Modifier.height(110.dp)
-        Timber.e("pagingItems.loadState.refresh ${pagingItems.loadState.refresh}")
-        Timber.e("pagingItems.loadState.append ${pagingItems.loadState.append}")
-        Timber.e("pagingItems.loadState.mediator ${pagingItems.loadState.mediator}")
-        Timber.e("pagingItems.loadState.prepend ${pagingItems.loadState.prepend}")
-        Timber.e("pagingItems.loadState.source ${pagingItems.loadState.source}")
 
         pagingInitialLoader(pagingItems.loadState) {
             if (/*pagingItems.itemCount == 0 &&*/ searchText.isNotEmpty())

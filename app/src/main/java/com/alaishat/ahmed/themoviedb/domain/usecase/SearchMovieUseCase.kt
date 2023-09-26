@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -34,7 +35,7 @@ class SearchMovieUseCase @Inject constructor(
             .flatMapLatest {
                 if (it.isEmpty()) flowOf(emptyPagingData)
                 else moviesRepository.getSearchMoviePagingFlow(it)
-                    .catch { emitAll(flowOf()) }
+                    .catch { emitAll(emptyFlow()) }
             }
     }
 }

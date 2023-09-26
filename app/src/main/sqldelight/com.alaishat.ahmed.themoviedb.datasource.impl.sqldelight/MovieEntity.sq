@@ -46,6 +46,11 @@ FROM TypeMovieEntity
 JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
 WHERE TypeMovieEntity.type = ?;
 
+searchMoviesList:
+SELECT *
+FROM MovieEntity
+WHERE title LIKE '%' || :query || '%' OR releaseDate LIKE '%' || :query || '%';
+
 upsertMovie:
 INSERT OR REPLACE INTO MovieEntity(movieId, title,backdropPath,posterPath,overview,voteAverage,releaseDate)
 VALUES ?;

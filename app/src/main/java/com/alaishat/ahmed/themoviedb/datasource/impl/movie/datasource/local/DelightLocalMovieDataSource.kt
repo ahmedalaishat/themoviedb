@@ -80,6 +80,12 @@ class DelightLocalMovieDataSource @Inject constructor(
         ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
 
+    override fun searchCachedMovieList(query: String): List<MovieDataModel> {
+        return movieEntityQueries.searchMoviesList(
+            query = query,
+        ).executeAsList().map(MovieEntity::toMovieDataModel)
+    }
+
     override fun getCachedMoviesPagingFlow(movieListTypeDataModel: MovieListTypeDataModel): Flow<PagingData<MovieDataModel>> {
         val pager = defaultPagerOf(
             pagingSourceFactory = {

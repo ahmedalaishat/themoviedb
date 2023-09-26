@@ -11,6 +11,7 @@ import com.alaishat.ahmed.themoviedb.data.model.mapToGenresDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
 import com.alaishat.ahmed.themoviedb.data.model.toMovieDomainModel
 import com.alaishat.ahmed.themoviedb.data.model.toReviewDomainModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.pagerFlowOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
@@ -20,18 +21,20 @@ import com.alaishat.ahmed.themoviedb.di.AppDispatchers
 import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
 import timber.log.Timber
@@ -94,8 +97,17 @@ class MoviesRepositoryImpl @Inject constructor(
             .flowOnBackground()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>> =
-        remoteMoviesDataSource.getSearchMoviePagingFlow(query = query)
+        connectionDataSource.observeIsConnected().flatMapLatest {
+            if (it == ConnectionStateDataModel.Connected) {
+                remoteMoviesDataSource.getSearchMoviePagingFlow(query = query)
+            } else {
+                pagerFlowOf(
+                    data = localMoviesDataSource.searchCachedMovieList(query = query)
+                )
+            }
+        }
             .mapData(MovieDataModel::toMovieDomainModel)
             .flowOnBackground()
 

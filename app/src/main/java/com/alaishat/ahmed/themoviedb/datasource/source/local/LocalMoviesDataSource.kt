@@ -22,6 +22,7 @@ interface LocalMoviesDataSource {
     )
 
     fun getCachedMovieList(movieListTypeDataModel: MovieListTypeDataModel): List<MovieDataModel>
+    fun searchCachedMovieList(query: String): List<MovieDataModel>
     fun getCachedMoviesPagingFlow(movieListTypeDataModel: MovieListTypeDataModel): Flow<PagingData<MovieDataModel>>
     fun cacheMovieReviews(movieId: Int, reviews: List<ReviewDataModel>)
     fun getCachedReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDataModel>>
