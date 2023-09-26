@@ -1,9 +1,12 @@
-package com.alaishat.ahmed.themoviedb.feature.watchlist
+package com.alaishat.ahmed.themoviedb.presentation.feature.watchlist
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetWatchListUseCase
+import com.alaishat.ahmed.themoviedb.presentation.common.model.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +26,7 @@ class WatchListViewModel @Inject constructor(
     val queryFlow = _queryFlow.asStateFlow()
 
     val watchListFlow = getWatchListUseCase(queryFlow)
+        .mapData(MovieDomainModel::toPresentation)
         .cachedIn(viewModelScope)
 
     fun updateQueryText(query: String) = _queryFlow.update { query }

@@ -8,6 +8,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.MovieListUiState
+import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
 
 /**
@@ -29,16 +30,16 @@ fun LazyListScope.topMoviesList(
 }
 
 fun LazyGridScope.movieInfoList(
-    pagingItems: LazyPagingItems<MovieDomainModel>,
+    pagingItems: LazyPagingItems<Movie>,
     onMovieClick: (movieId: Int) -> Unit,
     itemModifier: Modifier = Modifier,
 ) = items(
     count = pagingItems.itemCount,
-    key = pagingItems.itemKey(MovieDomainModel::id),
+    key = pagingItems.itemKey(Movie::id),
     itemContent = { index ->
         val movie = pagingItems[index]!!
         MovieListItem(
-            movieDomainModel = movie,
+            movie = movie,
             modifier = itemModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),
         )
     },

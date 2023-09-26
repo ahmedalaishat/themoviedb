@@ -10,7 +10,7 @@ import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.FetchFailedDom
  * Created by Ahmed Al-Aishat on Sep/16/2023.
  * The Movie DB Project.
  */
-fun Throwable.toMovieDomainException(): DomainException = when (this) {
+fun Throwable.toDomainException(): DomainException = when (this) {
     is ApiDataException -> FetchFailedDomainException(this)
     is RequestFailedDataException -> FetchFailedDomainException(this)
     else -> UnknownDomainException(this)

@@ -6,10 +6,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeRoute
 import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeScreen
-import com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation.movieScreen
-import com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation.navigateToMovie
+import com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation.movieScreen
+import com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation.navigateToMovie
 import com.alaishat.ahmed.themoviedb.feature.search.navigation.searchScreen
-import com.alaishat.ahmed.themoviedb.feature.watchlist.navigation.watchListScreen
+import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListScreen
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.

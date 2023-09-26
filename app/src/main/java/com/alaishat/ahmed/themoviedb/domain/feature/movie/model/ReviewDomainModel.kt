@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.domain.model
+package com.alaishat.ahmed.themoviedb.domain.feature.movie.model
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.

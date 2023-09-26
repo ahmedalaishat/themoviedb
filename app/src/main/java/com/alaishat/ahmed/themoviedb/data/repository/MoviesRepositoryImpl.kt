@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.data.repository
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
 import com.alaishat.ahmed.themoviedb.data.mapper.MovieDetailsToDomainResolver
-import com.alaishat.ahmed.themoviedb.data.mapper.toMovieDomainException
+import com.alaishat.ahmed.themoviedb.data.mapper.toDomainException
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.data.model.mapToCreditsDomainModels
@@ -23,7 +23,7 @@ import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDoma
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -122,7 +122,7 @@ class MoviesRepositoryImpl @Inject constructor(
                     }
                 )
             }.retryWhen { cause, _ ->
-                emit(MovieDetailsDomainModel.Error(cause.toMovieDomainException()))
+                emit(MovieDetailsDomainModel.Error(cause.toDomainException()))
                 delay(1000)
                 true
             }
@@ -166,7 +166,7 @@ class MoviesRepositoryImpl @Inject constructor(
                 }
             }
         }.retryWhen { cause, _ ->
-            emit(CreditsDomainModel.Error(cause.toMovieDomainException()))
+            emit(CreditsDomainModel.Error(cause.toDomainException()))
             delay(1000)
             true
         }

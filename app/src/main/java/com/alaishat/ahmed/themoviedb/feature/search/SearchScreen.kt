@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -30,7 +29,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
@@ -68,11 +67,10 @@ fun SearchRoute(
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchScreen(
     searchText: String,
-    pagingItems: LazyPagingItems<MovieDomainModel>,
+    pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
     onMovieClick: (movieId: Int) -> Unit,
 ) {
@@ -177,9 +175,8 @@ private fun SearchScreenPreview() {
     TheMoviePreviewSurface {
         SearchScreen(
             searchText = "",
-            pagingItems = flowOf(PagingData.empty<MovieDomainModel>()).collectAsLazyPagingItems(),
+            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
             onSearchTextChange = { },
-            onMovieClick = { },
-        )
+        ) { }
     }
 }

@@ -6,7 +6,7 @@ import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
@@ -16,7 +16,7 @@ import com.alaishat.ahmed.themoviedb.presentation.feature.movie.mapper.toViewSta
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.toPresentation
-import com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation.MovieDetailsArgs
+import com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation.MovieDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map

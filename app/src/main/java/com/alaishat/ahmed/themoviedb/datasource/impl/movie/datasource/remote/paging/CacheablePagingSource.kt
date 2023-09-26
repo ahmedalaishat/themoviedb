@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging
 
-import timber.log.Timber
+import com.alaishat.ahmed.themoviedb.data.mapper.toDomainException
 
 /**
  * Created by Ahmed Al-Aishat on Sep/15/2023.
@@ -20,7 +20,7 @@ open class CacheablePagingSource<Value : Any>(
 
             resultOf(page = page, fetchedPage = fetchedPageData)
         } catch (e: Exception) {
-            LoadResult.Error(e)
+            LoadResult.Error(e.toDomainException())
         }
     }
 }

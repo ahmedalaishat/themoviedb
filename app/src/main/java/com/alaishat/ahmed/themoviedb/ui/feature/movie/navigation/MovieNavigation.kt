@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation
+package com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController

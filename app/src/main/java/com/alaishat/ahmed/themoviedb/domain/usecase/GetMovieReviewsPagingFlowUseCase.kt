@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.domain.usecase
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

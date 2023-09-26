@@ -1,10 +1,10 @@
-package com.alaishat.ahmed.themoviedb.feature.watchlist.navigation
+package com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.alaishat.ahmed.themoviedb.feature.watchlist.WatchListRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.WatchListRoute
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.

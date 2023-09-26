@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.watchlist
+package com.alaishat.ahmed.themoviedb.ui.feature.watchlist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +23,8 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
+import com.alaishat.ahmed.themoviedb.presentation.feature.watchlist.WatchListViewModel
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
@@ -59,7 +60,7 @@ fun WatchListRoute(
 @Composable
 private fun WatchListScreen(
     searchText: String,
-    pagingItems: LazyPagingItems<MovieDomainModel>,
+    pagingItems: LazyPagingItems<Movie>,
     onSearchTextChange: (String) -> Unit,
     onMovieClick: (movieId: Int) -> Unit,
 ) {
@@ -77,7 +78,7 @@ private fun WatchListScreen(
             Surface(color = MaterialTheme.colorScheme.background) {
                 SearchBar(
                     searchText = searchText,
-                    placeholder = "Search",
+                    placeholder = stringResource(R.string.search),
                     onSearchTextChange = onSearchTextChange,
                     modifier = Modifier
                         .padding(top = Dimensions.ScreenPadding)
@@ -117,7 +118,7 @@ private fun WatchListScreen(
         modifier = Modifier.fillMaxSize(),
     ) { error ->
         Text(
-            text = error.orEmpty(),
+            text = stringResource(id = R.string.something_went_wrong),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -130,9 +131,8 @@ private fun WatchListScreenPreview() {
     TheMoviePreviewSurface {
         WatchListScreen(
             searchText = "",
-            pagingItems = flowOf(PagingData.empty<MovieDomainModel>()).collectAsLazyPagingItems(),
+            pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
             onSearchTextChange = { },
-            onMovieClick = { },
-        )
+        ) { }
     }
 }
