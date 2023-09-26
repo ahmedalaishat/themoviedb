@@ -7,7 +7,6 @@ import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -29,6 +28,7 @@ interface LocalMoviesDataSource {
     fun getMovieGenreList(): Flow<List<GenreDataModel>>
     fun updateMovieGenreList(genreList: List<GenreDataModel>)
     fun cacheMovieCredits(movieId: Int, credits: List<CreditDataModel>)
+    fun getCachedMovieCredits(movieId: Int): Flow<List<CreditDataModel>>
     fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel)
     fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel?
     fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean)

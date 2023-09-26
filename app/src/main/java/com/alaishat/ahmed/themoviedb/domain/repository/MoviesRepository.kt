@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
@@ -22,7 +22,7 @@ interface MoviesRepository : Repository {
     suspend fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean)
     fun observeWatchlist(movieId: Int): Flow<Boolean>
     fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
-    suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel>
+    fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int)
     fun getMovieGenreList(): Flow<List<GenreDomainModel>>
     suspend fun syncGenres(): Boolean

@@ -1,9 +1,8 @@
 package com.alaishat.ahmed.themoviedb.domain.usecase
 
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -13,8 +12,6 @@ import javax.inject.Inject
 class GetMovieCreditsUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
-    operator fun invoke(movieId: Int): Flow<List<CreditDomainModel>> = flow {
-        val credits = moviesRepository.getMovieCredits(movieId = movieId)
-        emit(credits)
-    }
+    operator fun invoke(movieId: Int): Flow<CreditsDomainModel> =
+    moviesRepository.getMovieCredits(movieId = movieId)
 }

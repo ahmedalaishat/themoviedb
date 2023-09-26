@@ -12,12 +12,14 @@ import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.mapToGenreDataModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toEntity
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
+import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreMovieEntityQueries
@@ -126,6 +128,16 @@ class DelightLocalMovieDataSource @Inject constructor(
                 creditEntityQueries.upsertCredit(credit.toEntity(movieId = movieId))
             }
         }
+    }
+
+    override fun getCachedMovieCredits(movieId: Int): Flow<List<CreditDataModel>> {
+        return creditEntityQueries
+            .selectMovieCredits(movieId = movieId.toLong())
+            .asFlow()
+            .map { it.executeAsList() }
+            .map {
+                it.map(CreditEntity::toDataModel)
+            }
     }
 
     override fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {

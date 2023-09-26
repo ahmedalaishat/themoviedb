@@ -65,13 +65,15 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
 import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
-import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.MovieViewModel
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Credit
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
@@ -109,14 +111,14 @@ fun MovieRoute(
     val rated by viewModel.rated.collectAsStateWithLifecycle()
 
 
-    when(movie){
-        is MovieDetailsViewState.Loading-> MovieDetailsShimmer()
+    when (movie) {
+        is MovieDetailsViewState.Loading -> MovieDetailsShimmer()
         MovieDetailsViewState.Disconnected -> Text(text = "You are offline")
         is MovieDetailsViewState.Error -> Text(text = "Something went wrong")
         is MovieDetailsViewState.Success -> MovieScreen(
             movie = movie as MovieDetailsViewState.Success,
             reviews = reviews,
-            creditDomainModels = credits,
+            creditsViewState = credits,
             rated = rated,
             onRateSubmit = viewModel::rateMovie,
             onToggleWatchlist = viewModel::toggleWatchlist,
@@ -129,7 +131,7 @@ fun MovieRoute(
 private fun MovieScreen(
     movie: MovieDetailsViewState.Success,
     reviews: LazyPagingItems<ReviewDomainModel>,
-    creditDomainModels: List<CreditDomainModel>?,
+    creditsViewState: CreditsViewState,
     rated: Boolean,
     onRateSubmit: (rating: Int) -> Unit,
     onToggleWatchlist: (watchlist: Boolean) -> Unit,
@@ -304,7 +306,7 @@ private fun MovieScreen(
                     )
 
                     2 -> CastTab(
-                        creditDomainModels = creditDomainModels,
+                        creditsViewState = creditsViewState,
                         modifier = tabModifier,
                     )
                 }
@@ -374,37 +376,40 @@ private fun ReviewsTab(
 
 @Composable
 private fun CastTab(
-    creditDomainModels: List<CreditDomainModel>?,
+    creditsViewState: CreditsViewState,
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()
 
-    //AHMED_TODO: make me shimmer
-    if (creditDomainModels == null) return TheMovieLoader()
-
-    LazyVerticalGrid(
-        state = lazyGridState,
-        columns = GridCells.Adaptive(150.dp),
-        horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
-        verticalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
-        contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        actors(
-            creditDomainModels = creditDomainModels,
-            actorModifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(.9f)
-        )
+    when (creditsViewState) {
+        CreditsViewState.Loading -> TheMovieLoader() //AHMED_TODO: make me shimmer
+        CreditsViewState.Disconnected -> Text(text = "Offline") //AHMED_TODO: add offline content
+        is CreditsViewState.Error -> Text(text = "Error")
+        is CreditsViewState.Success ->
+            LazyVerticalGrid(
+                state = lazyGridState,
+                columns = GridCells.Adaptive(150.dp),
+                horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
+                contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                actors(
+                    credits = creditsViewState.credits,
+                    actorModifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(.9f)
+                )
+            }
     }
 }
 
 
 private fun LazyGridScope.actors(
-    creditDomainModels: List<CreditDomainModel>,
+    credits: List<Credit>,
     actorModifier: Modifier = Modifier,
 ) {
-    items(items = creditDomainModels, key = CreditDomainModel::id) { credit ->
+    items(items = credits, key = Credit::id) { credit ->
         ActorCard(creditDomainModel = credit, modifier = actorModifier)
     }
 }
@@ -412,7 +417,7 @@ private fun LazyGridScope.actors(
 
 @Composable
 fun ActorCard(
-    creditDomainModel: CreditDomainModel,
+    creditDomainModel: Credit,
     modifier: Modifier = Modifier,
 ) {
     Box(

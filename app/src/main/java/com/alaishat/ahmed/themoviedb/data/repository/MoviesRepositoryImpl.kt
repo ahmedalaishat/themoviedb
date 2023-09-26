@@ -18,8 +18,8 @@ import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSour
 import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.di.AppDispatchers
 import com.alaishat.ahmed.themoviedb.di.Dispatcher
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
@@ -27,12 +27,12 @@ import com.alaishat.ahmed.themoviedb.domain.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.update
@@ -153,16 +153,28 @@ class MoviesRepositoryImpl @Inject constructor(
             .mapData(ReviewDataModel::toReviewDomainModel)
             .flowOnBackground()
 
-    override suspend fun getMovieCredits(movieId: Int): List<CreditDomainModel> = doInBackground {
-        try {
-            val credits = remoteMoviesDataSource.getMovieCredits(movieId = movieId)
-            localMoviesDataSource.cacheMovieCredits(movieId, credits)
-            credits.mapToCreditsDomainModels()
-        } catch (e: Exception) {
-            //AHMED_TODO: handle me
-            emptyList()
+    override fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel> =
+        localMoviesDataSource.getCachedMovieCredits(movieId).combine(
+            connectionDataSource.observeIsConnected()
+        ) { cached, connected ->
+            if (cached.isNotEmpty()) {
+                CreditsDomainModel.Success(cached.mapToCreditsDomainModels())
+            }
+            else {
+                if (connected == ConnectionStateDataModel.Connected) {
+                    val credits = remoteMoviesDataSource.getMovieCredits(movieId = movieId)
+                    localMoviesDataSource.cacheMovieCredits(movieId, credits)
+                    CreditsDomainModel.Success(credits.mapToCreditsDomainModels())
+                } else {
+                    CreditsDomainModel.Disconnected
+                }
+            }
+        }.retryWhen { cause, _ ->
+            emit(CreditsDomainModel.Error(cause.toMovieDomainException()))
+            delay(1000)
+            true
         }
-    }
+            .flowOnBackground()
 
     override suspend fun addMovieRating(movieId: Int, rating: Int) = doInBackground {
         remoteMoviesDataSource.addMovieRating(movieId = movieId, rating = rating)

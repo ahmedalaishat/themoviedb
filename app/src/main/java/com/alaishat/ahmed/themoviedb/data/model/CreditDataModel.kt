@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.data.model
 
-import com.alaishat.ahmed.themoviedb.domain.model.CreditDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditDomainModel
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.

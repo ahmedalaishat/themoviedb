@@ -22,6 +22,6 @@ fun MovieDetailsDomainModel.toViewState() = when (this) {
     )
 
     MovieDetailsDomainModel.Disconnected -> MovieDetailsViewState.Disconnected
-    is MovieDetailsDomainModel.Error -> MovieDetailsViewState.Error(exception.toViewState())
+    is MovieDetailsDomainModel.Error -> MovieDetailsViewState.Error(exception.toViewError())
     MovieDetailsDomainModel.Loading -> MovieDetailsViewState.Loading
 }

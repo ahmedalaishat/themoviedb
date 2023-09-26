@@ -9,3 +9,7 @@ CREATE TABLE CreditEntity (
 upsertCredit:
 INSERT OR REPLACE INTO CreditEntity(creditId,movieId,name,profilePath)
 VALUES ?;
+
+selectMovieCredits:
+SELECT * FROM CreditEntity
+WHERE movieId =?;

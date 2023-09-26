@@ -3,6 +3,7 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.movie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
@@ -10,6 +11,7 @@ import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieReviewsPagingFlowUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.ToggleWatchlistMovieUseCase
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.mapper.toViewState
+import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.navigation.MovieDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +41,10 @@ class MovieViewModel @Inject constructor(
         .stateInViewModel(MovieDetailsViewState.Loading)
 
     val movieReviews = getPagingMovieReviews(args.movieId)
-    val movieCredits = getMovieCredits(args.movieId).stateInViewModel(null)
+
+    val movieCredits = getMovieCredits(args.movieId)
+        .map(CreditsDomainModel::toViewState)
+        .stateInViewModel(CreditsViewState.Loading)
 
     val rated = MutableStateFlow(false)
 

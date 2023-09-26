@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.domain.feature.movie.exception
+package com.alaishat.ahmed.themoviedb.domain.achitecture.exception
 
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.DomainException
 

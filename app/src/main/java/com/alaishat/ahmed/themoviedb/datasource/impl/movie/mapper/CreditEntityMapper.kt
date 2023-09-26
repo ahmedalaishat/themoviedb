@@ -13,3 +13,9 @@ fun CreditDataModel.toEntity(movieId: Int) = CreditEntity(
     name = name,
     profilePath = profilePath,
 )
+
+fun CreditEntity.toDataModel() = CreditDataModel(
+    creditId = creditId,
+    name = name,
+    profilePath = profilePath,
+)

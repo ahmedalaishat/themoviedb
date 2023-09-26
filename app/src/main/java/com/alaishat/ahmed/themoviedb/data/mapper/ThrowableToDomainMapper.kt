@@ -4,7 +4,7 @@ import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.ApiData
 import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.RequestFailedDataException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.DomainException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.UnknownDomainException
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.exception.FetchFailedDomainException
+import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.FetchFailedDomainException
 
 /**
  * Created by Ahmed Al-Aishat on Sep/16/2023.
