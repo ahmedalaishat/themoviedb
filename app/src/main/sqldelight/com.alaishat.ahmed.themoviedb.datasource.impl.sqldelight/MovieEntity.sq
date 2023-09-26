@@ -17,7 +17,6 @@ SELECT m.*, md.*, g.*
 FROM MovieEntity AS m
 JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
 JOIN GenreEntity AS g ON gm.genreId = g.genreId
-JOIN CreditEntity AS c ON m.movieId == c.movieId
 JOIN MovieDetailsEntity AS md ON md.movieId = m.movieId
 WHERE m.movieId = ?;
 

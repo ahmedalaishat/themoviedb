@@ -19,7 +19,6 @@ interface MoviesRepository : Repository {
     fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>>
     fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
-    suspend fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean)
     fun observeWatchlist(movieId: Int): Flow<Boolean>
     fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>

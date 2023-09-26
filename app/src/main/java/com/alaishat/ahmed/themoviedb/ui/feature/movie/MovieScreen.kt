@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
@@ -89,6 +90,7 @@ import com.alaishat.ahmed.themoviedb.ui.component.SuccessDialog
 import com.alaishat.ahmed.themoviedb.ui.component.TheMoviePreviewSurface
 import com.alaishat.ahmed.themoviedb.ui.component.rememberDialogState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
+import com.alaishat.ahmed.themoviedb.ui.extenstions.maxLineBox
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.AppRed
@@ -112,8 +114,12 @@ fun MovieRoute(
 
     when (movie) {
         is MovieDetailsViewState.Loading -> MovieDetailsShimmer()
-        MovieDetailsViewState.Disconnected -> Text(text = "You are offline")
-        is MovieDetailsViewState.Error -> Text(text = "Something went wrong")
+        MovieDetailsViewState.Disconnected ->
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
+                Text(text = stringResource(id = R.string.no_cached_data))
+            }
+
+        is MovieDetailsViewState.Error -> Text(text = stringResource(R.string.something_went_wrong))
         is MovieDetailsViewState.Success -> MovieScreen(
             movie = movie as MovieDetailsViewState.Success,
             reviews = reviews,
@@ -379,27 +385,42 @@ private fun CastTab(
     modifier: Modifier = Modifier
 ) {
     val lazyGridState = rememberLazyGridState()
+    LazyVerticalGrid(
+        state = lazyGridState,
+        columns = GridCells.Adaptive(150.dp),
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
+        contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
+        modifier = modifier.fillMaxWidth(),
+    ) {
 
-    when (creditsViewState) {
-        CreditsViewState.Loading -> TheMovieLoader() //AHMED_TODO: make me shimmer
-        CreditsViewState.Disconnected -> Text(text = "Offline") //AHMED_TODO: add offline content
-        is CreditsViewState.Error -> Text(text = "Error")
-        is CreditsViewState.Success ->
-            LazyVerticalGrid(
-                state = lazyGridState,
-                columns = GridCells.Adaptive(150.dp),
-                horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
-                contentPadding = PaddingValues(vertical = Dimensions.MarginMd),
-                modifier = modifier.fillMaxWidth(),
+        when (creditsViewState) {
+            CreditsViewState.Loading -> maxLineBox(
+                modifier = Modifier.fillMaxSize(),
             ) {
+                TheMovieLoader()
+            } //AHMED_TODO: make me shimmer
+
+            CreditsViewState.Disconnected -> maxLineBox(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Text(text = stringResource(R.string.no_cached_data))
+            } //AHMED_TODO: add offline content
+
+            is CreditsViewState.Error -> maxLineBox(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Text(text = stringResource(R.string.something_went_wrong))
+            }
+
+            is CreditsViewState.Success ->
                 actors(
                     credits = creditsViewState.credits,
                     actorModifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(.9f)
                 )
-            }
+        }
     }
 }
 

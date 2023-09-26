@@ -31,11 +31,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
-import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -50,7 +48,6 @@ class MoviesRepositoryImpl @Inject constructor(
     private val movieDetailsToDomainResolver: MovieDetailsToDomainResolver,
     @Dispatcher(AppDispatchers.IO) override val ioDispatcher: CoroutineDispatcher,
 ) : MoviesRepository, BackgroundExecutor {
-    private val watchlistSet = MutableStateFlow(setOf<Int>())
 
     override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = connectionDataSource.observeIsConnected()
         .map { connected ->
@@ -130,13 +127,6 @@ class MoviesRepositoryImpl @Inject constructor(
                 true
             }
             .flowOnBackground()
-    }
-
-    override suspend fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean) {
-        if (watchlist)
-            watchlistSet.update { it + movieId }
-        else
-            watchlistSet.update { it - movieId }
     }
 
     override fun observeWatchlist(movieId: Int): Flow<Boolean> {
