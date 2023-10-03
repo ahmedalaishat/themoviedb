@@ -74,24 +74,29 @@ class MoviesRepositoryImpl @Inject constructor(
         }
         .flowOnBackground()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>> {
-        val flow = if (connectionDataSource.getConnectionState() is ConnectionStateDataModel.Connected) {
-            remoteMoviesDataSource.getCacheableMoviesPagingFlow(
-                movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel),
-                pageCachingHandler = { page, pageData ->
-                    localMoviesDataSource.cacheMovieList(
-                        deleteCached = page == 1,
-                        movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
-                            movieListTypeDomainModel
-                        ),
-                        movies = pageData,
-                    )
-                }
-            )
-        } else {
-            localMoviesDataSource.getCachedMoviesPagingFlow(
-                MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel)
-            )
+        val flow = connectionDataSource.observeIsConnected().flatMapLatest {
+            if (it is ConnectionStateDataModel.Connected) {
+                remoteMoviesDataSource.getCacheableMoviesPagingFlow(
+                    movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
+                        movieListTypeDomainModel
+                    ),
+                    pageCachingHandler = { page, pageData ->
+                        localMoviesDataSource.cacheMovieList(
+                            deleteCached = page == 1,
+                            movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
+                                movieListTypeDomainModel
+                            ),
+                            movies = pageData,
+                        )
+                    }
+                )
+            } else {
+                localMoviesDataSource.getCachedMoviesPagingFlow(
+                    MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel)
+                )
+            }
         }
         return flow.mapData(MovieDataModel::toMovieDomainModel)
             .flowOnBackground()
