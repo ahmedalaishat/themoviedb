@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeRoute
 import com.alaishat.ahmed.themoviedb.feature.search.navigation.searchRoute
-import com.alaishat.ahmed.themoviedb.feature.watchlist.navigation.watchListRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListRoute
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.

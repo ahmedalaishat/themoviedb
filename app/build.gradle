@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
     id 'dagger.hilt.android.plugin'
+    id 'app.cash.sqldelight'
 }
 
 android {
@@ -120,6 +121,11 @@ dependencies {
 
     implementation "me.onebone:toolbar-compose:2.3.5"
 
+    // SQL Delight
+    implementation "app.cash.sqldelight:android-driver:2.0.0"
+    implementation "app.cash.sqldelight:coroutines-extensions:2.0.0"
+    implementation "app.cash.sqldelight:androidx-paging3-extensions:2.0.0"
+
 
     // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
@@ -132,4 +138,12 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}
+
+sqldelight {
+    databases {
+        create("TheMovieDBDatabase") {
+            packageName.set("com.alaishat.ahmed.themoviedb")
+        }
+    }
 }

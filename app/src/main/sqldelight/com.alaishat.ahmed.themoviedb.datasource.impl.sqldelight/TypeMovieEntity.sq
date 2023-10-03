@@ -1,0 +1,30 @@
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel;
+
+CREATE TABLE TypeMovieEntity (
+  type TEXT AS MovieListTypeDataModel NOT NULL,
+  movieId INTEGER NOT NULL,
+  FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId)
+);
+
+selectall:
+SELECT * FROM TypeMovieEntity;
+
+insert:
+INSERT INTO TypeMovieEntity(type, movieId)
+VALUES (?, ?);
+
+selecctByIdAndType:
+SELECT movieId
+FROM TypeMovieEntity
+WHERE movieId = ? AND type = ?
+LIMIT 1;
+
+deleteByIdAndType:
+DELETE
+FROM TypeMovieEntity
+WHERE movieId = ? AND type = ?;
+
+deleteListByType:
+DELETE
+FROM TypeMovieEntity
+WHERE TypeMovieEntity.type = ?;

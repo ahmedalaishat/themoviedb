@@ -3,14 +3,14 @@ package com.alaishat.ahmed.themoviedb.feature.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.alaishat.ahmed.themoviedb.common.BaseViewModel
-import com.alaishat.ahmed.themoviedb.common.HomeTab
-import com.alaishat.ahmed.themoviedb.common.result.Result
-import com.alaishat.ahmed.themoviedb.common.result.asResult
-import com.alaishat.ahmed.themoviedb.common.usermessage.UserMessage
-import com.alaishat.ahmed.themoviedb.domain.GetMoviesPagingFlowUseCase
-import com.alaishat.ahmed.themoviedb.domain.GetTopFiveMoviesUseCase
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
+import com.alaishat.ahmed.themoviedb.architecture.HomeTab
+import com.alaishat.ahmed.themoviedb.architecture.result.Result
+import com.alaishat.ahmed.themoviedb.architecture.result.asResult
+import com.alaishat.ahmed.themoviedb.architecture.usermessage.UserMessage
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,20 +27,21 @@ class HomeViewModel @Inject constructor(
     getTopFiveMoviesUseCase: GetTopFiveMoviesUseCase,
 ) : BaseViewModel() {
 
-    private fun getMoviesFlowOf(homeTab: HomeTab): Flow<PagingData<Movie>> {
-        return getMoviesPagingFlowUseCase(homeTab.movieListType).cachedIn(viewModelScope)
+    private fun getMoviesFlowOf(homeTab: HomeTab): Flow<PagingData<MovieDomainModel>> {
+        return getMoviesPagingFlowUseCase(homeTab.movieListTypeDomainModel).cachedIn(viewModelScope)
     }
 
     val topFiveMoviesFlow = getTopFiveMoviesUseCase()
         .asResult()
-        .map(Result<List<Movie>>::toMovieListUiState)
+        .map(Result<List<MovieDomainModel>>::toMovieListUiState)
         .stateInViewModel(
             initialValue = MovieListUiState.Loading,
             started = SharingStarted.Lazily // no need to use `WhileSubscribed` as we make one shot call
         )
 
     // Each tab with its flow
-    val tabs: Map<HomeTab, Flow<PagingData<Movie>>> = HomeTab.values().associateWith { tab -> getMoviesFlowOf(tab) }
+    val tabs: Map<HomeTab, Flow<PagingData<MovieDomainModel>>> =
+        HomeTab.values().associateWith { tab -> getMoviesFlowOf(tab) }
 }
 
 
@@ -52,11 +53,11 @@ sealed interface MovieListUiState {
     ) : MovieListUiState
 
     data class Success(
-        val movies: List<Movie>,
+        val movieDomainModels: List<MovieDomainModel>,
     ) : MovieListUiState
 }
 
-fun Result<List<Movie>>.toMovieListUiState(): MovieListUiState {
+fun Result<List<MovieDomainModel>>.toMovieListUiState(): MovieListUiState {
     return when (this) {
         is Result.Loading -> MovieListUiState.Loading
         is Result.Error -> MovieListUiState.Error(this.message)

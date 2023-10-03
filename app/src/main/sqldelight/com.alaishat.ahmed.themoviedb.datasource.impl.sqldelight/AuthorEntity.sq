@@ -1,0 +1,9 @@
+CREATE TABLE AuthorEntity (
+  username TEXT PRIMARY KEY NOT NULL,
+  avatarPath TEXT,
+  rating REAL
+);
+
+upsertAuthor:
+INSERT OR REPLACE INTO AuthorEntity(username,avatarPath,rating)
+VALUES ?;

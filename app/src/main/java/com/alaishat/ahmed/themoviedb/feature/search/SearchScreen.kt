@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -30,7 +29,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
@@ -68,7 +67,6 @@ fun SearchRoute(
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchScreen(
     searchText: String,
@@ -144,11 +142,6 @@ private fun SearchScreen(
         }
 
         val itemModifier = Modifier.height(110.dp)
-        Timber.e("pagingItems.loadState.refresh ${pagingItems.loadState.refresh}")
-        Timber.e("pagingItems.loadState.append ${pagingItems.loadState.append}")
-        Timber.e("pagingItems.loadState.mediator ${pagingItems.loadState.mediator}")
-        Timber.e("pagingItems.loadState.prepend ${pagingItems.loadState.prepend}")
-        Timber.e("pagingItems.loadState.source ${pagingItems.loadState.source}")
 
         pagingInitialLoader(pagingItems.loadState) {
             if (/*pagingItems.itemCount == 0 &&*/ searchText.isNotEmpty())
@@ -179,7 +172,6 @@ private fun SearchScreenPreview() {
             searchText = "",
             pagingItems = flowOf(PagingData.empty<Movie>()).collectAsLazyPagingItems(),
             onSearchTextChange = { },
-            onMovieClick = { },
-        )
+        ) { }
     }
 }

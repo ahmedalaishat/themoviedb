@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.feature.home.POSTER_BASE_URL
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes
@@ -49,13 +49,13 @@ fun MovieCard(
 
 @Composable
 fun TopMovieCard(
-    movie: Movie,
+    movieDomainModel: MovieDomainModel,
     rank: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         MovieCard(
-            moviePosterPath = movie.posterPath,
+            moviePosterPath = movieDomainModel.posterPath,
             modifier = Modifier
                 .padding(start = Dimensions.MarginSm, end = Dimensions.MarginSm, bottom = Dimensions.MarginSm.times(2))
                 .fillMaxSize(),

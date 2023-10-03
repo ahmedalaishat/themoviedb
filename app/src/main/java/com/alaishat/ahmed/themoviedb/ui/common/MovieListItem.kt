@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.domain.model.Movie
+import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.component.SpacerSm
 
 /**

@@ -1,29 +1,27 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.source.network.AccountDataSource
-import com.alaishat.ahmed.themoviedb.data.source.network.MoviesDataSource
-import com.alaishat.ahmed.themoviedb.network.datasource.KtorAccountDataSource
-import com.alaishat.ahmed.themoviedb.network.datasource.KtorMoviesDataSource
-import dagger.Binds
+import android.content.Context
+import android.net.ConnectivityManager
+import com.alaishat.ahmed.themoviedb.datasource.impl.connection.datasource.ConnectionDataSourceImpl
+import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.MainScope
 
 /**
- * Created by Ahmed Al-Aishat on Jun/24/2023.
+ * Created by Ahmed Al-Aishat on Sep/16/2023.
  * The Movie DB Project.
  */
 @Module
 @InstallIn(SingletonComponent::class)
-interface NetworkModule {
+class NetworkModule {
 
-    @Binds
-    fun providesAccountDataSource(
-        accountDataSource: KtorAccountDataSource,
-    ): AccountDataSource
+    @Provides
+    fun providesConnectivityManager(@ApplicationContext context: Context) =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    @Binds
-    fun providesMoviesDataSource(
-        moviesDataSource: KtorMoviesDataSource,
-    ): MoviesDataSource
 }
