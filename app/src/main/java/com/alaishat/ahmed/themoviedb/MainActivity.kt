@@ -11,6 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.ui.MovieApp
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
@@ -25,6 +26,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var moviesRepository: MoviesRepository
+
+    @Inject
+    lateinit var connectionDataSource: ConnectionDataSource
 
 
     val viewModel: MainViewModel by viewModels()
@@ -59,7 +63,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             TheMovieDBTheme {
-                MovieApp()
+                MovieApp(
+                    connectionDataSource = connectionDataSource,
+                )
             }
         }
 //        lifecycleScope.launch {

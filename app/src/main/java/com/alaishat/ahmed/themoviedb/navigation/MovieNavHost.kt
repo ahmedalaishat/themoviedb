@@ -18,7 +18,6 @@ import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListSc
 @Composable
 fun MovieNavHost(
     navController: NavHostController,
-    onRateClick: () -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = homeRoute,
 ) {
