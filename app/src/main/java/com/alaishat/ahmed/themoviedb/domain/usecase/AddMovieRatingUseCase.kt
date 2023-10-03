@@ -10,6 +10,6 @@ import javax.inject.Inject
 class AddMovieRatingUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) {
-    suspend operator fun invoke(movieId: Int, rating: Int) =
+    suspend operator fun invoke(movieId: Int, rating: Int): Boolean =
         moviesRepository.addMovieRating(movieId = movieId, rating = rating)
 }

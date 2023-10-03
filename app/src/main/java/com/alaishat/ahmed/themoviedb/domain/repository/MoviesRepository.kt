@@ -22,7 +22,7 @@ interface MoviesRepository : Repository {
     fun observeWatchlist(movieId: Int): Flow<Boolean>
     fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>
-    suspend fun addMovieRating(movieId: Int, rating: Int)
+    suspend fun addMovieRating(movieId: Int, rating: Int):Boolean
     fun getMovieGenreList(): Flow<List<GenreDomainModel>>
     suspend fun syncGenres(): Boolean
 }

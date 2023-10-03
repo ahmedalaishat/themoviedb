@@ -50,12 +50,12 @@ class MovieViewModel @Inject constructor(
         .map(CreditsDomainModel::toViewState)
         .stateInViewModel(CreditsViewState.Loading)
 
-    val rated = MutableStateFlow(false)
+    val rated = MutableStateFlow<Boolean?>(null)
 
     fun rateMovie(rating: Int) {
         viewModelScope.launch {
-            addMovieRating(args.movieId, rating)
-            rated.value = true
+            rated.value = null
+            rated.value = addMovieRating(args.movieId, rating)
         }
     }
 

@@ -189,8 +189,13 @@ class MoviesRepositoryImpl @Inject constructor(
         }
             .flowOnBackground()
 
-    override suspend fun addMovieRating(movieId: Int, rating: Int) = doInBackground {
-        remoteMoviesDataSource.addMovieRating(movieId = movieId, rating = rating)
+    override suspend fun addMovieRating(movieId: Int, rating: Int): Boolean = doInBackground {
+        return@doInBackground try {
+            remoteMoviesDataSource.addMovieRating(movieId = movieId, rating = rating)
+            true
+        } catch (ignored: Exception) {
+            false
+        }
     }
 
     override fun getMovieGenreList(): Flow<List<GenreDomainModel>> =
