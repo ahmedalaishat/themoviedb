@@ -151,19 +151,24 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>> {
-        val flow = if (connectionDataSource.getConnectionState() is ConnectionStateDataModel.Connected) {
-            remoteMoviesDataSource.getMovieReviewsPagingFlow(
-                movieId = movieId,
-                pageCachingHandler = { _, reviews ->
-                    localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
-                }
-            )
-        } else {
-            localMoviesDataSource.getCachedReviewsPagingFlow(
-                movieId = movieId
-            )
+        val flow = connectionDataSource.observeIsConnected().flatMapLatest {
+            if (it is ConnectionStateDataModel.Connected) {
+                remoteMoviesDataSource.getMovieReviewsPagingFlow(
+                    movieId = movieId,
+                    pageCachingHandler = { _, reviews ->
+                        localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
+                    }
+                )
+            } else {
+                localMoviesDataSource.getCachedReviewsPagingFlow(
+                    movieId = movieId
+                )
+            }
+
         }
-        return flow.mapData(ReviewDataModel::toReviewDomainModel)
+
+        return flow
+            .mapData(ReviewDataModel::toReviewDomainModel)
             .flowOnBackground()
     }
 
