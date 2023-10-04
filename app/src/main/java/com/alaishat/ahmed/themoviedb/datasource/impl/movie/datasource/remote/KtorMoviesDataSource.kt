@@ -25,7 +25,7 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToReviewsDat
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMovieAccountStatusDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.toMoviesDetailsDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
-import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteMoviesDataSource
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

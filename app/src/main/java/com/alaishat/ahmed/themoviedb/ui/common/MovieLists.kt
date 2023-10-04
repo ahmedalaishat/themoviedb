@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.MovieListUiState
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable

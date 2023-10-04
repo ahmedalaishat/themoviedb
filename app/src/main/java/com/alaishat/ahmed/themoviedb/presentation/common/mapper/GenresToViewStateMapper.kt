@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.presentation.common.mapper
 
-import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.GenreDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Genre
 import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState
 

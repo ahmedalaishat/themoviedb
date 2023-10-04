@@ -1,7 +1,6 @@
-package com.alaishat.ahmed.themoviedb.domain.feature.home
+package com.alaishat.ahmed.themoviedb.domain.feature.home.model
 
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.DomainException
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 
 /**
  * Created by Ahmed Al-Aishat on Sep/24/2023.

@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.architecture
 
-import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieListTypeDomainModel
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.

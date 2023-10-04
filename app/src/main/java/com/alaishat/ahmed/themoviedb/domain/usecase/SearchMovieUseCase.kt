@@ -4,7 +4,7 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.constants.DEBOUNCE_TIMEOUT
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

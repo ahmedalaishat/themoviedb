@@ -6,8 +6,8 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.local.Deli
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.KtorMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteAccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteMoviesDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

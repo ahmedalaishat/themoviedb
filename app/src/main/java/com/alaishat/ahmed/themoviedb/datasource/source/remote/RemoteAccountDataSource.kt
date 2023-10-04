@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.datasource.source.network
+package com.alaishat.ahmed.themoviedb.datasource.source.remote
 
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel

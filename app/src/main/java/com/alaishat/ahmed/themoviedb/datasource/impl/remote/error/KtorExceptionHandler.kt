@@ -1,8 +1,8 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.remote.error
 
 import com.alaishat.ahmed.themoviedb.data.architecture.exception.DataException
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.ApiDataException
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.RequestFailedDataException
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.exception.ApiDataException
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.exception.RequestFailedDataException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.HttpRequest
 import io.ktor.client.statement.HttpResponse

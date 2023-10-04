@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.data.model
 
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.

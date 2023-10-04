@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.domain.usecase
 import androidx.paging.PagingData
 import androidx.paging.filter
 import com.alaishat.ahmed.themoviedb.domain.constants.DEBOUNCE_TIMEOUT
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

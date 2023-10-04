@@ -8,7 +8,7 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.ToggleWatchlistMovieReq
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.mapToMoviesDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
-import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteAccountDataSource
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

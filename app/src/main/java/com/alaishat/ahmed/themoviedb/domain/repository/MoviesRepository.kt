@@ -3,10 +3,10 @@ package com.alaishat.ahmed.themoviedb.domain.repository
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieListTypeDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import kotlinx.coroutines.flow.Flow
 
 /**

@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.presentation.common
 
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieGenreListUseCase
 import com.alaishat.ahmed.themoviedb.presentation.common.mapper.toViewState
 import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState

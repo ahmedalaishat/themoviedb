@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetWatchListUseCase
 import com.alaishat.ahmed.themoviedb.presentation.common.model.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel

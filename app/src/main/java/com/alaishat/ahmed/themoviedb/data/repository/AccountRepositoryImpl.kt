@@ -9,10 +9,10 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDa
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.network.RemoteAccountDataSource
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteAccountDataSource
 import com.alaishat.ahmed.themoviedb.di.AppDispatchers
 import com.alaishat.ahmed.themoviedb.di.Dispatcher
-import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import kotlinx.coroutines.CoroutineDispatcher

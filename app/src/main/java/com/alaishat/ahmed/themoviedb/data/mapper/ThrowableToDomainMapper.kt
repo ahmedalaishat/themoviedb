@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.data.mapper
 
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.ApiDataException
-import com.alaishat.ahmed.themoviedb.datasource.source.network.exception.RequestFailedDataException
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.exception.ApiDataException
+import com.alaishat.ahmed.themoviedb.datasource.source.remote.exception.RequestFailedDataException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.DomainException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.UnknownDomainException
 import com.alaishat.ahmed.themoviedb.domain.achitecture.exception.FetchFailedDomainException

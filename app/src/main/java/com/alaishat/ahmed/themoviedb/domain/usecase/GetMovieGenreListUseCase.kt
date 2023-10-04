@@ -1,6 +1,6 @@
 package com.alaishat.ahmed.themoviedb.domain.usecase
 
-import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
