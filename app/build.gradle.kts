@@ -55,6 +55,8 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     // Androidx
     implementation(libs.core.ktx)
     implementation(libs.splashscreen)

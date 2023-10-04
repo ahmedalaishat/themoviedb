@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.data.mapper.MovieDetailsToDomainResolver
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
@@ -93,10 +92,8 @@ object DomainModule {
     @Provides
     fun providesToggleWatchlistMovieUseCase(
         accountRepository: AccountRepository,
-        moviesRepository: MoviesRepository,
     ) = ToggleWatchlistMovieUseCase(
         accountRepository = accountRepository,
-        moviesRepository = moviesRepository,
     )
 
 }
