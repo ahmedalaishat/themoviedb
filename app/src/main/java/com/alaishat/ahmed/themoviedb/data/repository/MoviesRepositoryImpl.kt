@@ -22,7 +22,7 @@ import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
@@ -33,11 +33,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -51,6 +51,7 @@ class MoviesRepositoryImpl @Inject constructor(
     private val movieDetailsToDomainResolver: MovieDetailsToDomainResolver,
     @Dispatcher(AppDispatchers.IO) override val ioDispatcher: CoroutineDispatcher,
 ) : MoviesRepository, BackgroundExecutor {
+    private val isGenreSynced = MutableStateFlow(false)
 
     override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = connectionDataSource.observeIsConnected()
         .map { connected ->
@@ -203,22 +204,21 @@ class MoviesRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getMovieGenreList(): Flow<List<GenreDomainModel>> =
-        localMoviesDataSource.getMovieGenreList()
-            .map {
-                it.mapToGenresDomainModels()
-            }
-            .flowOnBackground()
-
-    //AHMED_TODO: refactor me
-    override suspend fun syncGenres(): Boolean {
-        return try {
+    override fun getMovieGenreList(): Flow<GenresDomainModel> = connectionDataSource.observeIsConnected().map {
+        if (it is ConnectionStateDataModel.Connected) {
             val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList()
             localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
-            Timber.e("Syncedd")
-            true
-        } catch (e: Exception) {
-            false
+            GenresDomainModel.Success(fetchedGenreList.mapToGenresDomainModels())
+        } else {
+            val cached = localMoviesDataSource.getMovieGenreList()
+            if (cached.isEmpty()) GenresDomainModel.NoCache
+            else GenresDomainModel.Success(cached.mapToGenresDomainModels())
         }
     }
+        .retryWhen { _, _ ->
+            emit(GenresDomainModel.NoCache)
+            delay(1000)
+            true
+        }
+        .flowOnBackground()
 }

@@ -12,7 +12,7 @@ fun GenreEntity.toGenreDataModel() = GenreDataModel(
     name = name,
 )
 
-fun List<GenreEntity>.mapToGenreDataModel() = map(GenreEntity::toGenreDataModel)
+fun List<GenreEntity>.mapToGenreDataModels() = map(GenreEntity::toGenreDataModel)
 
 
 fun GenreDataModel.toEntity() = GenreEntity(

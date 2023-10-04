@@ -2,7 +2,6 @@ package com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.local
 
 import androidx.paging.PagingData
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.alaishat.ahmed.themoviedb.data.architecture.mapData
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
@@ -11,7 +10,7 @@ import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
-import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.mapToGenreDataModel
+import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.mapToGenreDataModels
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toEntity
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDataModel
@@ -33,7 +32,6 @@ import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.SelectMoviesReviewsPage
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -121,7 +119,7 @@ class DelightLocalMovieDataSource @Inject constructor(
                 QueryPagingSource(
                     countQuery = reviewEntityQueries.selectMovieReviewsCount(movieId = movieId.toLong()),
                     transacter = reviewEntityQueries,
-                    context = Dispatchers.IO,
+                    context = ioDispatcher,
                     queryProvider = { limit, offset ->
                         reviewEntityQueries.selectMoviesReviewsPage(
                             movieId = movieId.toLong(),
@@ -140,10 +138,8 @@ class DelightLocalMovieDataSource @Inject constructor(
 //        val a: List<SelectReviewsByMovieId> = reviewEntityQueries.selectReviewsByMovieId(movieId = movieId.toLong()).executeAsList()
     }
 
-    override fun getMovieGenreList(): Flow<List<GenreDataModel>> {
-        return genreEntityQueries.selectAll().asFlow().mapToList(Dispatchers.IO).map {
-            it.mapToGenreDataModel()
-        }
+    override fun getMovieGenreList(): List<GenreDataModel> {
+        return genreEntityQueries.selectAll().executeAsList().mapToGenreDataModels()
     }
 
     override fun updateMovieGenreList(genreList: List<GenreDataModel>) {

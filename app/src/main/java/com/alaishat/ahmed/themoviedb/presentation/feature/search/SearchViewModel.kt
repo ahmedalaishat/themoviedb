@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.search
+package com.alaishat.ahmed.themoviedb.presentation.feature.search
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn

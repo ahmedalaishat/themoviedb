@@ -27,7 +27,7 @@ interface LocalMoviesDataSource {
     fun cacheMovieReviews(movieId: Int, reviews: List<ReviewDataModel>)
     fun getCachedReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDataModel>>
     fun getMovieReviewsFlow(movieId: Int): List<ReviewDataModel>
-    fun getMovieGenreList(): Flow<List<GenreDataModel>>
+    fun getMovieGenreList(): List<GenreDataModel>
     fun updateMovieGenreList(genreList: List<GenreDataModel>)
     fun cacheMovieCredits(movieId: Int, credits: List<CreditDataModel>)
     fun getCachedMovieCredits(movieId: Int): Flow<List<CreditDataModel>>

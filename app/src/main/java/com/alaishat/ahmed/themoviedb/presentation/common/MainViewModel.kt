@@ -1,13 +1,12 @@
-package com.alaishat.ahmed.themoviedb
+package com.alaishat.ahmed.themoviedb.presentation.common
 
-import androidx.lifecycle.viewModelScope
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieGenreListUseCase
-import com.alaishat.ahmed.themoviedb.domain.usecase.SyncUseCase
+import com.alaishat.ahmed.themoviedb.presentation.common.mapper.toViewState
+import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -17,22 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     getMovieGenreListUseCase: GetMovieGenreListUseCase,
-    private val syncc: SyncUseCase,
 ) : BaseViewModel() {
 
     val uiState = getMovieGenreListUseCase()
-        .map(MainActivityUiState::Success)
+        .map(GenresDomainModel::toViewState)
         .stateInViewModel(MainActivityUiState.Loading)
 
-
-    fun sync() {
-        viewModelScope.launch {
-            syncc()
-        }
-    }
-}
-
-sealed interface MainActivityUiState {
-    object Loading : MainActivityUiState
-    data class Success(val genres: List<GenreDomainModel>) : MainActivityUiState
 }

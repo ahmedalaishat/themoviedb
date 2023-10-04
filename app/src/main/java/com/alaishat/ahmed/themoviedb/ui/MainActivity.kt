@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb
+package com.alaishat.ahmed.themoviedb.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
+import com.alaishat.ahmed.themoviedb.presentation.common.MainActivityUiState
+import com.alaishat.ahmed.themoviedb.presentation.common.MainViewModel
 import com.alaishat.ahmed.themoviedb.ui.MovieApp
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
     lateinit var connectionDataSource: ConnectionDataSource
 
 
-    val viewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -42,29 +44,26 @@ class MainActivity : ComponentActivity() {
         // Update the uiState
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState
+                mainViewModel.uiState
                     .onEach {
                         uiState = it
                     }
                     .collect()
             }
         }
-        viewModel.sync()
 
         // Keep the splash screen on-screen until the UI state is loaded. This condition is
         // evaluated each time the app needs to be redrawn so it should be fast to avoid blocking
         // the UI.
         splashScreen.setKeepOnScreenCondition {
-            when (uiState) {
-                MainActivityUiState.Loading -> true
-                is MainActivityUiState.Success -> (uiState as MainActivityUiState.Success).genres.isEmpty()
-            }
+            uiState == MainActivityUiState.Loading
         }
 
         setContent {
             TheMovieDBTheme {
                 MovieApp(
                     connectionDataSource = connectionDataSource,
+                    isInitError = uiState == MainActivityUiState.NoCache
                 )
             }
         }

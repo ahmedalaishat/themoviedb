@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.rate
+package com.alaishat.ahmed.themoviedb.ui.feature.rate
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

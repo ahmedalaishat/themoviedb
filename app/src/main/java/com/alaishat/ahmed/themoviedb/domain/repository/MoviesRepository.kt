@@ -2,11 +2,11 @@ package com.alaishat.ahmed.themoviedb.domain.repository
 
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.model.GenreDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.model.MovieListTypeDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
+import com.alaishat.ahmed.themoviedb.domain.model.GenresDomainModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -23,6 +23,5 @@ interface MoviesRepository : Repository {
     fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
     fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int):Boolean
-    fun getMovieGenreList(): Flow<List<GenreDomainModel>>
-    suspend fun syncGenres(): Boolean
+    fun getMovieGenreList(): Flow<GenresDomainModel>
 }
