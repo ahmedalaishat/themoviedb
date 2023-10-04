@@ -1,10 +1,10 @@
-package com.alaishat.ahmed.themoviedb.navigation
+package com.alaishat.ahmed.themoviedb.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeRoute
-import com.alaishat.ahmed.themoviedb.feature.search.navigation.searchRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.home.navigation.homeRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.search.navigation.searchRoute
 import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListRoute
 
 /**

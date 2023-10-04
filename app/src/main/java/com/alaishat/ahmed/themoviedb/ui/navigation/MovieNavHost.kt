@@ -1,14 +1,14 @@
-package com.alaishat.ahmed.themoviedb.navigation
+package com.alaishat.ahmed.themoviedb.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeRoute
-import com.alaishat.ahmed.themoviedb.feature.home.navigation.homeScreen
+import com.alaishat.ahmed.themoviedb.ui.feature.home.navigation.homeRoute
+import com.alaishat.ahmed.themoviedb.ui.feature.home.navigation.homeScreen
 import com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation.movieScreen
 import com.alaishat.ahmed.themoviedb.ui.feature.movie.navigation.navigateToMovie
-import com.alaishat.ahmed.themoviedb.feature.search.navigation.searchScreen
+import com.alaishat.ahmed.themoviedb.ui.feature.search.navigation.searchScreen
 import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListScreen
 
 /**
@@ -18,7 +18,6 @@ import com.alaishat.ahmed.themoviedb.ui.feature.watchlist.navigation.watchListSc
 @Composable
 fun MovieNavHost(
     navController: NavHostController,
-    onRateClick: () -> Unit,
     modifier: Modifier = Modifier,
     startDestination: String = homeRoute,
 ) {

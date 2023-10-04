@@ -39,24 +39,26 @@ class ConnectionDataSourceImpl @Inject constructor(
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            emitConnectionUpdate(Connected)
+            emitConnectionUpdate(Connected(backOnline = stateFlow.value == Disconnected))
         }
 
         override fun onLost(network: Network) {
             emitConnectionUpdate(
-                if (isConnected()) {
-                    Connected
+                if (connectivityManager.isConnected()) {
+                    Connected(backOnline = stateFlow.value == Disconnected)
                 } else {
                     Disconnected
                 }
             )
         }
+    }
 
-        private fun isConnected(): Boolean {
-            val activeNetwork = connectivityManager.activeNetwork
-            return connectivityManager.getNetworkCapabilities(activeNetwork)
-                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-        }
+    init {
+        emitConnectionUpdate(
+            connectionState = if (connectivityManager.isConnected())
+                Connected(backOnline = false)
+            else Disconnected
+        )
     }
 
     override fun observeIsConnected(): Flow<ConnectionStateDataModel> {
@@ -77,4 +79,9 @@ class ConnectionDataSourceImpl @Inject constructor(
             stateFlow.emit(connectionState)
         }
     }
+
+    private fun ConnectivityManager.isConnected() = activeNetwork
+        ?.let(::getNetworkCapabilities)
+        ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        ?: false
 }

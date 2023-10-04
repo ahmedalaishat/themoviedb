@@ -6,6 +6,9 @@ package com.alaishat.ahmed.themoviedb.datasource.source.connection.model
  */
 sealed interface ConnectionStateDataModel {
     object Unset : ConnectionStateDataModel
-    object Connected : ConnectionStateDataModel
+    data class Connected(
+        val backOnline: Boolean
+    ) : ConnectionStateDataModel
+
     object Disconnected : ConnectionStateDataModel
 }

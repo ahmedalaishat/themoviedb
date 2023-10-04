@@ -66,9 +66,9 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.feature.home.AVATAR_BASE_URL
-import com.alaishat.ahmed.themoviedb.feature.home.BACKDROP_BASE_URL
-import com.alaishat.ahmed.themoviedb.feature.rate.RateBottomSheet
+import com.alaishat.ahmed.themoviedb.ui.feature.home.AVATAR_BASE_URL
+import com.alaishat.ahmed.themoviedb.ui.feature.home.BACKDROP_BASE_URL
+import com.alaishat.ahmed.themoviedb.ui.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.MovieViewModel
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Credit
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
@@ -137,20 +137,20 @@ private fun MovieScreen(
     movie: MovieDetailsViewState.Success,
     reviews: LazyPagingItems<Review>,
     creditsViewState: CreditsViewState,
-    rated: Boolean,
+    rated: Boolean?,
     onRateSubmit: (rating: Int) -> Unit,
     onToggleWatchlist: (watchlist: Boolean) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
 
-    var showSheet by remember { mutableStateOf(false) }
+    var isBottomSheetShowing by remember { mutableStateOf(false) }
 
-    if (showSheet) {
+    if (isBottomSheetShowing) {
         RateBottomSheet(
             onRateSubmit = onRateSubmit,
             onDismiss = {
-                showSheet = false
+                isBottomSheetShowing = false
             },
         )
     }
@@ -163,10 +163,9 @@ private fun MovieScreen(
     )
 
     LaunchedEffect(rated) {
-        if (rated) {
-            successDialogState.show()
-            showSheet = false
-        }
+        if (rated == null) return@LaunchedEffect
+        if (rated) successDialogState.show()
+        isBottomSheetShowing = false
     }
 
     BoxWithConstraints {
@@ -301,7 +300,7 @@ private fun MovieScreen(
                     0 -> AboutMovieTab(
                         movieOverview = movie.overview,
                         rated = rated,
-                        onRateClick = { showSheet = true },
+                        onRateClick = { isBottomSheetShowing = true },
                         modifier = tabModifier,
                     )
 
@@ -323,7 +322,7 @@ private fun MovieScreen(
 @Composable
 private fun AboutMovieTab(
     movieOverview: String,
-    rated: Boolean,
+    rated: Boolean?,
     onRateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -333,7 +332,7 @@ private fun AboutMovieTab(
     ) {
         Text(text = movieOverview)
         SpacerLg()
-        if (!rated)
+        if (rated != true)
             OutlinedButton(
                 onClick = onRateClick,
                 modifier = Modifier.fillMaxWidth(.5f),

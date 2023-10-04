@@ -35,7 +35,7 @@ class AccountRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>> =
         connectionDataSource.observeIsConnected().flatMapLatest {
-            if (it == ConnectionStateDataModel.Connected) {
+            if (it is ConnectionStateDataModel.Connected) {
                 remoteAccountDataSource.getWatchlistPagingFlow(
                     pageCachingHandler =
                     { page, movies ->

@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.feature.search
+package com.alaishat.ahmed.themoviedb.ui.feature.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +31,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
+import com.alaishat.ahmed.themoviedb.presentation.feature.search.SearchViewModel
 import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieListItemShimmer
 import com.alaishat.ahmed.themoviedb.ui.common.movieInfoList
@@ -45,7 +46,6 @@ import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import kotlinx.coroutines.flow.flowOf
-import timber.log.Timber
 
 /**
  * Created by Ahmed Al-Aishat on Jun/17/2023.

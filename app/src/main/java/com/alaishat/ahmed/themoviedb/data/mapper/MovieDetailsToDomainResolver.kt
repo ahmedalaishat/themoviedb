@@ -15,7 +15,7 @@ class MovieDetailsToDomainResolver {
         remoteMovieProvider: suspend () -> MovieDetailsDataModel,
         localMovieProvider: suspend () -> MovieDetailsDataModel?,
     ) = when (connectionState) {
-        ConnectionStateDataModel.Connected -> remoteMovieProvider().toMoviesDetailsDomainModel()
+        is ConnectionStateDataModel.Connected -> remoteMovieProvider().toMoviesDetailsDomainModel()
         else -> localMovieProvider()?.toMoviesDetailsDomainModel() ?: MovieDetailsDomainModel.Disconnected
     }
 }
