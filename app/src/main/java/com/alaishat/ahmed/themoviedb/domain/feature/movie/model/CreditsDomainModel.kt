@@ -10,7 +10,7 @@ sealed interface CreditsDomainModel {
 
     data class Success(
         val credits: List<CreditDomainModel>,
-    ): CreditsDomainModel
+    ) : CreditsDomainModel
 
     object Disconnected : CreditsDomainModel
 

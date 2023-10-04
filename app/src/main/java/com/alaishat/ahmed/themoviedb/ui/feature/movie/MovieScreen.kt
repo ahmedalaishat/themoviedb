@@ -66,9 +66,6 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.ui.feature.home.AVATAR_BASE_URL
-import com.alaishat.ahmed.themoviedb.ui.feature.home.BACKDROP_BASE_URL
-import com.alaishat.ahmed.themoviedb.ui.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.MovieViewModel
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Credit
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsViewState
@@ -93,6 +90,9 @@ import com.alaishat.ahmed.themoviedb.ui.extenstions.darker
 import com.alaishat.ahmed.themoviedb.ui.extenstions.maxLineBox
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingInitialLoader
 import com.alaishat.ahmed.themoviedb.ui.extenstions.pagingLoader
+import com.alaishat.ahmed.themoviedb.ui.feature.home.AVATAR_BASE_URL
+import com.alaishat.ahmed.themoviedb.ui.feature.home.BACKDROP_BASE_URL
+import com.alaishat.ahmed.themoviedb.ui.feature.rate.RateBottomSheet
 import com.alaishat.ahmed.themoviedb.ui.theme.AppRed
 import com.alaishat.ahmed.themoviedb.ui.theme.Dimensions
 import com.alaishat.ahmed.themoviedb.ui.theme.Shapes

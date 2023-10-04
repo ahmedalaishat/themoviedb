@@ -11,16 +11,12 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.jvm.Throws
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-@Singleton
-class KtorExceptionHandler @Inject constructor(private val networkJson: Json) {
+class KtorExceptionHandler(private val networkJson: Json) {
     @Throws(DataException::class)
     suspend fun handle(cause: Throwable, request: HttpRequest) {
         val message = when (cause) {

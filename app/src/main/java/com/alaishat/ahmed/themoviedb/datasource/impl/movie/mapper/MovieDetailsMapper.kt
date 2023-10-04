@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper
 
-import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntity
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.SelectMovieWithDetailsById
 

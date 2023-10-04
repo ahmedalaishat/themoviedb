@@ -3,8 +3,8 @@ package com.alaishat.ahmed.themoviedb.domain.usecase
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
-import com.alaishat.ahmed.themoviedb.domain.constants.DEBOUNCE_TIMEOUT
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
+import com.alaishat.ahmed.themoviedb.domain.constants.DEBOUNCE_TIMEOUT
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,9 +15,8 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import javax.inject.Inject
 
-class SearchMovieUseCase @Inject constructor(
+class SearchMovieUseCase(
     private val moviesRepository: MoviesRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)

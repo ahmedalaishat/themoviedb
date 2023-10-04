@@ -30,15 +30,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-@Singleton
-class KtorMoviesDataSource @Inject constructor(
+class KtorMoviesDataSource(
     private val ktorClient: KtorClient,
 ) : RemoteMoviesDataSource {
 

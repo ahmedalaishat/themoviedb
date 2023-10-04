@@ -15,6 +15,6 @@ sealed interface MovieListViewState {
     ) : MovieListViewState
 
     data class Success(
-        val movieDomainModels: List<Movie>,
+        val movies: List<Movie>,
     ) : MovieListViewState
 }

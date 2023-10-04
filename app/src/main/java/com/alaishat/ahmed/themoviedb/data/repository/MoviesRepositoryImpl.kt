@@ -17,14 +17,12 @@ import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.Con
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteMoviesDataSource
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
-import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieListTypeDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
+import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,25 +31,22 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
-import javax.inject.Inject
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-class MoviesRepositoryImpl @Inject constructor(
+class MoviesRepositoryImpl(
     private val remoteMoviesDataSource: RemoteMoviesDataSource,
     private val localMoviesDataSource: LocalMoviesDataSource,
     private val connectionDataSource: ConnectionDataSource,
     private val movieDetailsToDomainResolver: MovieDetailsToDomainResolver,
-    @Dispatcher(AppDispatchers.IO) override val ioDispatcher: CoroutineDispatcher,
+    override val ioDispatcher: CoroutineDispatcher,
 ) : MoviesRepository, BackgroundExecutor {
-    private val isGenreSynced = MutableStateFlow(false)
 
     override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = connectionDataSource.observeIsConnected()
         .map { connected ->

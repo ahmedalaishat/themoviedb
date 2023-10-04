@@ -9,25 +9,21 @@ import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.Connecti
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Connected
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Disconnected
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel.Unset
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.ApplicationScope
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 /**
  * Created by Ahmed Al-Aishat on Sep/16/2023.
  * The Movie DB Project.
  */
-class ConnectionDataSourceImpl @Inject constructor(
+class ConnectionDataSourceImpl(
     private val connectivityManager: ConnectivityManager,
-    @ApplicationScope private val coroutineScope: CoroutineScope,
-    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val coroutineScope: CoroutineScope,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ConnectionDataSource {
     private val stateFlow = MutableStateFlow<ConnectionStateDataModel>(Unset)
 

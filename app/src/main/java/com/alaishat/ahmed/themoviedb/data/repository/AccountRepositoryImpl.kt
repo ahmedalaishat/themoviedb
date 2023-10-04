@@ -10,8 +10,6 @@ import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.Con
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteAccountDataSource
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
@@ -19,17 +17,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import javax.inject.Inject
 
 /**
  * Created by Ahmed Al-Aishat on Sep/11/2023.
  * The Movie DB Project.
  */
-class AccountRepositoryImpl @Inject constructor(
+class AccountRepositoryImpl(
     private val remoteAccountDataSource: RemoteAccountDataSource,
     private val localMoviesDataSource: LocalMoviesDataSource,
     private val connectionDataSource: ConnectionDataSource,
-    @Dispatcher(AppDispatchers.IO) override val ioDispatcher: CoroutineDispatcher,
+    override val ioDispatcher: CoroutineDispatcher,
 ) : AccountRepository, BackgroundExecutor {
 
     @OptIn(ExperimentalCoroutinesApi::class)

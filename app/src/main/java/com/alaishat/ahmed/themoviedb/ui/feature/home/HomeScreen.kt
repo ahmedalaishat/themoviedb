@@ -37,10 +37,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.architecture.HomeTab
-import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.HomeViewModel
-import com.alaishat.ahmed.themoviedb.presentation.feature.home.MovieListUiState
+import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListViewState
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
 import com.alaishat.ahmed.themoviedb.ui.common.movieCardsList
 import com.alaishat.ahmed.themoviedb.ui.common.topMoviesList
@@ -85,7 +84,7 @@ fun HomeRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
-    topFiveMovies: MovieListUiState,
+    topFiveMovies: MovieListViewState,
     onMovieClick: (movieId: Int) -> Unit,
     tabsMap: Map<HomeTab, Flow<PagingData<Movie>>>,
 ) {
@@ -140,7 +139,7 @@ private fun HomeScreen(
 
 @Composable
 private fun TopFiveMovies(
-    topMovies: MovieListUiState,
+    topMovies: MovieListViewState,
     onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -150,7 +149,7 @@ private fun TopFiveMovies(
         contentPadding = PaddingValues(horizontal = Dimensions.ScreenPadding)
     ) {
         when (topMovies) {
-            MovieListUiState.Loading -> {
+            MovieListViewState.Loading -> {
                 items(5) {
                     ShimmerCard(
                         modifier = Modifier
@@ -161,7 +160,7 @@ private fun TopFiveMovies(
                 }
             }
 
-            is MovieListUiState.Success ->
+            is MovieListViewState.Success ->
                 topMoviesList(
                     topMovies = topMovies,
                     onMovieClick = onMovieClick,
@@ -170,14 +169,14 @@ private fun TopFiveMovies(
                         .height(240.dp)
                 )
 
-            is MovieListUiState.Error -> {}
+            is MovieListViewState.Error -> {}
         }
     }
 }
 
 @Composable
 fun HomePageContent(
-    pagingItems: LazyPagingItems<MovieDomainModel>,
+    pagingItems: LazyPagingItems<Movie>,
     onMovieClick: (movieId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -232,7 +231,7 @@ private fun HomeScreenPreview() {
     //AHMED_TODO: add preview parameters
     TheMoviePreviewSurface {
         HomeScreen(
-            topFiveMovies = MovieListUiState.Loading,
+            topFiveMovies = MovieListViewState.Loading,
             onMovieClick = { },
             tabsMap = mapOf(),
         )

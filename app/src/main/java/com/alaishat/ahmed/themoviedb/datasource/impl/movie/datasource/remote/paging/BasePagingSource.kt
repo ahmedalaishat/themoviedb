@@ -28,7 +28,7 @@ abstract class BasePagingSource<Value : Any>(
         }
     }
 
-    protected fun  resultOf(
+    protected fun resultOf(
         page: Int,
         fetchedPage: List<Value>,
     ): LoadResult.Page<Int, Value> = LoadResult.Page(

@@ -6,9 +6,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
-import com.alaishat.ahmed.themoviedb.presentation.feature.home.MovieListUiState
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
+import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListViewState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
 
 /**
@@ -16,13 +15,13 @@ import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
  * The Movie DB Project.
  */
 fun LazyListScope.topMoviesList(
-    topMovies: MovieListUiState.Success,
+    topMovies: MovieListViewState.Success,
     onMovieClick: (movieId: Int) -> Unit,
     cardModifier: Modifier = Modifier,
 ) {
-    itemsIndexed(topMovies.movieDomainModels, key = { _, item -> item.id }) { index, movie ->
+    itemsIndexed(topMovies.movies, key = { _, item -> item.id }) { index, movie ->
         TopMovieCard(
-            movieDomainModel = movie,
+            movie = movie,
             rank = index + 1,
             modifier = cardModifier.then(Modifier.silentClickable { onMovieClick(movie.id) }),
         )
@@ -46,7 +45,7 @@ fun LazyGridScope.movieInfoList(
 )
 
 fun LazyGridScope.movieCardsList(
-    pagingItems: LazyPagingItems<MovieDomainModel>,
+    pagingItems: LazyPagingItems<Movie>,
     onMovieClick: (movieId: Int) -> Unit,
     cardModifier: Modifier = Modifier,
 ) = items(

@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.ui.component
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width

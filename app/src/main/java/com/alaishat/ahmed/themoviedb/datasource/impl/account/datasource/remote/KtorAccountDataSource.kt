@@ -2,6 +2,7 @@ package com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource.remote
 
 import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
+import com.alaishat.ahmed.themoviedb.datasource.constants.ACCOUNT_ID
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.CacheablePagingSource
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListRes
@@ -13,17 +14,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by Ahmed Al-Aishat on Sep/11/2023.
  * The Movie DB Project.
  */
-const val ACCOUNT_ID = 9712119
 
-@Singleton
-class KtorAccountDataSource @Inject constructor(
+class KtorAccountDataSource(
     private val ktorClient: KtorClient,
 ) : RemoteAccountDataSource {
 

@@ -18,40 +18,20 @@ import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toMovieDetails
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.mapper.toReviewDataModel
 import com.alaishat.ahmed.themoviedb.datasource.impl.movie.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.datasource.source.local.LocalMoviesDataSource
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntity
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreMovieEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntity
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
 import comalaishatahmedthemoviedbdatasourceimplsqldelight.SelectMoviesReviewsPage
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by Ahmed Al-Aishat on Sep/12/2023.
  * The Movie DB Project.
  */
-@Singleton
-class DelightLocalMovieDataSource @Inject constructor(
-    private val movieEntityQueries: MovieEntityQueries,
-    private val movieDetailsEntityQueries: MovieDetailsEntityQueries,
-    private val typeMovieEntityQueries: TypeMovieEntityQueries,
-    private val genreEntityQueries: GenreEntityQueries,
-    private val genreMovieEntityQueries: GenreMovieEntityQueries,
-    private val reviewEntityQueries: ReviewEntityQueries,
-    private val authorEntityQueries: AuthorEntityQueries,
-    private val creditEntityQueries: CreditEntityQueries,
-    @Dispatcher(AppDispatchers.IO) val ioDispatcher: CoroutineDispatcher,
+class DelightLocalMovieDataSource(
+    private val queriesProvider: MovieQueriesProvider,
+    val ioDispatcher: CoroutineDispatcher,
 ) : LocalMoviesDataSource {
 
     override fun cacheMovieList(
@@ -59,27 +39,30 @@ class DelightLocalMovieDataSource @Inject constructor(
         deleteCached: Boolean,
         movies: List<MovieDataModel>
     ) {
-        movieEntityQueries.selectAll().executeAsList()
+        queriesProvider.movie.selectAll().executeAsList()
         movies.forEach { movie ->
-            movieEntityQueries.upsertMovie(movie.toEntity())
+            queriesProvider.movie.upsertMovie(movie.toEntity())
         }
-        typeMovieEntityQueries.transaction {
+        queriesProvider.typeMovie.transaction {
             if (deleteCached)
-                typeMovieEntityQueries.deleteListByType(movieListTypeDataModel)
+                queriesProvider.typeMovie.deleteListByType(movieListTypeDataModel)
             movies.forEach { movie ->
-                typeMovieEntityQueries.insert(type = movieListTypeDataModel, movieId = movie.id.toLong())
+                queriesProvider.typeMovie.insert(
+                    type = movieListTypeDataModel,
+                    movieId = movie.id.toLong()
+                )
             }
         }
     }
 
     override fun getCachedMovieList(movieListTypeDataModel: MovieListTypeDataModel): List<MovieDataModel> {
-        return movieEntityQueries.selectMoviesListByType(
+        return queriesProvider.movie.selectMoviesListByType(
             type = movieListTypeDataModel,
         ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
 
     override fun searchCachedMovieList(query: String): List<MovieDataModel> {
-        return movieEntityQueries.searchMoviesList(
+        return queriesProvider.movie.searchMoviesList(
             query = query,
         ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
@@ -88,11 +71,11 @@ class DelightLocalMovieDataSource @Inject constructor(
         val pager = defaultPagerOf(
             pagingSourceFactory = {
                 QueryPagingSource(
-                    countQuery = movieEntityQueries.selectMoviesCountByType(movieListTypeDataModel),
-                    transacter = movieEntityQueries,
+                    countQuery = queriesProvider.movie.selectMoviesCountByType(movieListTypeDataModel),
+                    transacter = queriesProvider.movie,
                     context = ioDispatcher,
                     queryProvider = { limit, offset ->
-                        movieEntityQueries.selectMoviesPageByType(
+                        queriesProvider.movie.selectMoviesPageByType(
                             type = movieListTypeDataModel,
                             limit = limit,
                             offset = offset,
@@ -105,10 +88,10 @@ class DelightLocalMovieDataSource @Inject constructor(
     }
 
     override fun cacheMovieReviews(movieId: Int, reviews: List<ReviewDataModel>) {
-        reviewEntityQueries.transaction {
+        queriesProvider.review.transaction {
             reviews.forEach { review ->
-                authorEntityQueries.upsertAuthor(review.authorDetailsDataModel.toEntity())
-                reviewEntityQueries.upsertReview(review.toEntity(movieId = movieId))
+                queriesProvider.author.upsertAuthor(review.authorDetailsDataModel.toEntity())
+                queriesProvider.review.upsertReview(review.toEntity(movieId = movieId))
             }
         }
     }
@@ -117,11 +100,11 @@ class DelightLocalMovieDataSource @Inject constructor(
         val pager = defaultPagerOf(
             pagingSourceFactory = {
                 QueryPagingSource(
-                    countQuery = reviewEntityQueries.selectMovieReviewsCount(movieId = movieId.toLong()),
-                    transacter = reviewEntityQueries,
+                    countQuery = queriesProvider.review.selectMovieReviewsCount(movieId = movieId.toLong()),
+                    transacter = queriesProvider.review,
                     context = ioDispatcher,
                     queryProvider = { limit, offset ->
-                        reviewEntityQueries.selectMoviesReviewsPage(
+                        queriesProvider.review.selectMoviesReviewsPage(
                             movieId = movieId.toLong(),
                             limit = limit,
                             offset = offset,
@@ -139,27 +122,27 @@ class DelightLocalMovieDataSource @Inject constructor(
     }
 
     override fun getMovieGenreList(): List<GenreDataModel> {
-        return genreEntityQueries.selectAll().executeAsList().mapToGenreDataModels()
+        return queriesProvider.genre.selectAll().executeAsList().mapToGenreDataModels()
     }
 
     override fun updateMovieGenreList(genreList: List<GenreDataModel>) {
-        genreEntityQueries.transaction {
+        queriesProvider.genre.transaction {
             genreList.forEach { genre ->
-                genreEntityQueries.upsertGenre(genre.toEntity())
+                queriesProvider.genre.upsertGenre(genre.toEntity())
             }
         }
     }
 
     override fun cacheMovieCredits(movieId: Int, credits: List<CreditDataModel>) {
-        creditEntityQueries.transaction {
+        queriesProvider.credit.transaction {
             credits.forEach { credit ->
-                creditEntityQueries.upsertCredit(credit.toEntity(movieId = movieId))
+                queriesProvider.credit.upsertCredit(credit.toEntity(movieId = movieId))
             }
         }
     }
 
     override fun getCachedMovieCredits(movieId: Int): Flow<List<CreditDataModel>> {
-        return creditEntityQueries
+        return queriesProvider.credit
             .selectMovieCredits(movieId = movieId.toLong())
             .asFlow()
             .map { it.executeAsList() }
@@ -169,11 +152,11 @@ class DelightLocalMovieDataSource @Inject constructor(
     }
 
     override fun cacheMovieDetails(movieDetailsDataModel: MovieDetailsDataModel) {
-        movieDetailsEntityQueries.upsertMovieDetails(movieDetailsDataModel.toEntity())
-        genreEntityQueries.transaction {
+        queriesProvider.movieDetails.upsertMovieDetails(movieDetailsDataModel.toEntity())
+        queriesProvider.genre.transaction {
             movieDetailsDataModel.genreDataModels.forEach { genre ->
-                genreEntityQueries.upsertGenre(genre.toEntity())
-                genreMovieEntityQueries.upsertGenreMovieDetails(
+                queriesProvider.genre.upsertGenre(genre.toEntity())
+                queriesProvider.genreMovie.upsertGenreMovieDetails(
                     movieId = movieDetailsDataModel.id.toLong(),
                     genreId = genre.id.toLong()
                 )
@@ -182,22 +165,25 @@ class DelightLocalMovieDataSource @Inject constructor(
     }
 
     override fun getCachedMovieDetails(movieId: Int): MovieDetailsDataModel? {
-        return movieEntityQueries.selectMovieWithDetailsById(movieId = movieId.toLong()).executeAsList()
+        return queriesProvider.movie.selectMovieWithDetailsById(movieId = movieId.toLong()).executeAsList()
             .toMovieDetailsDataModel()
     }
 
     override fun cacheMovieWatchlistStatus(movieId: Int, watchlist: Boolean) {
         if (watchlist)
-            typeMovieEntityQueries.insert(type = MovieListTypeDataModel.WATCHLIST, movieId = movieId.toLong())
+            queriesProvider.typeMovie.insert(
+                type = MovieListTypeDataModel.WATCHLIST,
+                movieId = movieId.toLong()
+            )
         else
-            typeMovieEntityQueries.deleteByIdAndType(
+            queriesProvider.typeMovie.deleteByIdAndType(
                 type = MovieListTypeDataModel.WATCHLIST,
                 movieId = movieId.toLong()
             )
     }
 
     override fun observeMovieWatchlistStatus(movieId: Int): Flow<Boolean> {
-        return typeMovieEntityQueries.selecctByIdAndType(
+        return queriesProvider.typeMovie.selecctByIdAndType(
             movieId = movieId.toLong(),
             type = MovieListTypeDataModel.WATCHLIST
         ).asFlow().map { it.executeAsOneOrNull() == movieId.toLong() }

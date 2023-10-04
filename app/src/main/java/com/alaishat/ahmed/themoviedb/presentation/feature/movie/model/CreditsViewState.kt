@@ -6,7 +6,7 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.movie.model
  */
 sealed interface CreditsViewState {
     data class Success(
-        val credits:List<Credit>
+        val credits: List<Credit>
     ) : CreditsViewState
 
     object Loading : CreditsViewState

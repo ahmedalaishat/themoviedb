@@ -130,7 +130,7 @@ fun PagingErrorBox(
     pagingItems: LazyPagingItems<*>,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
-    content: @Composable BoxScope.(errorMessage:String?) -> Unit
+    content: @Composable BoxScope.(errorMessage: String?) -> Unit
 ) {
     // Pagination Error
     if (pagingItems.loadState.refresh is LoadState.Error)

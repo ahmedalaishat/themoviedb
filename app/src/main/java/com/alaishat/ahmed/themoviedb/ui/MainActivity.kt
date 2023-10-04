@@ -13,9 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
-import com.alaishat.ahmed.themoviedb.presentation.common.MainActivityUiState
 import com.alaishat.ahmed.themoviedb.presentation.common.MainViewModel
-import com.alaishat.ahmed.themoviedb.ui.MovieApp
+import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect

@@ -4,13 +4,12 @@ import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDoma
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 /**
  * Created by Ahmed Al-Aishat on Sep/09/2023.
  * The Movie DB Project.
  */
-class GetMovieDetailsUseCase @Inject constructor(
+class GetMovieDetailsUseCase(
     private val moviesRepository: MoviesRepository,
 ) {
     operator fun invoke(movieId: Int): Flow<MovieDetailsDomainModel> = combine(

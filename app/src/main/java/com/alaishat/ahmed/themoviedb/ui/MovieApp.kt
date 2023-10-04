@@ -19,11 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alaishat.ahmed.themoviedb.R
 import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
-import com.alaishat.ahmed.themoviedb.ui.navigation.BottomBarDestination
-import com.alaishat.ahmed.themoviedb.ui.navigation.MovieNavHost
 import com.alaishat.ahmed.themoviedb.ui.component.ConnectionSnackBar
 import com.alaishat.ahmed.themoviedb.ui.component.MovieBottomBar
 import com.alaishat.ahmed.themoviedb.ui.component.SnackbarVisualsCustom
+import com.alaishat.ahmed.themoviedb.ui.navigation.BottomBarDestination
+import com.alaishat.ahmed.themoviedb.ui.navigation.MovieNavHost
 
 /**
  * Created by Ahmed Al-Aishat on Jun/18/2023.
@@ -89,9 +89,9 @@ fun MovieApp(
             ) {
                 if (isInitError) Text(text = stringResource(id = R.string.something_went_wrong))
                 else
-                MovieNavHost(
-                    navController = appState.navController,
-                )
+                    MovieNavHost(
+                        navController = appState.navController,
+                    )
             }
         }
     }

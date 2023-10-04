@@ -1,10 +1,11 @@
 package com.alaishat.ahmed.themoviedb.datasource.impl.remote
 
 import com.alaishat.ahmed.themoviedb.BuildConfig
+import com.alaishat.ahmed.themoviedb.datasource.constants.BASE_URL
+import com.alaishat.ahmed.themoviedb.datasource.constants.BREAR_TOKEN
+import com.alaishat.ahmed.themoviedb.datasource.constants.REQUEST_TIME_OUT
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.error.KtorExceptionHandler
 import com.alaishat.ahmed.themoviedb.datasource.impl.remote.log.KtorLogger
-import com.alaishat.ahmed.themoviedb.di.AppDispatchers
-import com.alaishat.ahmed.themoviedb.di.Dispatcher
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -24,23 +25,13 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by Ahmed Al-Aishat on Jun/24/2023.
  * The Movie DB Project.
  */
-const val BASE_URL = "https://api.themoviedb.org/3/"
-
-// this token is provided by the movie db api to use it instead of api key
-const val BREAR_TOKEN =
-    "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOTk1N2RhZjMxOTI5ZWE1ZTNhN2FlNjExMDhlYjgxMSIsInN1YiI6IjVmN2EwYTgxN2I3YjRkMDAzYTczMmU5MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rj6ppPQbHRnKloFkHLPU29bnn9WbQUm-bPQfBTlyEQ8"
-private const val TIME_OUT = 30_000L
-
-@Singleton
-class KtorClient @Inject constructor(
-    @Dispatcher(AppDispatchers.IO) val ioDispatcher: CoroutineDispatcher,
+class KtorClient(
+    val ioDispatcher: CoroutineDispatcher,
     private val networkJson: Json,
     private val exceptionHandler: KtorExceptionHandler,
     private val ktorLogger: KtorLogger,
@@ -60,9 +51,9 @@ class KtorClient @Inject constructor(
             }
 
             install(HttpTimeout) {
-                socketTimeoutMillis = TIME_OUT
-                requestTimeoutMillis = TIME_OUT
-                connectTimeoutMillis = TIME_OUT
+                socketTimeoutMillis = REQUEST_TIME_OUT
+                requestTimeoutMillis = REQUEST_TIME_OUT
+                connectTimeoutMillis = REQUEST_TIME_OUT
             }
 
             defaultRequest {
@@ -85,7 +76,7 @@ class KtorClient @Inject constructor(
     suspend inline fun <reified T> call(crossinline caller: suspend HttpClient.() -> HttpResponse): T {
         return withContext(ioDispatcher) {
             httpClient.use { client ->
-                    client.caller().body()
+                client.caller().body()
             }
         }
     }
