@@ -22,6 +22,9 @@ annotation class ApplicationScope
 @InstallIn(SingletonComponent::class)
 object CoroutineScopesModule {
 
+    /**
+     * @return coroutine scope that scoped to the application with the default dispatcher
+     */
     @Singleton
     @ApplicationScope
     @Provides

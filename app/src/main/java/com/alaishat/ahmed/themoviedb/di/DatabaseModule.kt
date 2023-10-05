@@ -6,22 +6,24 @@ import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.alaishat.ahmed.themoviedb.TheMovieDBDatabase
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.AuthorEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.CreditEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreMovieEntity
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.GenreMovieEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntity
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieDetailsEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.MovieEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.ReviewEntityQueries
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntity
-import comalaishatahmedthemoviedbdatasourceimplsqldelight.TypeMovieEntityQueries
+import com.alaishat.ahmed.themoviedb.data.source.local.LocalMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.local.provider.MovieQueriesProvider
+import com.alaishat.ahmed.themoviedb.datasource.movie.source.local.DelightLocalMovieDataSource
+import comalaishatahmedthemoviedbdatasourcesqldelight.AuthorEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.CreditEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.GenreEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.GenreMovieEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.MovieDetailsEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.MovieEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.ReviewEntityQueries
+import comalaishatahmedthemoviedbdatasourcesqldelight.TypeMovieEntity
+import comalaishatahmedthemoviedbdatasourcesqldelight.TypeMovieEntityQueries
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 /**
@@ -30,7 +32,7 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-class DatabaseModule {
+object DatabaseModule {
 
     @Provides
     @Singleton
@@ -105,4 +107,39 @@ class DatabaseModule {
     fun provideGenreMovieDataSource(db: TheMovieDBDatabase): GenreMovieEntityQueries {
         return db.genreMovieEntityQueries
     }
+
+
+    @Provides
+    @Singleton
+    fun providesMovieQueriesProvider(
+        movie: MovieEntityQueries,
+        movieDetails: MovieDetailsEntityQueries,
+        typeMovie: TypeMovieEntityQueries,
+        genre: GenreEntityQueries,
+        genreMovie: GenreMovieEntityQueries,
+        review: ReviewEntityQueries,
+        author: AuthorEntityQueries,
+        credit: CreditEntityQueries,
+    ): MovieQueriesProvider =
+        MovieQueriesProvider(
+            movie = movie,
+            movieDetails = movieDetails,
+            typeMovie = typeMovie,
+            genre = genre,
+            genreMovie = genreMovie,
+            review = review,
+            author = author,
+            credit = credit,
+        )
+
+    @Provides
+    @Singleton
+    fun providesLocalMoviesDataSource(
+        movieQueriesProvider: MovieQueriesProvider,
+        @Dispatcher(AppDispatchers.IO) ioDispatcher: CoroutineDispatcher,
+    ): LocalMoviesDataSource =
+        DelightLocalMovieDataSource(
+            queriesProvider = movieQueriesProvider,
+            ioDispatcher = ioDispatcher,
+        )
 }
