@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.search
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
-import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.domain.achitecture.util.mapData
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.usecase.SearchMovieUseCase
 import com.alaishat.ahmed.themoviedb.presentation.common.model.toPresentation

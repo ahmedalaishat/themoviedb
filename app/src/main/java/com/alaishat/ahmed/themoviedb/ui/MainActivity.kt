@@ -11,7 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
+import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.presentation.common.MainViewModel
 import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState

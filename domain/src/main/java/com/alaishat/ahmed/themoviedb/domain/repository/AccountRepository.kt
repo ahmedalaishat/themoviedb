@@ -9,6 +9,4 @@ import kotlinx.coroutines.flow.Flow
  * The Movie DB Project.
  */
 interface AccountRepository : Repository {
-    fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>>
-    suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean)
 }

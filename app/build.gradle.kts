@@ -2,11 +2,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.sqldelight)
     kotlin("kapt")
-    id("kotlin-parcelize")
+//    id("kotlin-parcelize")
 }
 
 android {
@@ -56,6 +54,8 @@ android {
 dependencies {
 
     implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":datasource"))
 
     // Androidx
     implementation(libs.core.ktx)
@@ -100,8 +100,6 @@ dependencies {
 
     // SQL Delight
     implementation(libs.sqldelight.android.driver)
-    implementation(libs.sqldelight.coroutines)
-    implementation(libs.sqldelight.paging)
 
     // Coil
     implementation(libs.coil.compose)
@@ -118,11 +116,11 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 }
-
-sqldelight {
-    databases {
-        create("TheMovieDBDatabase") {
-            packageName.set("com.alaishat.ahmed.themoviedb")
-        }
-    }
-}
+//
+//sqldelight {
+//    databases {
+//        create("TheMovieDBDatabase") {
+//            packageName.set("com.alaishat.ahmed.themoviedb")
+//        }
+//    }
+//}

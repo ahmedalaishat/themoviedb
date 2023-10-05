@@ -7,7 +7,7 @@ import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
 import com.alaishat.ahmed.themoviedb.architecture.HomeTab
 import com.alaishat.ahmed.themoviedb.architecture.result.Result
 import com.alaishat.ahmed.themoviedb.architecture.result.asResult
-import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.domain.achitecture.util.mapData
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie

@@ -69,9 +69,9 @@ object DomainModule {
 
     @Provides
     fun providesGetWatchListUseCase(
-        accountRepository: AccountRepository,
+        moviesRepository: MoviesRepository,
     ) = GetWatchListUseCase(
-        accountRepository = accountRepository,
+        moviesRepository = moviesRepository,
     )
 
     @Provides
@@ -91,9 +91,9 @@ object DomainModule {
 
     @Provides
     fun providesToggleWatchlistMovieUseCase(
-        accountRepository: AccountRepository,
+        moviesRepository: MoviesRepository,
     ) = ToggleWatchlistMovieUseCase(
-        accountRepository = accountRepository,
+        moviesRepository = moviesRepository,
     )
 
 }

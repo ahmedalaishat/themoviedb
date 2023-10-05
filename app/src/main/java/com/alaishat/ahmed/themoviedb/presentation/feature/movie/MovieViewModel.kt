@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.movie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alaishat.ahmed.themoviedb.architecture.BaseViewModel
-import com.alaishat.ahmed.themoviedb.data.architecture.mapData
+import com.alaishat.ahmed.themoviedb.domain.achitecture.util.mapData
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel

@@ -2,15 +2,13 @@ package com.alaishat.ahmed.themoviedb.di
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.alaishat.ahmed.themoviedb.datasource.impl.account.datasource.remote.KtorAccountDataSource
-import com.alaishat.ahmed.themoviedb.datasource.impl.connection.datasource.ConnectionDataSourceImpl
-import com.alaishat.ahmed.themoviedb.datasource.impl.movie.datasource.remote.KtorMoviesDataSource
-import com.alaishat.ahmed.themoviedb.datasource.impl.remote.KtorClient
-import com.alaishat.ahmed.themoviedb.datasource.impl.remote.error.KtorExceptionHandler
-import com.alaishat.ahmed.themoviedb.datasource.impl.remote.log.KtorLogger
-import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteAccountDataSource
-import com.alaishat.ahmed.themoviedb.datasource.source.remote.RemoteMoviesDataSource
+import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
+import com.alaishat.ahmed.themoviedb.data.source.remote.RemoteMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.connection.source.ConnectionDataSourceImpl
+import com.alaishat.ahmed.themoviedb.datasource.movie.source.remote.KtorMoviesDataSource
+import com.alaishat.ahmed.themoviedb.datasource.remote.KtorClient
+import com.alaishat.ahmed.themoviedb.datasource.remote.error.KtorExceptionHandler
+import com.alaishat.ahmed.themoviedb.datasource.remote.log.KtorLogger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,11 +62,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesAccountDataSource(ktorClient: KtorClient): RemoteAccountDataSource =
-        KtorAccountDataSource(ktorClient = ktorClient)
-
-    @Provides
-    @Singleton
     fun providesMoviesDataSource(ktorClient: KtorClient): RemoteMoviesDataSource =
         KtorMoviesDataSource(ktorClient = ktorClient)
 
@@ -83,10 +76,11 @@ object NetworkModule {
         connectivityManager: ConnectivityManager,
         @ApplicationScope coroutineScope: CoroutineScope,
         @Dispatcher(AppDispatchers.IO) ioDispatcher: CoroutineDispatcher,
-    ): ConnectionDataSource = ConnectionDataSourceImpl(
-        connectivityManager = connectivityManager,
-        coroutineScope = coroutineScope,
-        ioDispatcher = ioDispatcher,
-    )
+    ): ConnectionDataSource =
+        ConnectionDataSourceImpl(
+            connectivityManager = connectivityManager,
+            coroutineScope = coroutineScope,
+            ioDispatcher = ioDispatcher,
+        )
 
 }

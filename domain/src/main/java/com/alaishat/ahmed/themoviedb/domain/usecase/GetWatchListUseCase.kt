@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.filter
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.constants.DEBOUNCE_TIMEOUT
-import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
+import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.mapLatest
 
 
 class GetWatchListUseCase(
-    private val accountRepository: AccountRepository,
+    private val moviesRepository: MoviesRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     operator fun invoke(queryFlow: Flow<String>): Flow<PagingData<MovieDomainModel>> {
-        val pagingFlow = accountRepository.getWatchListPagingFlow()
+        val pagingFlow = moviesRepository.getWatchListPagingFlow()
 
         return queryFlow
             .debounce(DEBOUNCE_TIMEOUT)

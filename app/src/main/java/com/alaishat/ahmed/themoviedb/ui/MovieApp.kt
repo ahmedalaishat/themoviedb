@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.datasource.source.connection.datasource.ConnectionDataSource
+import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.ui.component.ConnectionSnackBar
 import com.alaishat.ahmed.themoviedb.ui.component.MovieBottomBar
 import com.alaishat.ahmed.themoviedb.ui.component.SnackbarVisualsCustom
