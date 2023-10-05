@@ -1,11 +1,15 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 android {
-    namespace = "com.alaishat.ahmed.themoviedb.domain"
+    namespace = "com.alaishat.ahmed.themoviedb.presentation"
     compileSdk = libs.versions.targetSdk.get().toInt()
 
     defaultConfig {
@@ -31,8 +35,21 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.paging.runtime.ktx)
 
-    testImplementation(libs.junit)
+    // Hilt & Hilt Work
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.hilt.compiler)
+    // For Robolectric tests
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.compiler)
 
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }

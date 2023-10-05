@@ -277,7 +277,7 @@ private fun MovieScreen(
                 if (movie.genre != null)
                     MovieInfo(
                         iconId = R.drawable.ic_ticket,
-                        text = movie.genre,
+                        text = movie.genre!!,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         iconSize = 20.dp,
                     )
@@ -502,7 +502,7 @@ fun ReviewCard(
             SpacerMd()
             if (reviewDomainModel.rating != null)
                 Text(
-                    text = reviewDomainModel.rating,
+                    text = reviewDomainModel.rating!!,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium
                 )

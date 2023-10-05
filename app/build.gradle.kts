@@ -53,6 +53,7 @@ android {
 
 dependencies {
 
+    implementation(project(":presentation"))
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":datasource"))
@@ -116,11 +117,3 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 }
-//
-//sqldelight {
-//    databases {
-//        create("TheMovieDBDatabase") {
-//            packageName.set("com.alaishat.ahmed.themoviedb")
-//        }
-//    }
-//}

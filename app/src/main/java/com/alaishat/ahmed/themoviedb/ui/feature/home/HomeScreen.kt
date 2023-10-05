@@ -36,7 +36,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alaishat.ahmed.themoviedb.R
-import com.alaishat.ahmed.themoviedb.architecture.HomeTab
+import com.alaishat.ahmed.themoviedb.presentation.architecture.HomeTab
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.HomeViewModel
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListViewState
