@@ -69,6 +69,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     // Compose Integrations
@@ -81,7 +82,7 @@ dependencies {
 
     // Hilt & Hilt Work
     implementation(libs.hilt.android)
-    implementation(libs.hilt.work)
+//    implementation(libs.hilt.work)
     kapt(libs.hilt.android.compiler)
     kapt(libs.hilt.compiler)
     // For Robolectric tests

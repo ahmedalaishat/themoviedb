@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -42,7 +40,7 @@ dependencies {
 
     // Hilt & Hilt Work
     implementation(libs.hilt.android)
-    implementation(libs.hilt.work)
+//    implementation(libs.hilt.work)
     kapt(libs.hilt.android.compiler)
     kapt(libs.hilt.compiler)
     // For Robolectric tests
