@@ -1,0 +1,15 @@
+CREATE TABLE CreditEntity (
+  creditId TEXT PRIMARY KEY NOT NULL,
+  movieId INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  profilePath TEXT,
+  FOREIGN KEY(movieId) REFERENCES MovieEntity(movieId)
+);
+
+upsertCredit:
+INSERT OR REPLACE INTO CreditEntity(creditId,movieId,name,profilePath)
+VALUES ?;
+
+selectMovieCredits:
+SELECT * FROM CreditEntity
+WHERE movieId =?;

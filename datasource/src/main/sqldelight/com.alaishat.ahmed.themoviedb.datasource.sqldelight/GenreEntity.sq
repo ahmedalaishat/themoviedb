@@ -1,0 +1,21 @@
+CREATE TABLE GenreEntity (
+  genreId INTEGER PRIMARY KEY NOT NULL,
+  name TEXT NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM GenreEntity;
+
+
+insert:
+INSERT OR REPLACE INTO GenreEntity(genreId, name)
+VALUES (?, ?);
+
+upsertGenre:
+INSERT OR REPLACE INTO GenreEntity(genreId, name)
+VALUES ?;
+
+
+deleteAll:
+DELETE FROM GenreEntity;

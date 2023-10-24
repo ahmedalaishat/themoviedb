@@ -1,0 +1,56 @@
+CREATE TABLE MovieEntity (
+  movieId INTEGER PRIMARY KEY NOT NULL,
+  title TEXT NOT NULL,
+  backdropPath TEXT,
+  posterPath TEXT,
+  overview TEXT NOT NULL,
+  voteAverage REAL NOT NULL,
+  releaseDate Text NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM MovieEntity;
+
+selectMovieWithDetailsById:
+SELECT m.*, md.*, g.*
+FROM MovieEntity AS m
+JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
+JOIN GenreEntity AS g ON gm.genreId = g.genreId
+JOIN MovieDetailsEntity AS md ON md.movieId = m.movieId
+WHERE m.movieId = ?;
+
+selectAllMovies:
+SELECT m.*, GROUP_CONCAT(ge.genreId, ', ') AS genres
+FROM MovieEntity AS m
+LEFT JOIN GenreMovieEntity AS gm ON m.movieId = gm.movieId
+LEFT JOIN GenreEntity AS ge ON gm.genreId = ge.genreId
+GROUP BY m.movieId;
+
+selectMoviesCountByType:
+SELECT count(*)
+FROM MovieEntity
+JOIN TypeMovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?;
+
+selectMoviesPageByType:
+SELECT MovieEntity.*
+FROM TypeMovieEntity
+JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?
+LIMIT :limit OFFSET :offset;
+
+selectMoviesListByType:
+SELECT MovieEntity.*
+FROM TypeMovieEntity
+JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?;
+
+searchMoviesList:
+SELECT *
+FROM MovieEntity
+WHERE title LIKE '%' || :query || '%' OR releaseDate LIKE '%' || :query || '%';
+
+upsertMovie:
+INSERT OR REPLACE INTO MovieEntity(movieId, title,backdropPath,posterPath,overview,voteAverage,releaseDate)
+VALUES ?;

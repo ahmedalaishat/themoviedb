@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">The Movie DB</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="watch_list">Watch list</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="search_movie">Search Movie</string>
+    <string name="can_not_find_movie_title">We Are Sorry, We Can Not Find The Movie :(</string>
+    <string name="find_your_movie_by">"Find your movie by Type title, categories, years, etc "</string>
+
+    <string name="watch_list_no_movies_title">There Is No Movie Yet!</string>
+    <string name="what_do_you_want_to_watch">What do you want to watch?</string>
+    <string name="read_more">… Read more</string>
+    <string name="rating_success_message">Your rating has been submitted</string>
+    <string name="confirmation_message">Are you sure you want to</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="rate_this_movie">Rate this movie</string>
+    <string name="no_cached_data">No cached data</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="no_connection">You\'re offline</string>
+    <string name="back_online">Back online</string>
+</resources>
