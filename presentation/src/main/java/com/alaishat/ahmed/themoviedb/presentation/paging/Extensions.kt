@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.domain.achitecture.util
+package com.alaishat.ahmed.themoviedb.presentation.paging
 
 import androidx.paging.PagingData
 import androidx.paging.map

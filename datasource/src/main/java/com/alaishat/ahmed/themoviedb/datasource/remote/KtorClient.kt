@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.datasource.remote
 
-import com.alaishat.ahmed.themoviedb.data.BuildConfig
 import com.alaishat.ahmed.themoviedb.datasource.constants.BASE_URL
 import com.alaishat.ahmed.themoviedb.datasource.constants.BREAR_TOKEN
 import com.alaishat.ahmed.themoviedb.datasource.constants.REQUEST_TIME_OUT
@@ -35,6 +34,7 @@ class KtorClient(
     private val networkJson: Json,
     private val exceptionHandler: KtorExceptionHandler,
     private val ktorLogger: KtorLogger,
+    private val logLevel: LogLevel,
 ) {
 
     val httpClient
@@ -47,7 +47,7 @@ class KtorClient(
 
             install(Logging) {
                 logger = ktorLogger
-                level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
+                level = logLevel
             }
 
             install(HttpTimeout) {

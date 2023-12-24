@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.domain.repository
 
-import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieListTypeDomainModel
@@ -16,14 +15,18 @@ import kotlinx.coroutines.flow.Flow
 interface MoviesRepository : Repository {
 
     fun getTopFiveMovies(): Flow<List<MovieDomainModel>>
-    fun getMoviesPagingFlowByType(movieListTypeDomainModel: MovieListTypeDomainModel): Flow<PagingData<MovieDomainModel>>
-    fun getSearchMoviePagingFlow(query: String): Flow<PagingData<MovieDomainModel>>
+    suspend fun getMoviesPagingFlowByType(
+        movieListTypeDomainModel: MovieListTypeDomainModel,
+        page: Int,
+    ): List<MovieDomainModel>
+
+    suspend fun getSearchMoviePage(query: String, page: Int): List<MovieDomainModel>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
     fun observeWatchlist(movieId: Int): Flow<Boolean>
-    fun getMovieReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDomainModel>>
+    suspend fun getMovieReviewsPage(movieId: Int, page: Int): List<ReviewDomainModel>
     fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int): Boolean
     fun getMovieGenreList(): Flow<GenresDomainModel>
-    fun getWatchListPagingFlow(): Flow<PagingData<MovieDomainModel>>
+    suspend fun getWatchListPage(page: Int): List<MovieDomainModel>
     suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean)
 }

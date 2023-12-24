@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.domain.constants
+package com.alaishat.ahmed.themoviedb.presentation.common.constants
 
 /**
  * Created by Ahmed Al-Aishat on Sep/12/2023.

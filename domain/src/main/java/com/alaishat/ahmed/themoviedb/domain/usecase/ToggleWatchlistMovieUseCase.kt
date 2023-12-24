@@ -7,7 +7,7 @@ import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
  * The Movie DB Project.
  */
 class ToggleWatchlistMovieUseCase(
-    private val moviesRepository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
 ) {
     suspend operator fun invoke(movieId: Int, watchlist: Boolean) {
         moviesRepository.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)

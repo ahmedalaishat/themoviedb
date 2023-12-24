@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.data.source.remote.paging
+package com.alaishat.ahmed.themoviedb.presentation.paging
 
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
@@ -24,16 +24,26 @@ fun <Value : Any> defaultPagerOf(
 )
 
 fun <Value : Any> pagerFlowOf(
-    data: List<Value>
+    data: List<Value>,
 ) = flowOf(pagerOf(data = data))
 
+fun <T : Any> emptyPagingFlow() = flowOf<PagingData<T>>(emptyPagingData())
+
 private fun <Value : Any> pagerOf(
-    data: List<Value>
+    data: List<Value>,
 ) = PagingData.from(
     data = data,
     sourceLoadStates = LoadStates(
         refresh = LoadState.NotLoading(endOfPaginationReached = true),
         prepend = LoadState.NotLoading(endOfPaginationReached = true),
         append = LoadState.NotLoading(endOfPaginationReached = true)
+    )
+)
+
+private fun <T : Any> emptyPagingData() = PagingData.empty<T>(
+    sourceLoadStates = LoadStates(
+        refresh = LoadState.Loading,
+        prepend = LoadState.NotLoading(false),
+        append = LoadState.NotLoading(false),
     )
 )

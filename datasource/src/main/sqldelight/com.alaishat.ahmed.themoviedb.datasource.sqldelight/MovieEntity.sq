@@ -46,10 +46,18 @@ FROM TypeMovieEntity
 JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
 WHERE TypeMovieEntity.type = ?;
 
+selectMoviesListPage:
+SELECT MovieEntity.*
+FROM TypeMovieEntity
+JOIN MovieEntity ON TypeMovieEntity.movieId = MovieEntity.movieId
+WHERE TypeMovieEntity.type = ?
+LIMIT :limit OFFSET :offset;
+
 searchMoviesList:
 SELECT *
 FROM MovieEntity
-WHERE title LIKE '%' || :query || '%' OR releaseDate LIKE '%' || :query || '%';
+WHERE title LIKE '%' || :query || '%' OR releaseDate LIKE '%' || :query || '%'
+LIMIT :limit OFFSET :offset;
 
 upsertMovie:
 INSERT OR REPLACE INTO MovieEntity(movieId, title,backdropPath,posterPath,overview,voteAverage,releaseDate)

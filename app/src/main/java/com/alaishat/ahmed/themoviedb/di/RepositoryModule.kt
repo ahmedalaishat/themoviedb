@@ -5,7 +5,6 @@ import com.alaishat.ahmed.themoviedb.data.repository.MoviesRepositoryImpl
 import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.data.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.data.source.remote.RemoteMoviesDataSource
-import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import dagger.Module
 import dagger.Provides

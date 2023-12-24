@@ -1,12 +1,11 @@
 package com.alaishat.ahmed.themoviedb.di
 
-import com.alaishat.ahmed.themoviedb.domain.repository.AccountRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieGenreListUseCase
-import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieReviewsPagingFlowUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieReviewsPageUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetWatchListUseCase
@@ -49,7 +48,7 @@ object DomainModule {
     @Provides
     fun providesGetMovieReviewsPagingFlowUseCase(
         moviesRepository: MoviesRepository,
-    ) = GetMovieReviewsPagingFlowUseCase(
+    ) = GetMovieReviewsPageUseCase(
         moviesRepository = moviesRepository,
     )
 

@@ -1,4 +1,4 @@
-package com.alaishat.ahmed.themoviedb.data.source.remote.paging
+package com.alaishat.ahmed.themoviedb.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

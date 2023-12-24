@@ -3,7 +3,7 @@ package com.alaishat.ahmed.themoviedb.presentation.feature.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.alaishat.ahmed.themoviedb.domain.achitecture.util.mapData
+import com.alaishat.ahmed.themoviedb.presentation.paging.mapData
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
 import com.alaishat.ahmed.themoviedb.presentation.architecture.BaseViewModel
@@ -14,6 +14,8 @@ import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
 import com.alaishat.ahmed.themoviedb.presentation.common.model.toPresentation
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.mapper.toMovieListViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListViewState
+import com.alaishat.ahmed.themoviedb.presentation.paging.NormalPagingSource
+import com.alaishat.ahmed.themoviedb.presentation.paging.defaultPagerOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +33,9 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private fun getMoviesFlowOf(homeTab: HomeTab): Flow<PagingData<Movie>> {
-        return getMoviesPagingFlowUseCase(homeTab.movieListTypeDomainModel)
+        return defaultPagerOf {
+            NormalPagingSource { page -> getMoviesPagingFlowUseCase(homeTab.movieListTypeDomainModel, page) }
+        }.flow
             .mapData { it.toPresentation() }
             .cachedIn(viewModelScope)
     }
@@ -47,5 +51,5 @@ class HomeViewModel @Inject constructor(
 
     // Each tab with its flow
     val tabs: Map<HomeTab, Flow<PagingData<Movie>>> =
-        HomeTab.values().associateWith { tab -> getMoviesFlowOf(tab) }
+        HomeTab.entries.associateWith { tab -> getMoviesFlowOf(tab) }
 }
