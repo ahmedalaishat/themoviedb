@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.alaishat.ahmed.themoviedb.presentation.common.model.Movie
-import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListViewState
+import com.alaishat.ahmed.themoviedb.presentation.feature.home.model.MovieListUiState
 import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
 
 /**
@@ -15,7 +15,7 @@ import com.alaishat.ahmed.themoviedb.ui.extenstions.silentClickable
  * The Movie DB Project.
  */
 fun LazyListScope.topMoviesList(
-    topMovies: MovieListViewState.Success,
+    topMovies: MovieListUiState.Success,
     onMovieClick: (movieId: Int) -> Unit,
     cardModifier: Modifier = Modifier,
 ) {

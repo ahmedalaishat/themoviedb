@@ -8,12 +8,12 @@ import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
  * Created by Ahmed Al-Aishat on Jun/25/2023.
  * The Movie DB Project.
  */
-class GetMoviesPagingFlowUseCase(
+class GetMoviesPageUseCase(
     private val moviesRepository: MoviesRepository,
 ) {
     suspend operator fun invoke(
         movieListTypeDomainModel: MovieListTypeDomainModel,
         page: Int,
     ): List<MovieDomainModel> =
-        moviesRepository.getMoviesPagingFlowByType(movieListTypeDomainModel, page)
+        moviesRepository.getMoviesPageByType(movieListTypeDomainModel, page)
 }

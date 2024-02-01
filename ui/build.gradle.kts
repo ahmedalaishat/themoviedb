@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.ui.tooling)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.material3.pullrefresh)
     // Compose Integrations
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.runtime.compose)

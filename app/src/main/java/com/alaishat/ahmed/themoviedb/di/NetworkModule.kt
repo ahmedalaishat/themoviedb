@@ -34,12 +34,10 @@ object NetworkModule {
     fun providesKtorClient(
         @Dispatcher(AppDispatchers.IO) ioDispatcher: CoroutineDispatcher,
         networkJson: Json,
-        exceptionHandler: KtorExceptionHandler,
         ktorLogger: KtorLogger,
     ) = KtorClient(
         ioDispatcher = ioDispatcher,
         networkJson = networkJson,
-        exceptionHandler = exceptionHandler,
         ktorLogger = ktorLogger,
         if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
     )
@@ -52,12 +50,6 @@ object NetworkModule {
         prettyPrint = true
         isLenient = true
     }
-
-    @Provides
-    @Singleton
-    fun providesKtorExceptionHandler(
-        networkJson: Json,
-    ) = KtorExceptionHandler(networkJson)
 
     @Provides
     @Singleton

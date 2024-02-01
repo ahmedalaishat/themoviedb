@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -64,6 +65,35 @@ private fun WatchListScreen(
     onSearchTextChange: (String) -> Unit,
     onMovieClick: (movieId: Int) -> Unit,
 ) {
+
+    PagingEmptyBox(
+        pagingItems = pagingItems,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        EmptyContent(
+            imageId = R.drawable.no_items,
+            title = stringResource(R.string.watch_list_no_movies_title),
+            subtitle = stringResource(id = R.string.find_your_movie_by),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Dimensions.ScreenPadding),
+        )
+    }
+
+    PagingErrorBox(
+        pagingItems = pagingItems,
+        modifier = Modifier.fillMaxSize(),
+    ) { error ->
+        EmptyContent(
+            imageId = R.drawable.error,
+            title = stringResource(R.string.something_went_wrong),
+            subtitle = error,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Dimensions.ScreenPadding),
+        )
+    }
+
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(Dimensions.MarginLg),
         horizontalArrangement = Arrangement.spacedBy(Dimensions.MarginSm),
@@ -98,28 +128,6 @@ private fun WatchListScreen(
             pagingItems = pagingItems,
             onMovieClick = onMovieClick,
             itemModifier = itemModifier,
-        )
-    }
-
-    PagingEmptyBox(
-        pagingItems = pagingItems,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        EmptyContent(
-            imageId = R.drawable.ic_magic_box,
-            title = stringResource(R.string.watch_list_no_movies_title),
-            subtitle = stringResource(id = R.string.find_your_movie_by),
-            modifier = Modifier.fillMaxWidth(.5f),
-        )
-    }
-
-    PagingErrorBox(
-        pagingItems = pagingItems,
-        modifier = Modifier.fillMaxSize(),
-    ) { error ->
-        Text(
-            text = stringResource(id = R.string.something_went_wrong),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

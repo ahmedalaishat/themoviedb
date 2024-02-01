@@ -1,5 +1,8 @@
 package com.alaishat.ahmed.themoviedb.datasource.movie.source.remote
 
+import com.alaishat.ahmed.themoviedb.data.architecture.DataResult
+import com.alaishat.ahmed.themoviedb.data.architecture.getOrThrow
+import com.alaishat.ahmed.themoviedb.data.architecture.successMapper
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieAccountStatusDataModel
@@ -39,81 +42,76 @@ class KtorMoviesDataSource(
     override suspend fun getMoviesPage(
         movieListTypeDataModel: MovieListTypeDataModel,
         page: Int,
-    ): List<MovieDataModel> {
-        val res: MovieListRes = ktorClient.call {
-            get("movie/${movieListTypeDataModel.listApiPath}?page=$page")
+    ): List<MovieDataModel> = ktorClient.safeApiCall<MovieListRes> {
+        get("movie/${movieListTypeDataModel.listApiPath}?page=$page")
 //            &without_keywords=158718
-        }
-        return res.results.mapToMoviesDataModel()
-    }
+    }.successMapper {
+        it.results.mapToMoviesDataModel()
+    }.getOrThrow()
 
-    override suspend fun fetchSearchMoviePage(query: String, page: Int): List<MovieDataModel> {
-        val res: MovieListRes = ktorClient.call {
+    override suspend fun fetchSearchMoviePage(query: String, page: Int): DataResult<List<MovieDataModel>> =
+        ktorClient.safeApiCall<MovieListRes> {
             get("search/movie?query=$query&page=$page")
+        }.successMapper {
+            it.results.mapToMoviesDataModel()
         }
-        return res.results.mapToMoviesDataModel()
-    }
 
-    override suspend fun getMovieDetails(movieId: Int): MovieDetailsDataModel {
-        val res: NetworkMovieDetails = ktorClient.call {
+    override suspend fun getMovieDetails(movieId: Int): DataResult<MovieDetailsDataModel> =
+        ktorClient.safeApiCall<NetworkMovieDetails> {
             get("movie/$movieId")
+        }.successMapper {
+            it.toMoviesDetailsDataModel()
         }
-        return res.toMoviesDetailsDataModel()
-    }
 
-    override suspend fun getMovieCredits(movieId: Int): List<CreditDataModel> {
-        val res: MovieCreditsRes = ktorClient.call {
+    override suspend fun getMovieCredits(movieId: Int): DataResult<List<CreditDataModel>> =
+        ktorClient.safeApiCall<MovieCreditsRes> {
             get("movie/$movieId/credits")
+        }.successMapper {
+            it.cast.mapToCreditsDataModels()
         }
-        return res.cast.mapToCreditsDataModels()
-    }
 
-    override suspend fun getMovieReviewsPage(movieId: Int, page: Int): List<ReviewDataModel> {
-        val res: MovieReviewsRes = ktorClient.call {
+    override suspend fun getMovieReviewsPage(movieId: Int, page: Int): DataResult<List<ReviewDataModel>> =
+        ktorClient.safeApiCall<MovieReviewsRes> {
             get("movie/$movieId/reviews?page=$page")
+        }.successMapper {
+            it.reviews.mapToReviewsDataModels()
         }
-        return res.reviews.mapToReviewsDataModels()
-    }
 
-    override suspend fun addMovieRating(movieId: Int, rating: Int) {
-        ktorClient.call<Unit> {
-            post("movie/$movieId/rating") {
-                setBody(body = MovieRatingReq(value = rating))
-            }
+    override suspend fun addMovieRating(movieId: Int, rating: Int) = ktorClient.safeApiCall<Unit> {
+        post("movie/$movieId/rating") {
+            setBody(body = MovieRatingReq(value = rating))
         }
     }
 
-    override suspend fun getMovieAccountStatus(movieId: Int): MovieAccountStatusDataModel {
-        val res: NetworkMovieAccountStatus = ktorClient.call {
+    override suspend fun getMovieAccountStatus(movieId: Int): DataResult<MovieAccountStatusDataModel> =
+        ktorClient.safeApiCall<NetworkMovieAccountStatus> {
             get("movie/$movieId/account_states")
+        }.successMapper {
+            it.toMovieAccountStatusDataModel()
         }
-        return res.toMovieAccountStatusDataModel()
-    }
 
-    override suspend fun getMovieGenreList(): List<GenreDataModel> {
-        val res: MovieGenreListRes = ktorClient.call {
+    override suspend fun getMovieGenreList(): DataResult<List<GenreDataModel>> =
+        ktorClient.safeApiCall<MovieGenreListRes> {
             get("genre/movie/list")
+        }.successMapper {
+            it.genres.mapToGenresDataModels()
         }
-        return res.genres.mapToGenresDataModels()
-    }
 
-    override suspend fun getWatchlistPage(page: Int): List<MovieDataModel> {
-        val res: MovieListRes = ktorClient.call {
+    override suspend fun getWatchlistPage(page: Int): DataResult<List<MovieDataModel>> =
+        ktorClient.safeApiCall<MovieListRes> {
             get("account/$ACCOUNT_ID/watchlist/movies?page=$page")
+        }.successMapper {
+            it.results.mapToMoviesDataModel()
         }
-        return res.results.mapToMoviesDataModel()
-    }
 
-    override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) {
-        ktorClient.call<Unit> {
-            post("account/$ACCOUNT_ID/watchlist") {
-                setBody(
-                    body = ToggleWatchlistMovieReq(
-                        mediaId = movieId,
-                        watchlist = watchlist,
-                    )
+    override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) = ktorClient.safeApiCall<Unit> {
+        post("account/$ACCOUNT_ID/watchlist") {
+            setBody(
+                body = ToggleWatchlistMovieReq(
+                    mediaId = movieId,
+                    watchlist = watchlist,
                 )
-            }
+            )
         }
     }
 }

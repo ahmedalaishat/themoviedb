@@ -4,13 +4,16 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,9 +40,12 @@ fun EmptyContent(
     ) {
         SpacerSm()
         Image(
-            modifier = Modifier.size(75.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(25 / 15f),
             painter = painterResource(id = imageId),
-            contentDescription = null
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
         )
         Text(
             text = title,

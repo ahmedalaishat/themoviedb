@@ -5,10 +5,10 @@ package com.alaishat.ahmed.themoviedb.data.model
  * The Movie DB Project.
  */
 sealed interface ConnectionStateDataModel {
-    object Unset : ConnectionStateDataModel
+    data object Unset : ConnectionStateDataModel
     data class Connected(
         val backOnline: Boolean,
     ) : ConnectionStateDataModel
 
-    object Disconnected : ConnectionStateDataModel
+    data object Disconnected : ConnectionStateDataModel
 }

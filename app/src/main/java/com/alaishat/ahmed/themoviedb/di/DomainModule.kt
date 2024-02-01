@@ -1,14 +1,16 @@
 package com.alaishat.ahmed.themoviedb.di
 
+import com.alaishat.ahmed.themoviedb.domain.repository.ConnectionRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.domain.usecase.AddMovieRatingUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieCreditsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieDetailsUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieGenreListUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetMovieReviewsPageUseCase
-import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPagingFlowUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.GetMoviesPageUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetTopFiveMoviesUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.GetWatchListUseCase
+import com.alaishat.ahmed.themoviedb.domain.usecase.ObserveConnectionStateUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.SearchMovieUseCase
 import com.alaishat.ahmed.themoviedb.domain.usecase.ToggleWatchlistMovieUseCase
 import dagger.Module
@@ -55,7 +57,7 @@ object DomainModule {
     @Provides
     fun providesGetMoviesPagingFlowUseCase(
         moviesRepository: MoviesRepository,
-    ) = GetMoviesPagingFlowUseCase(
+    ) = GetMoviesPageUseCase(
         moviesRepository = moviesRepository,
     )
 
@@ -82,7 +84,7 @@ object DomainModule {
 
     @Provides
     fun providesGetMovieDetailsUseCase(
-        moviesRepository: MoviesRepository
+        moviesRepository: MoviesRepository,
     ) = GetMovieDetailsUseCase(
         moviesRepository = moviesRepository,
     )
@@ -95,4 +97,10 @@ object DomainModule {
         moviesRepository = moviesRepository,
     )
 
+    @Provides
+    fun providesObserveConnectionStateUseCase(
+        connectionRepository: ConnectionRepository,
+    ) = ObserveConnectionStateUseCase(
+        connectionRepository = connectionRepository,
+    )
 }

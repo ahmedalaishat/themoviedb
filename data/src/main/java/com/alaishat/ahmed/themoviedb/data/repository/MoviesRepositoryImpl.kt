@@ -1,17 +1,18 @@
 package com.alaishat.ahmed.themoviedb.data.repository
 
+import com.alaishat.ahmed.themoviedb.data.architecture.getOrThrow
 import com.alaishat.ahmed.themoviedb.data.mapper.MovieDetailsToDomainResolver
 import com.alaishat.ahmed.themoviedb.data.mapper.toDomainException
-import com.alaishat.ahmed.themoviedb.data.model.ConnectionStateDataModel
+import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.data.model.mapToCreditsDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.mapToGenresDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.mapToMovies
 import com.alaishat.ahmed.themoviedb.data.model.mapToReviewsDomainModels
 import com.alaishat.ahmed.themoviedb.data.model.toMovieDomainModel
-import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.data.source.local.LocalMoviesDataSource
 import com.alaishat.ahmed.themoviedb.data.source.remote.RemoteMoviesDataSource
+import com.alaishat.ahmed.themoviedb.domain.common.model.ConnectionStateDomainModel.Connected
 import com.alaishat.ahmed.themoviedb.domain.common.model.GenresDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieDomainModel
 import com.alaishat.ahmed.themoviedb.domain.common.model.MovieListTypeDomainModel
@@ -19,15 +20,21 @@ import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.CreditsDomainMod
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.ReviewDomainModel
 import com.alaishat.ahmed.themoviedb.domain.repository.BackgroundExecutor
+import com.alaishat.ahmed.themoviedb.domain.repository.ConnectionRepository
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * Created by Ahmed Al-Aishat on Jun/25/2023.
@@ -36,72 +43,105 @@ import kotlinx.coroutines.flow.retryWhen
 class MoviesRepositoryImpl(
     private val remoteMoviesDataSource: RemoteMoviesDataSource,
     private val localMoviesDataSource: LocalMoviesDataSource,
-    private val connectionDataSource: ConnectionDataSource,
     private val movieDetailsToDomainResolver: MovieDetailsToDomainResolver,
+    private val connectionRepository: ConnectionRepository,
     override val ioDispatcher: CoroutineDispatcher,
+    coroutineScope: CoroutineScope,
 ) : MoviesRepository, BackgroundExecutor {
+    private val genres = MutableStateFlow<GenresDomainModel?>(null)
 
-    override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = connectionDataSource.observeIsConnected()
-        .map { connected ->
-            if (connected is ConnectionStateDataModel.Connected) {
-                val movies = remoteMoviesDataSource.getMoviesPage(
-                    movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
-                    page = 1,
-                ).take(5)
+    init {
+        val cached = localMoviesDataSource.getMovieGenreList()
+        if (cached.isNotEmpty()) {
+            genres.update {
+                GenresDomainModel.Success(cached.mapToGenresDomainModels())
+            }
+        } else {
+            coroutineScope.launch {
+                connectionRepository.observeConnectionState().collect {
+                    val fetched = if (it is Connected) {
+                        val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList().getOrThrow()
+                        localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
+                        GenresDomainModel.Success(fetchedGenreList.mapToGenresDomainModels())
+                    } else {
+                        GenresDomainModel.NoCache
+                    }
+                    genres.update { fetched }
+                }
+            }
+        }
+    }
+
+    override fun getTopFiveMovies(): Flow<List<MovieDomainModel>> = flow {
+        val movies = try {
+            remoteMoviesDataSource.getMoviesPage(
+                movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
+                page = 1,
+            ).take(5).also { fetchedMovies ->
                 localMoviesDataSource.cacheMovieList(
                     deleteCached = true,
                     movieListTypeDataModel = MovieListTypeDataModel.TOP_FIVE,
-                    movies = movies,
+                    movies = fetchedMovies,
                 )
-                movies.mapToMovies()
-            } else {
-                localMoviesDataSource.getCachedMovieList(MovieListTypeDataModel.TOP_FIVE).mapToMovies()
             }
-        }.retryWhen { _, _ ->
-            delay(1000)
-            true
+        } catch (e: Exception) {
+            localMoviesDataSource.getCachedMovieList(MovieListTypeDataModel.TOP_FIVE)
         }
+        emit(movies.mapToMovies())
+    }
         .flowOnBackground()
 
-    override suspend fun getMoviesPagingFlowByType(
+    override suspend fun getMoviesPageByType(
         movieListTypeDomainModel: MovieListTypeDomainModel,
         page: Int,
     ): List<MovieDomainModel> = doInBackground {
-        val connectionState = connectionDataSource.getConnectionState()
-        val movies = if (connectionState is ConnectionStateDataModel.Connected) {
-            remoteMoviesDataSource.getMoviesPage(
-                movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
-                    movieListTypeDomainModel
-                ),
-                page = page,
-            ).also { movies ->
-                localMoviesDataSource.cacheMovieList(
-                    deleteCached = page == 1,
-                    movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
-                        movieListTypeDomainModel
-                    ),
-                    movies = movies,
-                )
+        suspend fun remoteMovies() = remoteMoviesDataSource.getMoviesPage(
+            movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
+                movieListTypeDomainModel
+            ),
+            page = page,
+        )
+
+        fun cachedMovies() = localMoviesDataSource.getCachedMoviesPagingFlow(
+            movieListType = MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel),
+            page = page,
+        )
+
+        fun cacheMovies(movies: List<MovieDataModel>) = localMoviesDataSource.cacheMovieList(
+            deleteCached = page == 1,
+            movieListTypeDataModel = MovieListTypeDataModel.getByMovieListTypeDomainModel(
+                movieListTypeDomainModel
+            ),
+            movies = movies,
+        )
+
+        val movies = if (connectionRepository.getConnectionState() is Connected) {
+            try {
+                val remote = remoteMovies() // fetch movies
+                cacheMovies(remote)
+                remote
+            } catch (e: Exception) {
+                cachedMovies().ifEmpty { throw e }
             }
         } else {
-            localMoviesDataSource.getCachedMoviesPagingFlow(
-                movieListType = MovieListTypeDataModel.getByMovieListTypeDomainModel(movieListTypeDomainModel),
-                page = page,
-            )
+            cachedMovies()
         }
+
         movies.map { it.toMovieDomainModel() }
     }
 
     override suspend fun getSearchMoviePage(query: String, page: Int): List<MovieDomainModel> = doInBackground {
-        val connectionState = connectionDataSource.getConnectionState()
+        val connectionState = connectionRepository.getConnectionState()
 
-        val movies = if (connectionState is ConnectionStateDataModel.Connected)
+        val movies = if (connectionState is Connected)
             remoteMoviesDataSource.fetchSearchMoviePage(
                 query = query,
                 page = page,
-            ).also { fetchedMovies ->
-                localMoviesDataSource.cacheMovies(movies = fetchedMovies)
-            }
+            )
+                .getOrThrow()
+                .also { fetchedMovies ->
+                    localMoviesDataSource.cacheMovies(movies = fetchedMovies)
+                }
         else localMoviesDataSource.searchCachedMoviePage(
             query = query,
             page = page
@@ -109,49 +149,58 @@ class MoviesRepositoryImpl(
         movies.mapToMovies()
     }
 
-    override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> {
-        return connectionDataSource.observeIsConnected()
-            .map { connected ->
-                movieDetailsToDomainResolver.toDomain(
-                    connectionState = connected,
-                    remoteMovieProvider = {
-                        coroutineScope {
-                            val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
-                            val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
-                            localMoviesDataSource.cacheMovieDetails(movieDetails.await())
-                            localMoviesDataSource.cacheMovieWatchlistStatus(
-                                movieId = movieId,
-                                watchlist = status.await().watchlist
-                            )
-                            movieDetails.await()
-                        }
-                    },
-                    localMovieProvider = {
-                        delay(200)
-                        localMoviesDataSource.getCachedMovieDetails(movieId = movieId)
-                    }
-                )
-            }.retryWhen { cause, _ ->
-                emit(MovieDetailsDomainModel.Error(cause.toDomainException()))
-                delay(1000)
-                true
+    override fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel> = flow {
+        val connectionStatus = connectionRepository.getConnectionState()
+        val movie = movieDetailsToDomainResolver.toDomain(
+            connectionState = connectionStatus,
+            remoteMovieProvider = {
+                coroutineScope {
+                    val status = async { remoteMoviesDataSource.getMovieAccountStatus(movieId = movieId) }
+                    val movieDetails = async { remoteMoviesDataSource.getMovieDetails(movieId = movieId) }
+                    localMoviesDataSource.cacheMovieDetails(movieDetails.await().getOrThrow())
+                    localMoviesDataSource.cacheMovieWatchlistStatus(
+                        movieId = movieId,
+                        watchlist = status.await().getOrThrow().watchlist
+                    )
+                    movieDetails.await().getOrThrow()
+                }
+            },
+            localMovieProvider = {
+                delay(200)
+                localMoviesDataSource.getCachedMovieDetails(movieId = movieId)
             }
-            .flowOnBackground()
+        )
+        emit(movie)
     }
+        .flowOnBackground()
+//        {
+//                return connectionRepository.observeConnectionState()
+//                    .map { connected ->
+//                    }
+//                    .retryWhen { cause, _ ->
+//                        emit(MovieDetailsDomainModel.Error(cause.toDomainException()))
+//                        delay(1000)
+//                        true
+//                    }
+//                    .flowOnBackground()
+//            }
+//        }
 
-    override fun observeWatchlist(movieId: Int): Flow<Boolean> {
+    override fun isWatchlist(movieId: Int): Flow<Boolean> {
         return localMoviesDataSource.observeMovieWatchlistStatus(movieId = movieId)
     }
 
     override suspend fun getMovieReviewsPage(movieId: Int, page: Int): List<ReviewDomainModel> = doInBackground {
-        val connectionStatus = connectionDataSource.getConnectionState()
-        val movies = if (connectionStatus is ConnectionStateDataModel.Connected) {
+        val connectionStatus = connectionRepository.getConnectionState()
+        val movies = if (connectionStatus is Connected) {
             remoteMoviesDataSource.getMovieReviewsPage(
                 movieId = movieId,
                 page = page,
-            ).also { reviews ->
-                localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
-            }
+            )
+                .getOrThrow()
+                .also { reviews ->
+                    localMoviesDataSource.cacheMovieReviews(movieId = movieId, reviews = reviews)
+                }
         } else {
             localMoviesDataSource.getCachedReviewsPage(
                 movieId = movieId,
@@ -163,13 +212,13 @@ class MoviesRepositoryImpl(
 
     override fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel> =
         localMoviesDataSource.getCachedMovieCredits(movieId).combine(
-            connectionDataSource.observeIsConnected()
+            connectionRepository.observeConnectionState()
         ) { cached, connected ->
             if (cached.isNotEmpty()) {
                 CreditsDomainModel.Success(cached.mapToCreditsDomainModels())
             } else {
-                if (connected is ConnectionStateDataModel.Connected) {
-                    val credits = remoteMoviesDataSource.getMovieCredits(movieId = movieId)
+                if (connected is Connected) {
+                    val credits = remoteMoviesDataSource.getMovieCredits(movieId = movieId).getOrThrow()
                     localMoviesDataSource.cacheMovieCredits(movieId, credits)
                     CreditsDomainModel.Success(credits.mapToCreditsDomainModels())
                 } else {
@@ -192,34 +241,20 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieGenreList(): Flow<GenresDomainModel> = connectionDataSource.observeIsConnected().map {
-        if (it is ConnectionStateDataModel.Connected) {
-            val fetchedGenreList = remoteMoviesDataSource.getMovieGenreList()
-            localMoviesDataSource.updateMovieGenreList(fetchedGenreList)
-            GenresDomainModel.Success(fetchedGenreList.mapToGenresDomainModels())
-        } else {
-            val cached = localMoviesDataSource.getMovieGenreList()
-            if (cached.isEmpty()) GenresDomainModel.NoCache
-            else GenresDomainModel.Success(cached.mapToGenresDomainModels())
-        }
-    }
-        .retryWhen { _, _ ->
-            emit(GenresDomainModel.NoCache)
-            delay(1000)
-            true
-        }
-        .flowOnBackground()
+    override fun getMovieGenreList(): Flow<GenresDomainModel> = genres.filterNotNull()
 
     override suspend fun getWatchListPage(page: Int): List<MovieDomainModel> = doInBackground {
-        val connectionStatus = connectionDataSource.getConnectionState()
-        val movies = if (connectionStatus is ConnectionStateDataModel.Connected)
-            remoteMoviesDataSource.getWatchlistPage(page).also { fetchedMovies ->
-                localMoviesDataSource.cacheMovieList(
-                    deleteCached = page == 1,
-                    movieListTypeDataModel = MovieListTypeDataModel.WATCHLIST,
-                    movies = fetchedMovies,
-                )
-            }
+        val connectionStatus = connectionRepository.getConnectionState()
+        val movies = if (connectionStatus is Connected)
+            remoteMoviesDataSource.getWatchlistPage(page)
+                .getOrThrow()
+                .also { fetchedMovies ->
+                    localMoviesDataSource.cacheMovieList(
+                        deleteCached = page == 1,
+                        movieListTypeDataModel = MovieListTypeDataModel.WATCHLIST,
+                        movies = fetchedMovies,
+                    )
+                }
         else localMoviesDataSource.getCachedWatchlistPage(page = page)
         movies.mapToMovies()
     }
@@ -227,7 +262,7 @@ class MoviesRepositoryImpl(
     override suspend fun toggleWatchlistMovie(movieId: Int, watchlist: Boolean) = doInBackground {
         localMoviesDataSource.cacheMovieWatchlistStatus(movieId = movieId, watchlist = watchlist)
         try {
-            remoteMoviesDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist)
+            remoteMoviesDataSource.toggleWatchlistMovie(movieId = movieId, watchlist = watchlist).getOrThrow()
         } catch (e: Exception) {
             // in case the request fails undo toggle cached movie
             localMoviesDataSource.cacheMovieWatchlistStatus(movieId = movieId, watchlist = !watchlist)

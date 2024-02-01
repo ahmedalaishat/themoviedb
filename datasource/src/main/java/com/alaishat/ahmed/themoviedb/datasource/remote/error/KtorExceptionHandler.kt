@@ -2,7 +2,7 @@ package com.alaishat.ahmed.themoviedb.datasource.remote.error
 
 import com.alaishat.ahmed.themoviedb.data.architecture.exception.DataException
 import com.alaishat.ahmed.themoviedb.data.source.remote.exception.ApiDataException
-import com.alaishat.ahmed.themoviedb.data.source.remote.exception.RequestFailedDataException
+import com.alaishat.ahmed.themoviedb.data.source.remote.exception.ConnectionDataException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.HttpRequest
 import io.ktor.client.statement.HttpResponse
@@ -20,8 +20,8 @@ class KtorExceptionHandler(private val networkJson: Json) {
     @Throws(DataException::class)
     suspend fun handle(cause: Throwable, request: HttpRequest) {
         val message = when (cause) {
-            is UnknownHostException -> throw RequestFailedDataException()
-            is SocketTimeoutException -> throw RequestFailedDataException()
+            is UnknownHostException -> throw ConnectionDataException()
+            is SocketTimeoutException -> throw ConnectionDataException()
             is ResponseException -> cause.response.decodeErrorMessage()
             else -> cause.message
         }

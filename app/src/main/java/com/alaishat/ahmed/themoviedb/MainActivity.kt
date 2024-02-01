@@ -11,11 +11,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.domain.repository.MoviesRepository
 import com.alaishat.ahmed.themoviedb.presentation.common.MainViewModel
 import com.alaishat.ahmed.themoviedb.presentation.common.model.MainActivityUiState
 import com.alaishat.ahmed.themoviedb.ui.MovieApp
+import com.alaishat.ahmed.themoviedb.ui.rememberMovieAppState
 import com.alaishat.ahmed.themoviedb.ui.theme.TheMovieDBTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -28,9 +28,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var moviesRepository: MoviesRepository
-
-    @Inject
-    lateinit var connectionDataSource: ConnectionDataSource
 
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -62,15 +59,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             TheMovieDBTheme {
                 MovieApp(
-                    connectionDataSource = connectionDataSource,
-                    isInitError = uiState == MainActivityUiState.NoCache
+                    appState = rememberMovieAppState(
+                        mainActivityUiState = uiState,
+                    )
                 )
             }
         }
-//        lifecycleScope.launch {
-//            movieListRepository.getMovieListByType(MovieListType.UPCOMING).collect {
-//                Timber.e(it.toString())
-//            }
-//        }
     }
 }

@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.Flow
 interface MoviesRepository : Repository {
 
     fun getTopFiveMovies(): Flow<List<MovieDomainModel>>
-    suspend fun getMoviesPagingFlowByType(
+    suspend fun getMoviesPageByType(
         movieListTypeDomainModel: MovieListTypeDomainModel,
         page: Int,
     ): List<MovieDomainModel>
 
     suspend fun getSearchMoviePage(query: String, page: Int): List<MovieDomainModel>
     fun getMovieDetails(movieId: Int): Flow<MovieDetailsDomainModel>
-    fun observeWatchlist(movieId: Int): Flow<Boolean>
+    fun isWatchlist(movieId: Int): Flow<Boolean>
     suspend fun getMovieReviewsPage(movieId: Int, page: Int): List<ReviewDomainModel>
     fun getMovieCredits(movieId: Int): Flow<CreditsDomainModel>
     suspend fun addMovieRating(movieId: Int, rating: Int): Boolean

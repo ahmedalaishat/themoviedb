@@ -6,7 +6,10 @@ package com.alaishat.ahmed.themoviedb.presentation.common.model
  */
 
 sealed interface MainActivityUiState {
-    object Loading : MainActivityUiState
-    object NoCache : MainActivityUiState
-    data class Success(val genres: List<Genre>) : MainActivityUiState
+    data object Loading : MainActivityUiState
+    data object NoCache : MainActivityUiState
+    data class Success(
+        val genres: List<Genre>,
+        val connectionState: ConnectionStateUiModel,
+    ) : MainActivityUiState
 }

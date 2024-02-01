@@ -20,5 +20,10 @@
     <string name="no_cached_data">No cached data</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="no_connection">You\'re offline</string>
+    <string name="connect_for_first_time">Connect for First-Time Movie Details</string>
+    <string name="connect_for_first_time_movie_description">For the first-time movie details, an internet connection is required. Offline access is available after initial setup.</string>
+    <string name="connect_for_first_time_movie_list_description">Connect online for initial movie list access. Enjoy offline browsing afterward.</string>
     <string name="back_online">Back online</string>
+    <string name="initial_setup_error">Initial setup requires a network connection. Please ensure you\'re connected for the first-time setup.</string>
+    <string name="retry">Retry</string>
 </resources>

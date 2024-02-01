@@ -43,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
@@ -71,6 +70,7 @@ import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.CreditsVie
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.MovieDetailsViewState
 import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.Review
 import com.alaishat.ahmed.themoviedb.ui.R
+import com.alaishat.ahmed.themoviedb.ui.common.EmptyContent
 import com.alaishat.ahmed.themoviedb.ui.common.MovieCard
 import com.alaishat.ahmed.themoviedb.ui.common.MovieInfo
 import com.alaishat.ahmed.themoviedb.ui.common.ShimmerCard
@@ -106,22 +106,29 @@ import com.alaishat.ahmed.themoviedb.ui.theme.Shapes.CornerFull
 fun MovieRoute(
     viewModel: MovieViewModel = hiltViewModel(),
 ) {
-    val movie by viewModel.movieDetails.collectAsStateWithLifecycle()
+    val uiState by viewModel.refreshableUiState.collectAsStateWithLifecycle()
     val reviews = viewModel.movieReviews.collectAsLazyPagingItems()
     val credits by viewModel.movieCredits.collectAsStateWithLifecycle()
     val rated by viewModel.rated.collectAsStateWithLifecycle()
 
+    val (movie, isRefreshing) = uiState
 
     when (movie) {
         is MovieDetailsViewState.Loading -> MovieDetailsShimmer()
         MovieDetailsViewState.Disconnected ->
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
-                Text(text = stringResource(id = R.string.no_cached_data))
-            }
+            if (isRefreshing) MovieDetailsShimmer()
+            else ConnectionErrorContent(
+                onRetryClick = viewModel::refresh,
+            )
 
-        is MovieDetailsViewState.Error -> Text(text = stringResource(R.string.something_went_wrong))
+        is MovieDetailsViewState.Error ->
+            if (isRefreshing) MovieDetailsShimmer()
+            else ConnectionErrorContent(
+                onRetryClick = viewModel::refresh,
+            )
+
         is MovieDetailsViewState.Success -> MovieScreen(
-            movie = movie as MovieDetailsViewState.Success,
+            movie = movie,
             reviews = reviews,
             creditsViewState = credits,
             rated = rated,
@@ -129,6 +136,22 @@ fun MovieRoute(
             onToggleWatchlist = viewModel::toggleWatchlist,
         )
     }
+}
+
+@Composable
+private fun ConnectionErrorContent(
+    onRetryClick: () -> Unit,
+) {
+    EmptyContent(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Dimensions.ScreenPadding),
+        imageId = R.drawable.no_connection,
+        title = stringResource(id = R.string.connect_for_first_time),
+        subtitle = stringResource(id = R.string.connect_for_first_time_movie_description),
+        actionButtonText = stringResource(id = R.string.retry),
+        onActionButtonClick = onRetryClick,
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -324,7 +347,7 @@ private fun AboutMovieTab(
     movieOverview: String,
     rated: Boolean?,
     onRateClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -345,7 +368,7 @@ private fun AboutMovieTab(
 @Composable
 private fun ReviewsTab(
     pagingReviews: LazyPagingItems<Review>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         state = rememberLazyListState(),
@@ -381,7 +404,7 @@ private fun ReviewsTab(
 @Composable
 private fun CastTab(
     creditsViewState: CreditsViewState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val lazyGridState = rememberLazyGridState()
     LazyVerticalGrid(

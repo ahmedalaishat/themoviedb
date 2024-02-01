@@ -34,13 +34,13 @@ class ConnectionDataSourceImpl(
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            emitConnectionUpdate(Connected(backOnline = stateFlow.value == Disconnected))
+            emitConnectionUpdate(Connected(backOnline = stateFlow.value is Disconnected))
         }
 
         override fun onLost(network: Network) {
             emitConnectionUpdate(
                 if (connectivityManager.isConnected()) {
-                    Connected(backOnline = stateFlow.value == Disconnected)
+                    Connected(backOnline = stateFlow.value is Disconnected)
                 } else {
                     Disconnected
                 }
@@ -50,9 +50,11 @@ class ConnectionDataSourceImpl(
 
     init {
         emitConnectionUpdate(
-            connectionState = if (connectivityManager.isConnected())
+            connectionState = if (connectivityManager.isConnected()) {
                 Connected(backOnline = false)
-            else Disconnected
+            } else{
+                Disconnected
+            }
         )
     }
 
