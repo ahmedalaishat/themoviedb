@@ -1,6 +1,5 @@
 package com.alaishat.ahmed.themoviedb.data.source.local
 
-import androidx.paging.PagingData
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
@@ -18,16 +17,21 @@ interface LocalMoviesDataSource {
     fun cacheMovieList(
         movieListTypeDataModel: MovieListTypeDataModel,
         deleteCached: Boolean,
-        movies: List<MovieDataModel>
+        movies: List<MovieDataModel>,
     )
 
     fun cacheMovies(movies: List<MovieDataModel>)
 
     fun getCachedMovieList(movieListTypeDataModel: MovieListTypeDataModel): List<MovieDataModel>
-    fun searchCachedMovieList(query: String): List<MovieDataModel>
-    fun getCachedMoviesPagingFlow(movieListTypeDataModel: MovieListTypeDataModel): Flow<PagingData<MovieDataModel>>
+    fun getCachedWatchlistPage(page: Int): List<MovieDataModel>
+    fun searchCachedMoviePage(query: String, page: Int): List<MovieDataModel>
+    fun getCachedMoviesPagingFlow(
+        movieListType: MovieListTypeDataModel,
+        page: Int,
+    ): List<MovieDataModel>
+
     fun cacheMovieReviews(movieId: Int, reviews: List<ReviewDataModel>)
-    fun getCachedReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDataModel>>
+    fun getCachedReviewsPage(movieId: Int, page: Int): List<ReviewDataModel>
     fun getMovieReviewsFlow(movieId: Int): List<ReviewDataModel>
     fun getMovieGenreList(): List<GenreDataModel>
     fun updateMovieGenreList(genreList: List<GenreDataModel>)

@@ -20,9 +20,9 @@ sealed interface MovieDetailsDomainModel {
         val watchlist: Boolean,
     ) : MovieDetailsDomainModel
 
-    object Disconnected : MovieDetailsDomainModel
+    data object Disconnected : MovieDetailsDomainModel
 
     data class Error(val exception: DomainException) : MovieDetailsDomainModel
 
-    object Loading : MovieDetailsDomainModel
+    data object Loading : MovieDetailsDomainModel
 }

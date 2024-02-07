@@ -1,5 +1,7 @@
 package com.alaishat.ahmed.themoviedb.ui.component
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -29,6 +31,7 @@ fun MovieBottomBar(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.primary,
         tonalElevation = 0.dp,
+        windowInsets = WindowInsets.systemBars
     ) {
         destinations.forEach { destination ->
             NavigationBarItem(

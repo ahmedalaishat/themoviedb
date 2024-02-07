@@ -7,12 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -80,21 +79,25 @@ private fun SearchScreen(
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         PagingInitialLoader(pagingItems.loadState) {
-            if (searchText.isEmpty()) EmptyContent(
-                imageId = R.drawable.ic_no_results,
-                title = stringResource(R.string.find_your_movie_by),
-                subtitle = null,
-                modifier = Modifier.fillMaxWidth(.5f),
-                actionButtonText = stringResource(id = R.string.search),
-                onActionButtonClick = {
-                    searchFocusRequester.requestFocus()
-                    softwareKeyboardController?.show()
-                }
-            )
+            if (searchText.isEmpty())
+                EmptyContent(
+                    imageId = R.drawable.no_search_result,
+                    title = stringResource(R.string.find_your_movie_by),
+                    subtitle = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.ScreenPadding),
+                    actionButtonText = stringResource(id = R.string.search),
+                    onActionButtonClick = {
+                        searchFocusRequester.requestFocus()
+                        softwareKeyboardController?.show()
+                    }
+                )
 //            else if (pagingItems.itemCount > 0) CircularProgressIndicator()
         }
     }
@@ -104,10 +107,12 @@ private fun SearchScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         EmptyContent(
-            imageId = R.drawable.ic_no_results,
+            imageId = R.drawable.no_search_result,
             title = stringResource(R.string.can_not_find_movie_title),
             subtitle = stringResource(id = R.string.find_your_movie_by),
-            modifier = Modifier.fillMaxWidth(.5f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimensions.ScreenPadding),
         )
     }
 
@@ -115,9 +120,13 @@ private fun SearchScreen(
         pagingItems = pagingItems,
         modifier = Modifier.fillMaxSize(),
     ) { error ->
-        Text(
-            text = error.orEmpty(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+        EmptyContent(
+            imageId = R.drawable.error,
+            title = stringResource(id = R.string.something_went_wrong),
+            subtitle = error,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimensions.ScreenPadding),
         )
     }
 

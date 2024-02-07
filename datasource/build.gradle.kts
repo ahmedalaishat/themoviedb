@@ -39,11 +39,13 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.auth)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.client.logging)
+    implementation(libs.bundles.ktor)
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.android)
+    implementation(libs.ktor.auth)
+    implementation(libs.ktor.content.negotiation)
+    implementation(libs.ktor.logging)
+    implementation(libs.ktor.mock)
     implementation(libs.ktor.serialization.kotlinx.json)
 
     // SQL Delight
@@ -54,7 +56,11 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.hamcrest)
+    testImplementation(libs.test.mockito.kotlin)
+    testImplementation(libs.test.kotlinx.coroutines)
+    testImplementation(project(":coroutine-test"))
 }
 
 sqldelight {

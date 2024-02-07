@@ -14,7 +14,7 @@ class GetMovieDetailsUseCase(
 ) {
     operator fun invoke(movieId: Int): Flow<MovieDetailsDomainModel> = combine(
         moviesRepository.getMovieDetails(movieId = movieId),
-        moviesRepository.observeWatchlist(movieId = movieId)
+        moviesRepository.isWatchlist(movieId = movieId)
     ) { details, watchlistStatus ->
         if (details is MovieDetailsDomainModel.Success)
             details.copy(watchlist = watchlistStatus)

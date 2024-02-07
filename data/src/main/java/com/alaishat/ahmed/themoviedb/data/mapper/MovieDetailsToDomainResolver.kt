@@ -1,7 +1,7 @@
 package com.alaishat.ahmed.themoviedb.data.mapper
 
-import com.alaishat.ahmed.themoviedb.data.model.ConnectionStateDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
+import com.alaishat.ahmed.themoviedb.domain.common.model.ConnectionStateDomainModel
 import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDomainModel
 
 /**
@@ -11,16 +11,18 @@ import com.alaishat.ahmed.themoviedb.domain.feature.movie.model.MovieDetailsDoma
 class MovieDetailsToDomainResolver {
 
     suspend fun toDomain(
-        connectionState: ConnectionStateDataModel,
-        remoteMovieProvider: suspend () -> MovieDetailsDataModel,
+        connectionState: ConnectionStateDomainModel,
+        remoteMovieProvider: suspend () -> MovieDetailsDataModel?,
         localMovieProvider: suspend () -> MovieDetailsDataModel?,
     ) = when (connectionState) {
-        is ConnectionStateDataModel.Connected -> remoteMovieProvider().toMoviesDetailsDomainModel()
-        else -> localMovieProvider()?.toMoviesDetailsDomainModel() ?: MovieDetailsDomainModel.Disconnected
-    }
+        is ConnectionStateDomainModel.Connected -> remoteMovieProvider()?.toMoviesDetailsDomainModel()
+            ?: localMovieProvider()?.toMoviesDetailsDomainModel()
+
+        else -> localMovieProvider()?.toMoviesDetailsDomainModel()
+    } ?: MovieDetailsDomainModel.Disconnected
 }
 
-private fun MovieDetailsDataModel.toMoviesDetailsDomainModel() = MovieDetailsDomainModel.Success(
+fun MovieDetailsDataModel.toMoviesDetailsDomainModel() = MovieDetailsDomainModel.Success(
     id = id,
     overview = overview,
     posterPath = posterPath.orEmpty(),

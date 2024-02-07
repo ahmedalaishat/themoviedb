@@ -12,9 +12,7 @@ sealed interface CreditsDomainModel {
         val credits: List<CreditDomainModel>,
     ) : CreditsDomainModel
 
-    object Disconnected : CreditsDomainModel
+    data object NoCache : CreditsDomainModel
 
     data class Error(val exception: DomainException) : CreditsDomainModel
-
-    object Loading : CreditsDomainModel
 }

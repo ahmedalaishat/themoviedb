@@ -9,7 +9,7 @@ sealed interface CreditsViewState {
         val credits: List<Credit>
     ) : CreditsViewState
 
-    object Loading : CreditsViewState
-    object Disconnected : CreditsViewState
+    data object Loading : CreditsViewState
+    data object NoCache : CreditsViewState
     data class Error(val error: CreditsError) : CreditsViewState
 }

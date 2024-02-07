@@ -2,6 +2,7 @@ package com.alaishat.ahmed.themoviedb.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.alaishat.ahmed.themoviedb.BuildConfig
 import com.alaishat.ahmed.themoviedb.data.source.connection.ConnectionDataSource
 import com.alaishat.ahmed.themoviedb.data.source.remote.RemoteMoviesDataSource
 import com.alaishat.ahmed.themoviedb.datasource.connection.source.ConnectionDataSourceImpl
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.plugins.logging.LogLevel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
@@ -32,13 +34,12 @@ object NetworkModule {
     fun providesKtorClient(
         @Dispatcher(AppDispatchers.IO) ioDispatcher: CoroutineDispatcher,
         networkJson: Json,
-        exceptionHandler: KtorExceptionHandler,
         ktorLogger: KtorLogger,
     ) = KtorClient(
         ioDispatcher = ioDispatcher,
         networkJson = networkJson,
-        exceptionHandler = exceptionHandler,
         ktorLogger = ktorLogger,
+        if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
     )
 
     @Provides
@@ -49,12 +50,6 @@ object NetworkModule {
         prettyPrint = true
         isLenient = true
     }
-
-    @Provides
-    @Singleton
-    fun providesKtorExceptionHandler(
-        networkJson: Json,
-    ) = KtorExceptionHandler(networkJson)
 
     @Provides
     @Singleton

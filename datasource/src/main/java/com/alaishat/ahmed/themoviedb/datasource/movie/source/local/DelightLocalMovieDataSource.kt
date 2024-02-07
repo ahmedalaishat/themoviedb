@@ -1,9 +1,7 @@
 package com.alaishat.ahmed.themoviedb.datasource.movie.source.local
 
 import androidx.paging.PagingData
-import androidx.paging.map
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.paging3.QueryPagingSource
 import com.alaishat.ahmed.themoviedb.data.model.CreditDataModel
 import com.alaishat.ahmed.themoviedb.data.model.GenreDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieDataModel
@@ -11,7 +9,6 @@ import com.alaishat.ahmed.themoviedb.data.model.MovieDetailsDataModel
 import com.alaishat.ahmed.themoviedb.data.model.MovieListTypeDataModel
 import com.alaishat.ahmed.themoviedb.data.model.ReviewDataModel
 import com.alaishat.ahmed.themoviedb.data.source.local.LocalMoviesDataSource
-import com.alaishat.ahmed.themoviedb.data.source.remote.paging.defaultPagerOf
 import com.alaishat.ahmed.themoviedb.datasource.local.provider.MovieQueriesProvider
 import com.alaishat.ahmed.themoviedb.datasource.movie.mapper.mapToGenreDataModels
 import com.alaishat.ahmed.themoviedb.datasource.movie.mapper.toDataModel
@@ -21,7 +18,6 @@ import com.alaishat.ahmed.themoviedb.datasource.movie.mapper.toMovieDetailsDataM
 import com.alaishat.ahmed.themoviedb.datasource.movie.mapper.toReviewDataModel
 import comalaishatahmedthemoviedbdatasourcesqldelight.CreditEntity
 import comalaishatahmedthemoviedbdatasourcesqldelight.MovieEntity
-import comalaishatahmedthemoviedbdatasourcesqldelight.SelectMoviesReviewsPage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -38,7 +34,7 @@ class DelightLocalMovieDataSource(
     override fun cacheMovieList(
         movieListTypeDataModel: MovieListTypeDataModel,
         deleteCached: Boolean,
-        movies: List<MovieDataModel>
+        movies: List<MovieDataModel>,
     ) {
         queriesProvider.movie.selectAll().executeAsList()
         movies.forEach { movie ->
@@ -70,37 +66,34 @@ class DelightLocalMovieDataSource(
         ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
 
-    override fun searchCachedMovieList(query: String): List<MovieDataModel> {
-        return queriesProvider.movie.searchMoviesList(
-            query = query,
+    override fun getCachedWatchlistPage(page: Int): List<MovieDataModel> {
+        return queriesProvider.movie.selectMoviesListPage(
+            type = MovieListTypeDataModel.WATCHLIST,
+            limit = 10,
+            offset = (page - 1) * 10L,
         ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
 
-    override fun getCachedMoviesPagingFlow(movieListTypeDataModel: MovieListTypeDataModel): Flow<PagingData<MovieDataModel>> {
-        val pager = defaultPagerOf(
-            pagingSourceFactory = {
-                QueryPagingSource(
-                    countQuery = queriesProvider.movie.selectMoviesCountByType(movieListTypeDataModel),
-                    transacter = queriesProvider.movie,
-                    context = ioDispatcher,
-                    queryProvider = { limit, offset ->
-                        queriesProvider.movie.selectMoviesPageByType(
-                            type = movieListTypeDataModel,
-                            limit = limit,
-                            offset = offset,
-                        )
-                    },
-                )
-            }
-        )
-        return pager.flow.map {
-            it.map(MovieEntity::toMovieDataModel)
-        }
+    override fun searchCachedMoviePage(query: String, page: Int): List<MovieDataModel> {
+        return queriesProvider.movie.searchMoviesList(
+            query = query,
+            limit = 10,
+            offset = (page - 1) * 10L,
+        ).executeAsList().map(MovieEntity::toMovieDataModel)
     }
+
+    override fun getCachedMoviesPagingFlow(
+        movieListType: MovieListTypeDataModel,
+        page: Int,
+    ): List<MovieDataModel> = queriesProvider.movie.selectMoviesPageByType(
+        type = movieListType,
+        limit = 10,
+        offset = (page + 1) * 10L,
+    ).executeAsList().map { it.toMovieDataModel() }
 
     override fun cacheMovieReviews(
         movieId: Int,
-        reviews: List<ReviewDataModel>
+        reviews: List<ReviewDataModel>,
     ) {
         queriesProvider.review.transaction {
             reviews.forEach { review ->
@@ -110,26 +103,12 @@ class DelightLocalMovieDataSource(
         }
     }
 
-    override fun getCachedReviewsPagingFlow(movieId: Int): Flow<PagingData<ReviewDataModel>> {
-        val pager = defaultPagerOf(
-            pagingSourceFactory = {
-                QueryPagingSource(
-                    countQuery = queriesProvider.review.selectMovieReviewsCount(movieId = movieId.toLong()),
-                    transacter = queriesProvider.review,
-                    context = ioDispatcher,
-                    queryProvider = { limit, offset ->
-                        queriesProvider.review.selectMoviesReviewsPage(
-                            movieId = movieId.toLong(),
-                            limit = limit,
-                            offset = offset,
-                        )
-                    },
-                )
-            }
-        )
-        return pager.flow.map {
-            it.map(SelectMoviesReviewsPage::toReviewDataModel)
-        }
+    override fun getCachedReviewsPage(movieId: Int, page: Int): List<ReviewDataModel> {
+        return queriesProvider.review.selectMoviesReviewsPage(
+            movieId = movieId.toLong(),
+            limit = 10,
+            offset = (page - 1) * 10L,
+        ).executeAsList().map { it.toReviewDataModel() }
     }
 
     override fun getMovieReviewsFlow(movieId: Int): List<ReviewDataModel> {
@@ -151,7 +130,7 @@ class DelightLocalMovieDataSource(
 
     override fun cacheMovieCredits(
         movieId: Int,
-        credits: List<CreditDataModel>
+        credits: List<CreditDataModel>,
     ) {
         queriesProvider.credit.transaction {
             credits.forEach { credit ->
