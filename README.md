@@ -15,6 +15,9 @@ Download the APK from this [Link](https://bit.ly/49kd5fC).
   - [App Startup](https://developer.android.com/topic/libraries/app-startup): Provides a straightforward, performant way to initialize components at application startup.
   - [Hilt Navigation](https://developer.android.com/jetpack/compose/libraries#hilt-navigation): For navigating screens and injecting dependencies.
   - [Hilt](https://dagger.dev/hilt/): for dependency injection.
+- [Ktor](https://github.com/ktorio/ktor): Kotlin-based framework for building efficient HTTP clients in Kotlin applications.
+- [SQLDelight](https://github.com/cashapp/sqldelight): Generates Kotlin APIs from SQL statements for seamless database integration.
+- [Coil](https://github.com/coil-kt/coil): Image loading library for loading images from network.
 - [Material-Components](https://github.com/material-components/material-components-android): Material design components for building ripple animation, and CardView.
 - [Timber](https://github.com/JakeWharton/timber): A logger with a small, extensible API.
 
