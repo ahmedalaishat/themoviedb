@@ -10,10 +10,3 @@ data class GenreDataModel(
     val id: Int,
     val name: String,
 )
-
-fun GenreDataModel.toGenreDomainModel() = GenreDomainModel(
-    id = id,
-    name = name,
-)
-
-fun List<GenreDataModel>.mapToGenresDomainModels() = map(GenreDataModel::toGenreDomainModel)

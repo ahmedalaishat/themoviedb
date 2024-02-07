@@ -29,6 +29,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.serialization.json.Json
 import timber.log.Timber
+import java.net.UnknownHostException
 
 /**
  * Created by Ahmed Al-Aishat on Jun/24/2023.
@@ -85,7 +86,7 @@ class KtorClient(
                 )
             )
 
-            is ConnectTimeoutException -> DataResult.Error(ConnectionDataException())
+            is ConnectTimeoutException, is UnknownHostException -> DataResult.Error(ConnectionDataException())
 
             else -> DataResult.Error(UnknownDataException())
         }

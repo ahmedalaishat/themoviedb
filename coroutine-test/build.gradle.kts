@@ -9,14 +9,9 @@ java {
     targetCompatibility = JavaVersion.toVersion(libs.versions.java.get())
 }
 
-dependencies {
-    implementation(project(":domain"))
+dependencies{
 
+    implementation(libs.test.junit)
     implementation(libs.kotlinx.coroutines.core)
-
-    testImplementation(libs.test.junit)
-    testImplementation(libs.test.mockito.kotlin)
-    testImplementation(libs.test.kotlinx.coroutines)
-    testImplementation(libs.test.mockk)
-    testImplementation(project(":coroutine-test"))
+    implementation(libs.test.kotlinx.coroutines)
 }

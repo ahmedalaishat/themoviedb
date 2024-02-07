@@ -15,15 +15,3 @@ data class MovieDataModel(
     val title: String,
     val voteAverage: Float,
 )
-
-fun MovieDataModel.toMovieDomainModel() = MovieDomainModel(
-    id = id,
-    overview = overview,
-    posterPath = posterPath.orEmpty(),
-    backdropPath = backdropPath.orEmpty(),
-    releaseDate = releaseDate,
-    title = title,
-    voteAverage = "%.1f".format(voteAverage),
-)
-
-fun List<MovieDataModel>.mapToMovies() = map(MovieDataModel::toMovieDomainModel)

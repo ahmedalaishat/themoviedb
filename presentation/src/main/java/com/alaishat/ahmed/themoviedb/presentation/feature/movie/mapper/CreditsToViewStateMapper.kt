@@ -9,8 +9,7 @@ import com.alaishat.ahmed.themoviedb.presentation.feature.movie.model.toPresenta
  * The Movie DB Project.
  */
 fun CreditsDomainModel.toViewState() = when (this) {
-    CreditsDomainModel.Disconnected -> CreditsViewState.Disconnected
+    CreditsDomainModel.NoCache -> CreditsViewState.NoCache
     is CreditsDomainModel.Error -> CreditsViewState.Error(exception.toCreditsViewError())
-    CreditsDomainModel.Loading -> CreditsViewState.Loading
     is CreditsDomainModel.Success -> CreditsViewState.Success(credits = credits.map { it.toPresentation() })
 }

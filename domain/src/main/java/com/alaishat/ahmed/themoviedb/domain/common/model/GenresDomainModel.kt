@@ -10,7 +10,7 @@ sealed interface GenresDomainModel {
         val genres: List<GenreDomainModel>,
     ) : GenresDomainModel
 
-    object NoCache : GenresDomainModel
+    data object NoCache : GenresDomainModel
 
-    object Loading : GenresDomainModel
+    data object Loading : GenresDomainModel
 }

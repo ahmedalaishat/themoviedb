@@ -423,7 +423,7 @@ private fun CastTab(
                 TheMovieLoader()
             } //AHMED_TODO: make me shimmer
 
-            CreditsViewState.Disconnected -> maxLineBox(
+            CreditsViewState.NoCache -> maxLineBox(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Text(text = stringResource(R.string.no_cached_data))

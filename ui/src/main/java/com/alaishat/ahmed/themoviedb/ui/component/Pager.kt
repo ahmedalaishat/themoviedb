@@ -83,7 +83,6 @@ fun PagerTabRow(
         Divider(color = MaterialTheme.colorScheme.background)
     },
 ) {
-    val coroutineScope = rememberCoroutineScope()
 
     ScrollableTabRow(
         selectedTabIndex = selectedTabIndex,

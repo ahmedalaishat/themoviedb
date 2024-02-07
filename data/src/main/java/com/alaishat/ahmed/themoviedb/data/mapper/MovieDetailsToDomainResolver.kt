@@ -12,15 +12,17 @@ class MovieDetailsToDomainResolver {
 
     suspend fun toDomain(
         connectionState: ConnectionStateDomainModel,
-        remoteMovieProvider: suspend () -> MovieDetailsDataModel,
+        remoteMovieProvider: suspend () -> MovieDetailsDataModel?,
         localMovieProvider: suspend () -> MovieDetailsDataModel?,
     ) = when (connectionState) {
-        is ConnectionStateDomainModel.Connected -> remoteMovieProvider().toMoviesDetailsDomainModel()
-        else -> localMovieProvider()?.toMoviesDetailsDomainModel() ?: MovieDetailsDomainModel.Disconnected
-    }
+        is ConnectionStateDomainModel.Connected -> remoteMovieProvider()?.toMoviesDetailsDomainModel()
+            ?: localMovieProvider()?.toMoviesDetailsDomainModel()
+
+        else -> localMovieProvider()?.toMoviesDetailsDomainModel()
+    } ?: MovieDetailsDomainModel.Disconnected
 }
 
-private fun MovieDetailsDataModel.toMoviesDetailsDomainModel() = MovieDetailsDomainModel.Success(
+fun MovieDetailsDataModel.toMoviesDetailsDomainModel() = MovieDetailsDomainModel.Success(
     id = id,
     overview = overview,
     posterPath = posterPath.orEmpty(),
